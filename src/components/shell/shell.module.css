@@ -12,7 +12,7 @@
   justify-content: space-between;
   gap: var(--space-3);
   padding: 0 var(--space-5);
-  background: var(--surface);
+  background: var(--surface-2);
   border-bottom: 1px solid var(--line);
 }
 
@@ -51,7 +51,7 @@
   height: 30px;
   flex: 0 0 30px;
   border-radius: 50%;
-  background: var(--brand-soft);
+  background: var(--surface);
   border: 1px solid var(--line);
   color: var(--brand-dark);
   display: flex;
@@ -94,7 +94,7 @@
   min-height: 34px;
   width: auto;
   font-size: 13px;
-  background: var(--surface-2);
+  background: var(--surface);
 }
 
 .switcherLabel {
@@ -111,7 +111,7 @@
   width: var(--nav-width);
   flex: 0 0 var(--nav-width);
   border-right: 1px solid var(--line);
-  background: var(--surface);
+  background: var(--surface-2);
   padding: var(--space-4) var(--space-3) var(--space-6);
   position: sticky;
   top: var(--header-height);
@@ -156,13 +156,13 @@
 }
 
 .navLink:hover {
-  background: var(--surface-2);
+  background: var(--surface-3);
   color: var(--ink);
 }
 
 .navLinkActive,
 .navLinkActive:hover {
-  background: var(--brand-soft);
+  background: var(--surface);
   border-left-color: var(--brand);
   color: var(--ink);
   font-weight: 600;
@@ -212,7 +212,7 @@
     left: 0;
     right: 0;
     z-index: 20;
-    background: var(--surface);
+    background: var(--surface-2);
     border-top: 1px solid var(--line);
     padding-bottom: env(safe-area-inset-bottom);
   }
@@ -245,6 +245,7 @@
   .bottomNavLinkActive {
     font-weight: 600;
     color: var(--brand-dark);
+    background: var(--surface);
     box-shadow: inset 0 -2px 0 var(--brand);
   }
 

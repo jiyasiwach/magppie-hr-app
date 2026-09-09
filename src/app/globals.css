@@ -9,25 +9,31 @@
 
 :root {
   /* --- surfaces --------------------------------------------------------- */
-  --bg: #faf7f2;          /* page — soft cream */
-  --surface: #ffffff;     /* cards and content */
-  --surface-2: #f4efe7;   /* table headers, quiet fills */
-  --surface-3: #ebe3d8;   /* pressed / selected */
+  /* Three layers, and the layering is what does the layout work:
+     beige page → white content cards → beige again for the chrome
+     (sidebar, header, table headers, filter bars). Cards are never tinted. */
+  --bg: #f1e9dd;          /* page — warm beige */
+  --surface: #ffffff;     /* content cards, never tinted */
+  --surface-2: #e8dece;   /* chrome: sidebar, header, table heads, filters */
+  --surface-3: #dccfb9;   /* hover / pressed on the chrome */
 
   /* --- brown ------------------------------------------------------------ */
   --brand: #8b6f4e;       /* navigation, buttons, active states */
-  --brand-dark: #6f573b;  /* hover / pressed */
-  --brand-soft: #f0e8dd;  /* active nav background */
+  --brand-dark: #6f573b;  /* hover, links */
+  --brand-soft: #f0e8dd;
 
   /* --- text ------------------------------------------------------------- */
-  --ink: #2e241c;         /* headings and body — 13:1 on cream */
+  --ink: #2e241c;         /* headings and body — 12.5:1 on beige */
   --ink-2: #4c3f33;
-  --ink-3: #7a6a5a;       /* muted — 4.9:1 on cream, 5.2:1 on white */
+  /* Muted text is #6e5f50, not the #7a6a5a in the brief: on the beige page
+     that value measured 4.32:1 and on the secondary beige 3.9:1, both under
+     AA. This is the same warm grey-brown, darkened until it passes. */
+  --ink-3: #6e5f50;
   --on-brand: #ffffff;
 
   /* --- lines ------------------------------------------------------------ */
-  --line: #e3dace;
-  --line-soft: #efe8de;
+  --line: #ddd1bf;
+  --line-soft: #eae1d3;   /* dividers inside white cards */
 
   /* --- status ----------------------------------------------------------- */
   /* Each pair is text-on-tint, checked to clear 4.5:1 against its own tint. */
@@ -48,8 +54,8 @@
   --info-line: #c3dcee;
 
   --neutral-fg: #5d4f42;
-  --neutral-bg: #f4efe7;
-  --neutral-line: #e3dace;
+  --neutral-bg: #e8dece;
+  --neutral-line: #ddd1bf;
 
   /* --- spacing ---------------------------------------------------------- */
   --space-1: 4px;
@@ -139,7 +145,7 @@ textarea {
 input:hover,
 select:hover,
 textarea:hover {
-  border-color: #d3c6b4;
+  border-color: #c9b99f;
 }
 
 textarea {
@@ -148,7 +154,7 @@ textarea {
 }
 
 ::placeholder {
-  color: #a2917f;
+  color: #9a8975;
 }
 
 :focus-visible {

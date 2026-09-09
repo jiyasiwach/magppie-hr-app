@@ -88,7 +88,7 @@
 
 .button:hover:not(:disabled) {
   background: var(--surface-2);
-  border-color: #d3c6b4;
+  border-color: #c9b99f;
 }
 
 .button:disabled {
@@ -138,7 +138,7 @@
   padding: var(--space-6) var(--space-5);
   border: 1px dashed var(--line);
   border-radius: var(--radius);
-  background: var(--surface-2);
+  background: transparent;
   color: var(--ink-2);
 }
 
@@ -161,7 +161,7 @@
 
 .skeleton {
   height: 14px;
-  background: var(--surface-3);
+  background: var(--surface-2);
   border-radius: 3px;
 }
 
@@ -236,7 +236,7 @@
   padding: var(--space-4);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: var(--surface);
+  background: var(--surface-2);
   margin-bottom: var(--space-4);
 }
 

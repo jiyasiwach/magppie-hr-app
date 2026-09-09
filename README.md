@@ -43,14 +43,18 @@ and nothing else in the app types it out.
 
 Warm brown and white, flat. Tokens are in `src/app/globals.css`:
 
+Three layers, and the layering does the layout work: a beige page, white
+content cards on it, and beige again for the chrome. Cards are never tinted.
+
 | Role | Token | Value |
 | --- | --- | --- |
-| Page | `--bg` | `#faf7f2` |
-| Cards | `--surface` | `#ffffff` |
+| Page | `--bg` | `#f1e9dd` |
+| Content cards | `--surface` | `#ffffff` |
+| Chrome — sidebar, header, table heads, filter bars | `--surface-2` | `#e8dece` |
 | Primary brown | `--brand` | `#8b6f4e` |
 | Text | `--ink` | `#2e241c` |
-| Borders | `--line` | `#e3dace` |
-| Muted text | `--ink-3` | `#7a6a5a` |
+| Borders | `--line` | `#ddd1bf` |
+| Muted text | `--ink-3` | `#6e5f50` |
 
 Rules the code follows:
 
@@ -59,9 +63,12 @@ Rules the code follows:
   `--neutral-*`. They drive the status pills, the attendance calendar and the
   team calendar. Colour is always backed by a label or a mark letter, so the
   calendar is still readable without relying on colour alone.
-- **Contrast was measured, not assumed.** Every text-on-surface pair in the
-  palette clears WCAG AA (4.5:1). The tightest is white on the primary brown at
-  4.69:1, which is why button labels are 600 weight.
+- **Contrast was measured, not assumed.** All 23 text-on-surface pairs clear
+  WCAG AA (4.5:1). Two results are worth knowing: muted text is `#6e5f50`
+  rather than the `#7a6a5a` in the brief, because that value measured 4.32:1 on
+  the beige page and 3.9:1 on the beige chrome — both under AA; and white on the
+  primary brown is 4.69:1, which passes with no headroom, so button labels are
+  600 weight.
 - **Flat.** Solid surfaces and 1px borders. No gradients, no glassmorphism, no
   decorative shadows.
 - **One sans-serif** (Inter, self-hosted via `next/font`), three weights.
