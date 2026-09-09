@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import type { AsyncState } from '@/hooks/useAsync';
+import type { Tone } from '@/lib/labels';
 import s from './ui.module.css';
 
 // --- layout ----------------------------------------------------------------
@@ -212,17 +213,13 @@ export function AsyncSection<T>({
 
 // --- status pill -----------------------------------------------------------
 
-export function StatusPill({
-  label,
-  tone = 'default',
-}: {
-  label: string;
-  tone?: 'default' | 'strong' | 'muted' | 'dashed';
-}) {
+export function StatusPill({ label, tone = 'neutral' }: { label: string; tone?: Tone }) {
   const classes = [s.pill];
-  if (tone === 'strong') classes.push(s.pillStrong);
-  if (tone === 'muted') classes.push(s.pillMuted);
-  if (tone === 'dashed') classes.push(s.pillOutlineDashed);
+  if (tone === 'success') classes.push(s.pillSuccess);
+  if (tone === 'warning') classes.push(s.pillWarning);
+  if (tone === 'danger') classes.push(s.pillDanger);
+  if (tone === 'info') classes.push(s.pillInfo);
+  if (tone === 'quiet') classes.push(s.pillQuiet);
   return <span className={classes.join(' ')}>{label}</span>;
 }
 

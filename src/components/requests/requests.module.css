@@ -48,11 +48,16 @@
 .details {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: var(--space-1) var(--space-3);
+  gap: var(--space-1) var(--space-4);
   font-size: 13px;
   background: var(--surface-2);
-  border-radius: var(--radius);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm);
   padding: var(--space-3);
+}
+
+.details > span:nth-child(odd) {
+  color: var(--ink-3);
 }
 
 .detailKey {
@@ -80,7 +85,7 @@
   flex-direction: column;
   gap: var(--space-2);
   font-size: 13px;
-  border-left: 2px solid var(--line);
+  border-left: 2px solid var(--brand-soft);
   padding-left: var(--space-3);
 }
 
@@ -92,7 +97,9 @@
 
 .error {
   font-size: 13px;
-  border: 1px solid var(--ink);
-  border-radius: var(--radius);
+  color: var(--danger-fg);
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-line);
+  border-radius: var(--radius-sm);
   padding: var(--space-2) var(--space-3);
 }

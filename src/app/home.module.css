@@ -6,7 +6,7 @@
 }
 
 .big {
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 600;
 }
 
@@ -106,4 +106,8 @@
 .notificationMeta {
   font-size: 12px;
   color: var(--ink-3);
+}
+
+.notificationButton:hover strong {
+  color: var(--brand-dark);
 }

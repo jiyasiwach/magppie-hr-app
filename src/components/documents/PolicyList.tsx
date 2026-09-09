@@ -44,9 +44,9 @@ export function PolicyList({ employeeId, readOnly = false }: { employeeId: strin
                 </div>
                 <div className={s.itemActions}>
                   {acknowledgement ? (
-                    <StatusPill label="Acknowledged" />
+                    <StatusPill label="Acknowledged" tone="success" />
                   ) : readOnly ? (
-                    <StatusPill label="Not acknowledged" tone="dashed" />
+                    <StatusPill label="Not acknowledged" tone="warning" />
                   ) : (
                     <Button
                       onClick={() => acknowledge(policy.id)}

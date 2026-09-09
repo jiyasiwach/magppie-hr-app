@@ -52,10 +52,16 @@
   height: 24px;
   flex: 0 0 24px;
   border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--brand-dark);
+  font-weight: 600;
   cursor: pointer;
   line-height: 1;
+}
+
+.toggle:hover {
+  border-color: var(--brand);
 }
 
 .toggleSpacer {

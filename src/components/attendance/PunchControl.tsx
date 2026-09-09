@@ -6,7 +6,7 @@ import { getTodayStatus, punch } from '@/data/attendance';
 import { useAsync } from '@/hooks/useAsync';
 import { now } from '@/lib/clock';
 import { formatDate, formatDayName, formatHours, formatTime } from '@/lib/date';
-import { punchSourceLabels } from '@/lib/labels';
+import { attendanceStatusLabels, attendanceStatusTones, punchSourceLabels } from '@/lib/labels';
 import s from './attendance.module.css';
 
 /**
@@ -58,7 +58,7 @@ export function PunchControl({ employeeId }: { employeeId: string }) {
 
             <Button
               large
-              variant={today.isPunchedIn ? 'default' : 'primary'}
+              variant="primary"
               disabled={busy}
               onClick={() => doPunch(today.isPunchedIn ? 'out' : 'in')}
             >
@@ -80,7 +80,10 @@ export function PunchControl({ employeeId }: { employeeId: string }) {
 
             {today.day ? (
               <div>
-                <StatusPill label={`Recorded as: ${today.day.status}`} tone="muted" />
+                <StatusPill
+                  label={`Recorded as ${attendanceStatusLabels[today.day.status].toLowerCase()}`}
+                  tone={attendanceStatusTones[today.day.status]}
+                />
               </div>
             ) : null}
 

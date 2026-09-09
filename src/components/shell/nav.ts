@@ -8,17 +8,50 @@ export interface NavItem {
   visible: (user: CurrentUser) => boolean;
 }
 
-/** Only the modules in scope for this pass. Nothing is stubbed in ahead of time. */
-export const navItems: NavItem[] = [
-  { href: '/', label: 'Home', shortLabel: 'Home', visible: () => true },
-  { href: '/directory', label: 'Directory', shortLabel: 'People', visible: () => true },
-  { href: '/attendance', label: 'My Attendance', shortLabel: 'Attendance', visible: () => true },
-  { href: '/leave', label: 'My Leave', shortLabel: 'Leave', visible: () => true },
-  { href: '/approvals', label: 'Approvals', shortLabel: 'Approvals', visible: canSeeApprovals },
-  { href: '/documents', label: 'Documents', shortLabel: 'Docs', visible: () => true },
-  { href: '/settings', label: 'Settings', shortLabel: 'Settings', visible: () => true },
+export interface NavGroup {
+  /** null renders the items with no heading, at the very top. */
+  title: string | null;
+  items: NavItem[];
+}
+
+/**
+ * Grouped by area, with a person's own things at the top and the
+ * organisation-wide and administrative things below them.
+ * Only the modules in scope for this pass — nothing is stubbed in ahead of time.
+ */
+export const navGroups: NavGroup[] = [
+  {
+    title: null,
+    items: [{ href: '/', label: 'Home', shortLabel: 'Home', visible: () => true }],
+  },
+  {
+    title: 'Me',
+    items: [
+      { href: '/attendance', label: 'My Attendance', shortLabel: 'Attendance', visible: () => true },
+      { href: '/leave', label: 'My Leave', shortLabel: 'Leave', visible: () => true },
+      { href: '/documents', label: 'Documents', shortLabel: 'Docs', visible: () => true },
+    ],
+  },
+  {
+    title: 'Team',
+    items: [{ href: '/approvals', label: 'Approvals', shortLabel: 'Approvals', visible: canSeeApprovals }],
+  },
+  {
+    title: 'Organisation',
+    items: [
+      { href: '/directory', label: 'Directory', shortLabel: 'People', visible: () => true },
+      { href: '/settings', label: 'Settings', shortLabel: 'Settings', visible: () => true },
+    ],
+  },
 ];
 
+export function visibleNavGroups(user: CurrentUser): NavGroup[] {
+  return navGroups
+    .map((group) => ({ ...group, items: group.items.filter((item) => item.visible(user)) }))
+    .filter((group) => group.items.length > 0);
+}
+
+/** Flat list, in the same order — used by the mobile bottom bar. */
 export function visibleNavItems(user: CurrentUser): NavItem[] {
-  return navItems.filter((item) => item.visible(user));
+  return visibleNavGroups(user).flatMap((group) => group.items);
 }

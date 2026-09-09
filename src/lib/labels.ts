@@ -10,7 +10,12 @@ import type {
   RequestType,
 } from './types';
 
-export type Tone = 'default' | 'strong' | 'muted' | 'dashed';
+/**
+ * Status colour, never brown. Brown is the app's furniture; these are the
+ * signals people read at a glance, so they have to survive being scanned on a
+ * phone in a factory or a showroom.
+ */
+export type Tone = 'neutral' | 'success' | 'warning' | 'danger' | 'info' | 'quiet';
 
 export const attendanceStatusLabels: Record<AttendanceStatus, string> = {
   present: 'Present',
@@ -34,13 +39,13 @@ export const attendanceStatusMarks: Record<AttendanceStatus, string> = {
 };
 
 export const attendanceStatusTones: Record<AttendanceStatus, Tone> = {
-  present: 'default',
-  absent: 'strong',
-  'half-day': 'default',
-  leave: 'muted',
-  holiday: 'muted',
-  'weekly-off': 'muted',
-  'pending-regularisation': 'dashed',
+  present: 'success',
+  absent: 'danger',
+  'half-day': 'warning',
+  leave: 'info',
+  holiday: 'quiet',
+  'weekly-off': 'quiet',
+  'pending-regularisation': 'warning',
 };
 
 export const employeeStatusLabels: Record<EmployeeStatus, string> = {
@@ -51,10 +56,10 @@ export const employeeStatusLabels: Record<EmployeeStatus, string> = {
 };
 
 export const employeeStatusTones: Record<EmployeeStatus, Tone> = {
-  active: 'default',
-  probation: 'dashed',
-  notice: 'dashed',
-  inactive: 'muted',
+  active: 'success',
+  probation: 'warning',
+  notice: 'warning',
+  inactive: 'quiet',
 };
 
 export const employmentTypeLabels: Record<EmploymentType, string> = {
@@ -79,10 +84,10 @@ export const requestStatusLabels: Record<RequestStatus, string> = {
 };
 
 export const requestStatusTones: Record<RequestStatus, Tone> = {
-  pending: 'dashed',
-  approved: 'default',
-  rejected: 'strong',
-  cancelled: 'muted',
+  pending: 'warning',
+  approved: 'success',
+  rejected: 'danger',
+  cancelled: 'quiet',
 };
 
 export const leaveStatusLabels: Record<LeaveRequestStatus, string> = requestStatusLabels;

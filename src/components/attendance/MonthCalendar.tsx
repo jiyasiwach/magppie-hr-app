@@ -1,6 +1,6 @@
 'use client';
 
-import type { AttendanceDay } from '@/lib/types';
+import type { AttendanceDay, AttendanceStatus } from '@/lib/types';
 import { MOCK_TODAY } from '@/lib/clock';
 import { datesBetween, dayOfWeek, endOfMonth, startOfMonth } from '@/lib/date';
 import { attendanceStatusLabels, attendanceStatusMarks } from '@/lib/labels';
@@ -9,14 +9,27 @@ import s from './attendance.module.css';
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-const legend: Array<[string, string]> = [
-  ['P', 'Present'],
-  ['½', 'Half day'],
-  ['L', 'Leave'],
-  ['A', 'Absent'],
-  ['H', 'Holiday'],
-  ['W', 'Weekly off'],
-  ['?', 'Pending regularisation'],
+/** Status → the cell's colour class. Mark letters back the colour up, so the
+ *  calendar is still readable without relying on colour alone. */
+const statusClass: Record<AttendanceStatus, string> = {
+  present: s.dayPresent,
+  'half-day': s.dayHalf,
+  absent: s.dayAbsent,
+  leave: s.dayLeave,
+  holiday: s.dayOff,
+  'weekly-off': s.dayOff,
+  'pending-regularisation': s.dayPending,
+};
+
+const legend: Array<[AttendanceStatus | 'none', string, string]> = [
+  ['present', 'P', 'Present'],
+  ['half-day', '½', 'Half day'],
+  ['leave', 'L', 'Leave'],
+  ['absent', 'A', 'Absent'],
+  ['holiday', 'H', 'Holiday'],
+  ['weekly-off', 'W', 'Weekly off'],
+  ['pending-regularisation', '?', 'Pending regularisation'],
+  ['none', '', 'No record'],
 ];
 
 export function MonthCalendar({
@@ -55,12 +68,10 @@ export function MonthCalendar({
         {dates.map((date) => {
           const day = byDate.get(date);
           const classes = [s.day];
+          if (day) classes.push(statusClass[day.status]);
+          else classes.push(s.dayNoRecord);
           if (date === MOCK_TODAY) classes.push(s.dayToday);
           if (date === selected) classes.push(s.daySelected);
-          if (day?.status === 'weekly-off' || day?.status === 'holiday') classes.push(s.dayOff);
-          if (day?.status === 'absent') classes.push(s.dayAbsent);
-          if (day?.status === 'pending-regularisation') classes.push(s.dayPending);
-          if (!day) classes.push(s.dayNoRecord);
 
           const label = day
             ? attendanceStatusLabels[day.status]
@@ -85,16 +96,16 @@ export function MonthCalendar({
       </div>
 
       <div className={s.legend}>
-        {legend.map(([mark, label]) => (
-          <span key={mark} className={s.legendItem}>
-            <span className={s.legendMark}>{mark}</span>
+        {legend.map(([status, mark, label]) => (
+          <span key={label} className={s.legendItem}>
+            <span
+              className={`${s.legendMark} ${status === 'none' ? s.dayNoRecord : statusClass[status]}`}
+            >
+              {mark}
+            </span>
             {label}
           </span>
         ))}
-        <span className={s.legendItem}>
-          <span className={s.legendMark} style={{ borderStyle: 'dotted' }} />
-          No record
-        </span>
       </div>
     </div>
   );

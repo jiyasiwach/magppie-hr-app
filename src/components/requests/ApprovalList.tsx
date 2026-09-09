@@ -91,7 +91,7 @@ export function RequestCard({
           </span>
         </div>
         <div className={s.pills}>
-          <StatusPill label={requestTypeLabels[request.type]} tone="muted" />
+          <StatusPill label={requestTypeLabels[request.type]} tone="neutral" />
           <StatusPill label={requestStatusLabels[request.status]} tone={requestStatusTones[request.status]} />
         </div>
       </div>

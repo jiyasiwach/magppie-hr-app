@@ -130,7 +130,7 @@ export default function SettingsPage() {
                 <h3 className={s.subheading}>Weekly off</h3>
                 <p className={s.plain}>
                   {weeklyOffDays.map((d) => DAY_NAMES[d]).join(' and ')}.{' '}
-                  <StatusPill label="Same for everyone" tone="dashed" />
+                  <StatusPill label="Same for everyone" tone="quiet" />
                 </p>
                 <p className={s.note}>
                   <Small>

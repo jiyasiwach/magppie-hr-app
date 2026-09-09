@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import {
   AsyncSection,
-  ButtonLink,
   Card,
   EmptyState,
   Grid,
@@ -13,14 +12,15 @@ import {
   Stack,
   StatusPill,
 } from '@/components/ui';
+import { PunchControl } from '@/components/attendance/PunchControl';
 import { RequestCard } from '@/components/requests/ApprovalList';
 import { useCurrentUser } from '@/components/shell/CurrentUserProvider';
 import { getHomeSummary } from '@/data/home';
 import { markNotificationRead } from '@/data/notifications';
 import { useAsync } from '@/hooks/useAsync';
 import { MOCK_TODAY } from '@/lib/clock';
-import { formatDate, formatDayName, formatTime, formatTimestamp } from '@/lib/date';
-import { attendanceStatusLabels, attendanceStatusTones, roleGreeting } from '@/lib/home';
+import { formatDate, formatDayName, formatTimestamp } from '@/lib/date';
+import { roleGreeting } from '@/lib/home';
 import s from './home.module.css';
 
 export default function HomePage() {
@@ -37,38 +37,17 @@ export default function HomePage() {
       <AsyncSection state={state} reload={reload} loadingRows={6}>
         {(home) => (
           <Stack>
-            <Grid>
+            {home.today.holidayName ? (
               <Card title="Today">
-                {home.today.holidayName ? (
-                  <p>
-                    <StatusPill label="Holiday" tone="muted" /> {home.today.holidayName}
-                  </p>
-                ) : home.today.punches.length === 0 ? (
-                  <p className={s.plain}>
-                    You have not punched in today.{' '}
-                    <Link href="/attendance">Punch in</Link>
-                  </p>
-                ) : (
-                  <div className={s.stack}>
-                    <p className={s.big}>
-                      {home.today.isPunchedIn ? 'Punched in' : 'Punched out'}{' '}
-                      <Muted>
-                        <Small>since {formatTime(home.today.punches[0].timestamp)}</Small>
-                      </Muted>
-                    </p>
-                    {home.today.day ? (
-                      <StatusPill
-                        label={attendanceStatusLabels[home.today.day.status]}
-                        tone={attendanceStatusTones[home.today.day.status]}
-                      />
-                    ) : null}
-                    <ButtonLink href="/attendance" variant="quiet">
-                      Open my attendance
-                    </ButtonLink>
-                  </div>
-                )}
+                <p className={s.stack}>
+                  <StatusPill label="Holiday" tone="quiet" /> {home.today.holidayName}
+                </p>
               </Card>
+            ) : (
+              <PunchControl employeeId={user.employee.id} />
+            )}
 
+            <Grid>
               <Card title="Leave balance">
                 {home.leave.length === 0 ? (
                   <p className={s.plain}>
@@ -86,6 +65,39 @@ export default function HomePage() {
                 )}
                 <p className={s.linkRow}>
                   <Link href="/leave">See how each balance was worked out</Link>
+                </p>
+              </Card>
+
+              <Card title="Your open items">
+                <ul className={s.itemList}>
+                  <li>
+                    <span>Requests you raised, still pending</span>
+                    <strong>{home.myOpenRequests.length}</strong>
+                  </li>
+                  <li>
+                    <span>Policies not yet acknowledged</span>
+                    <strong>{home.unacknowledgedPolicies}</strong>
+                  </li>
+                  <li>
+                    <span>Upcoming or current leave</span>
+                    <strong>{home.upcomingLeave.length}</strong>
+                  </li>
+                </ul>
+                {home.upcomingLeave.length > 0 ? (
+                  <ul className={s.plainList}>
+                    {home.upcomingLeave.map((l) => (
+                      <li key={l.id}>
+                        {formatDate(l.startDate)}
+                        {l.startDate === l.endDate ? '' : ` – ${formatDate(l.endDate)}`}{' '}
+                        <Muted>
+                          <Small>{l.status}</Small>
+                        </Muted>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+                <p className={s.linkRow}>
+                  <Link href="/documents">Open documents and policies</Link>
                 </p>
               </Card>
             </Grid>
@@ -120,41 +132,7 @@ export default function HomePage() {
               )}
             </Card>
 
-            <Grid>
-              <Card title="Your open items">
-                <ul className={s.itemList}>
-                  <li>
-                    <span>Requests you raised, still pending</span>
-                    <strong>{home.myOpenRequests.length}</strong>
-                  </li>
-                  <li>
-                    <span>Policies not yet acknowledged</span>
-                    <strong>{home.unacknowledgedPolicies}</strong>
-                  </li>
-                  <li>
-                    <span>Upcoming or current leave</span>
-                    <strong>{home.upcomingLeave.length}</strong>
-                  </li>
-                </ul>
-                {home.upcomingLeave.length > 0 ? (
-                  <ul className={s.plainList}>
-                    {home.upcomingLeave.map((l) => (
-                      <li key={l.id}>
-                        {formatDate(l.startDate)}
-                        {l.startDate === l.endDate ? '' : ` – ${formatDate(l.endDate)}`}{' '}
-                        <Muted>
-                          <Small>{l.status}</Small>
-                        </Muted>
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
-                <p className={s.linkRow}>
-                  <Link href="/documents">Open documents and policies</Link>
-                </p>
-              </Card>
-
-              <Card title="Recent notifications">
+            <Card title="Recent notifications">
                 {home.notifications.length === 0 ? (
                   <p className={s.plain}>Nothing yet.</p>
                 ) : (
@@ -177,8 +155,7 @@ export default function HomePage() {
                     ))}
                   </ul>
                 )}
-              </Card>
-            </Grid>
+            </Card>
           </Stack>
         )}
       </AsyncSection>

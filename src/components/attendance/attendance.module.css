@@ -45,7 +45,8 @@
 
 .punchChip {
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
   padding: 4px 8px;
   font-size: 13px;
   font-variant-numeric: tabular-nums;
@@ -87,9 +88,9 @@
 
 .day {
   aspect-ratio: 1 / 1;
-  min-height: 44px;
+  min-height: 46px;
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   background: var(--surface);
   display: flex;
   flex-direction: column;
@@ -98,10 +99,11 @@
   padding: 4px 6px;
   cursor: pointer;
   text-align: left;
+  color: var(--ink-2);
 }
 
 .day:hover {
-  background: var(--surface-2);
+  border-color: var(--brand);
 }
 
 .dayEmpty {
@@ -121,33 +123,56 @@
   align-self: flex-end;
 }
 
-.dayToday {
-  outline: 2px solid var(--ink);
-  outline-offset: -2px;
+/* Status colours, never brown — see globals.css. */
+.dayPresent {
+  background: var(--ok-bg);
+  border-color: var(--ok-line);
+  color: var(--ok-fg);
 }
 
-.daySelected {
-  background: var(--surface-3);
+.dayHalf {
+  background: var(--warn-bg);
+  border-color: var(--warn-line);
+  color: var(--warn-fg);
+}
+
+.dayAbsent {
+  background: var(--danger-bg);
+  border-color: var(--danger-line);
+  color: var(--danger-fg);
+}
+
+.dayLeave {
+  background: var(--info-bg);
+  border-color: var(--info-line);
+  color: var(--info-fg);
 }
 
 .dayOff {
   background: var(--surface-2);
+  border-color: var(--line-soft);
   color: var(--ink-3);
 }
 
-.dayAbsent {
-  background: var(--ink);
-  color: #fff;
-}
-
 .dayPending {
+  background: var(--warn-bg);
+  border-color: var(--warn-fg);
   border-style: dashed;
-  border-color: var(--ink);
+  color: var(--warn-fg);
 }
 
 .dayNoRecord {
   border-style: dotted;
   color: var(--ink-3);
+}
+
+.dayToday {
+  outline: 2px solid var(--brand);
+  outline-offset: -2px;
+}
+
+.daySelected {
+  box-shadow: inset 0 0 0 2px var(--ink);
 }
 
 .legend {
@@ -169,8 +194,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border: 1px solid var(--line);
   border-radius: 3px;
   font-size: 11px;
@@ -237,8 +262,10 @@
 
 .formError {
   font-size: 13px;
-  border: 1px solid var(--ink);
-  border-radius: var(--radius);
+  color: var(--danger-fg);
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-line);
+  border-radius: var(--radius-sm);
   padding: var(--space-2) var(--space-3);
 }
 
