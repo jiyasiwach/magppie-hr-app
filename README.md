@@ -4,6 +4,14 @@ In-house HR app for Magppie, intended to replace Keka. **This repository is the
 front end only, running entirely on mock data.** There is no back end, no API
 routes, no database and no authentication in it yet.
 
+> **This repository has a temporary home.** It belongs to the Magppie GitHub
+> account (`Magppie1234`) and is to be transferred there. It currently sits under
+> `jiyasiwach` only because that is the account with push access on the machine
+> it was built on. The URL will change when it moves.
+
+All forty employees, their departments, emails and reporting lines are invented
+for this build. Nothing here is real staff data.
+
 Nothing in this project is shared with, imported from, or deployed alongside any
 other product.
 
