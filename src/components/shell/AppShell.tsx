@@ -20,14 +20,18 @@ function useIsActive() {
   return (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
 }
 
-function RoleSwitcher() {
+export function RoleSwitcher({ block = false }: { block?: boolean }) {
   const { user, switchUser } = useCurrentUser();
   return (
-    <div className={s.switcher}>
-      <label className={s.switcherLabel} htmlFor="role-switcher">
+    <div className={block ? s.switcherBlock : s.switcher}>
+      <label className={s.switcherLabel} htmlFor={block ? 'role-switcher-drawer' : 'role-switcher'}>
         Viewing as
       </label>
-      <select id="role-switcher" value={user.employee.id} onChange={(e) => switchUser(e.target.value)}>
+      <select
+        id={block ? 'role-switcher-drawer' : 'role-switcher'}
+        value={user.employee.id}
+        onChange={(e) => switchUser(e.target.value)}
+      >
         {mockPersonas.map((p) => (
           <option key={p.employeeId} value={p.employeeId}>
             {p.label} — {employees.find((e) => e.id === p.employeeId)?.fullName ?? p.employeeId}
@@ -74,7 +78,9 @@ function Chrome({ children }: { children: ReactNode }) {
 
         <div className={s.topBarRight}>
           <span className={s.brand}>{APP_NAME}</span>
-          <RoleSwitcher />
+          <div className={s.switcherDesktop}>
+            <RoleSwitcher />
+          </div>
         </div>
       </header>
 

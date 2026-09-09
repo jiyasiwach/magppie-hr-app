@@ -77,6 +77,27 @@
   white-space: nowrap;
 }
 
+.switcherBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.switcherBlock select {
+  width: 100%;
+  min-height: 38px;
+}
+
+/* On a phone the top bar carries only the avatar and search; the switcher
+   lives one tap away in the drawer instead. */
+.switcherMobile {
+  display: none;
+}
+
+.switcherDesktop {
+  display: block;
+}
+
 /* --- colleague search ----------------------------------------------------- */
 
 .search {
@@ -387,8 +408,15 @@
     display: none;
   }
 
-  .switcherLabel {
+  .switcherDesktop {
     display: none;
+  }
+
+  .switcherMobile {
+    display: block;
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--surface);
   }
 
   .topBarRight {

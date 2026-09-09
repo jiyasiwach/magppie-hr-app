@@ -29,16 +29,23 @@ no CSS framework.
 
 ## What is in this pass
 
-- App shell: left navigation on desktop, bottom bar on mobile, header with the
-  current user, their role and a role switcher.
-- Home, Directory (list, profile, reporting tree), Documents (per person, plus
-  policy acknowledgements), My Attendance, My Leave, Approvals, Settings.
-- Shared pieces every later module reuses: the request card and approvals list,
-  status pills, the responsive table, filters, the four list states, and the
-  "show the working" disclosure.
+Five sections, reached from a bottom bar on a phone and the same five, in the
+same order, as a left navigation on desktop:
 
-Onboarding, performance, payroll and hiring are **not** here, not even as
-placeholder pages.
+| Section | What it holds |
+| --- | --- |
+| **Home** | Quick actions, the Today card (shift, hours against expected, clock in/out, live timer, location punch), off this week, wish them, announcements, upcoming holidays |
+| **Inbox** | Every pending thing in one list — approvals to decide and notices from HR — filtered by type |
+| **Wall** | Company feed: posts, reactions, comments, compose |
+| **Me** | Four tabs: Time, Finances, Documents, Assets |
+| **My Team** | Departments, off this week, teammates with live filter counts, and for a manager the team's attendance and leave calendar |
+
+Everything else is reached from inside one of those: the colleague search and
+profiles, the reporting tree, attendance logs, leave, requests, policies, the ID
+card, settings, feedback and about.
+
+Not in this pass: sign-in, any back end, payslips beyond a not-configured state,
+hiring, and performance reviews.
 
 ## Name
 

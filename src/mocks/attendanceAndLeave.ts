@@ -9,7 +9,7 @@ import type {
 import { MOCK_TODAY } from '@/lib/clock';
 import { addDays, datesBetween, dayOfWeek, inclusiveDayCount } from '@/lib/date';
 import { employees } from './employees';
-import { holidays, weeklyOffDays } from './calendar';
+import { holidays, shiftIdForLocation, shifts, weeklyOffDays } from './calendar';
 import { leaveTypes } from './leaveTypes';
 import { intBetween, makeRng, pick } from './seed';
 
@@ -189,8 +189,17 @@ function buildAttendance(): { punches: Punch[]; attendanceDays: AttendanceDay[] 
 
       const source = pick(rng, sources);
       const location = source === 'mobile' ? (siteLocations[employee.department] ?? 'Head Office') : null;
-      const inHour = 9;
-      const inMinute = intBetween(rng, 0, 55);
+
+      // Punch around the shift the person is actually on, so "on time" means
+      // something. Most people are early or on the minute; some are late.
+      const shift =
+        shifts.find((sh) => sh.id === shiftIdForLocation(employee.location, employee.department)) ??
+        shifts[0];
+      const [shiftHour, shiftMinute] = shift.startTime.split(':').map(Number);
+      const offset = rng() < 0.72 ? intBetween(rng, -12, 0) : intBetween(rng, 1, 38);
+      const startMinutes = shiftHour * 60 + shiftMinute + offset;
+      const inHour = Math.floor(startMinutes / 60);
+      const inMinute = startMinutes % 60;
 
       // Today: people are still at work, so there is an in-punch and no out-punch.
       const isToday = date === MOCK_TODAY;
@@ -215,8 +224,12 @@ function buildAttendance(): { punches: Punch[]; attendanceDays: AttendanceDay[] 
         return;
       }
 
-      const outHour = status === 'half-day' ? 13 : intBetween(rng, 18, 19);
-      const outMinute = status === 'half-day' ? intBetween(rng, 20, 50) : intBetween(rng, 0, 55);
+      const outMinutes =
+        status === 'half-day'
+          ? startMinutes + 4 * 60 + intBetween(rng, 0, 30)
+          : startMinutes + shift.expectedHours * 60 + intBetween(rng, -5, 45);
+      const outHour = Math.floor(outMinutes / 60);
+      const outMinute = outMinutes % 60;
 
       punches.push({
         id: `pn-${employee.id}-${date}-1`,
@@ -230,8 +243,10 @@ function buildAttendance(): { punches: Punch[]; attendanceDays: AttendanceDay[] 
       if (!isToday) {
         // Most people punch out for lunch on the factory floor.
         if (employee.department === 'Production' && status === 'present') {
-          punches.push({ id: `pn-${employee.id}-${date}-2`, employeeId: employee.id, timestamp: stamp(date, 13, 30), direction: 'out', source, location });
-          punches.push({ id: `pn-${employee.id}-${date}-3`, employeeId: employee.id, timestamp: stamp(date, 14, 5), direction: 'in', source, location });
+          const breakStart = startMinutes + 4 * 60;
+          punches.push({ id: `pn-${employee.id}-${date}-2`, employeeId: employee.id, timestamp: stamp(date, Math.floor(breakStart / 60), breakStart % 60), direction: 'out', source, location });
+          const breakEnd = breakStart + 35;
+          punches.push({ id: `pn-${employee.id}-${date}-3`, employeeId: employee.id, timestamp: stamp(date, Math.floor(breakEnd / 60), breakEnd % 60), direction: 'in', source, location });
         }
         punches.push({
           id: `pn-${employee.id}-${date}-9`,
@@ -245,9 +260,7 @@ function buildAttendance(): { punches: Punch[]; attendanceDays: AttendanceDay[] 
 
       const firstIn = stamp(date, inHour, inMinute);
       const lastOut = isToday ? null : stamp(date, outHour, outMinute);
-      const totalHours = isToday
-        ? 0
-        : Math.round((outHour + outMinute / 60 - (inHour + inMinute / 60)) * 100) / 100;
+      const totalHours = isToday ? 0 : Math.round(((outMinutes - startMinutes) / 60) * 100) / 100;
 
       attendanceDays.push({
         ...base,
@@ -441,6 +454,7 @@ function buildRequests(): Request[] {
     ['emp-012', '2026-09-09', '2026-09-11', 'Rendering the Al Wasl set — quieter at home.', 'approved'],
     ['emp-023', '2026-09-09', '2026-09-09', 'Client calls all day, no showroom appointments.', 'approved'],
     ['emp-034', '2026-09-08', '2026-09-12', 'Recovering from dengue, able to work.', 'approved'],
+    ['emp-021', '2026-09-09', '2026-09-10', 'Production plan for next month — heads-down work.', 'approved'],
     ['emp-010', '2026-09-15', '2026-09-16', 'Mumbai showroom shut for maintenance.', 'pending'],
   ];
   wfh.forEach(([employeeId, startDate, endDate, reason, status], i) => {

@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/icons';
 import { APP_NAME, APP_VERSION, ORGANISATION_NAME } from '@/lib/constants';
 import { roleLabels } from '@/lib/auth';
+import { RoleSwitcher } from './AppShell';
 import { useCurrentUser } from './CurrentUserProvider';
 import s from './shell.module.css';
 
@@ -47,6 +48,10 @@ export function ProfileDrawer({ open, onClose }: { open: boolean; onClose: () =>
           </div>
         </div>
 
+        <div className={s.switcherMobile}>
+          <RoleSwitcher block />
+        </div>
+
         <nav className={s.drawerNav}>
           <Link href="/settings" className={s.drawerLink} onClick={onClose}>
             <IconSettings size={18} />
@@ -74,8 +79,8 @@ export function ProfileDrawer({ open, onClose }: { open: boolean; onClose: () =>
               Logout
             </span>
             <p className={s.drawerNote}>
-              There is no sign-in yet, so there is nothing to log out of. Use the role switcher in the
-              top bar to change who you are looking at.
+              There is no sign-in yet, so there is nothing to log out of. Use the role switcher above
+              to change who you are looking at.
             </p>
           </div>
           <Button variant="quiet" onClick={onClose}>
