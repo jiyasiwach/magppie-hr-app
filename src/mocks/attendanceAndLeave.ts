@@ -339,13 +339,25 @@ export const leaveTransactions: LeaveTransaction[] = buildLeaveTransactions();
 // Generic requests — what the approvals queue actually reads
 // ---------------------------------------------------------------------------
 
+const regularisationReasons = [
+  'Out-punch missed — left directly from the client site.',
+  'Biometric did not read my finger in the morning.',
+  'Was at the Noida plant all day, punched at the wrong gate.',
+  'Site visit — no biometric there.',
+  'Phone died before I could punch out.',
+];
+
 function buildRequests(): Request[] {
   const byId = new Map(employees.map((e) => [e.id, e]));
   const out: Request[] = [];
 
   leaveRequests.forEach((r) => {
     const employee = byId.get(r.employeeId);
-    const raisedOn = `${addDays(r.startDate, -5)}T10:30:00${IST}`;
+    // Applied five days ahead, but never later than yesterday — a request
+    // cannot have been raised in the future.
+    const proposed = addDays(r.startDate, -5);
+    const raisedDate = proposed < MOCK_TODAY ? proposed : addDays(MOCK_TODAY, -1);
+    const raisedOn = `${raisedDate}T10:30:00${IST}`;
     out.push({
       id: `req-${r.id}`,
       type: 'leave',
@@ -388,7 +400,7 @@ function buildRequests(): Request[] {
           requestedStatus: 'present',
           requestedFirstIn: d.firstIn,
           requestedLastOut: `${d.date}T18:30:00${IST}`,
-          reason: 'Out-punch missed — left from client site.',
+          reason: pick(makeRng(`reg:${d.employeeId}:${d.date}`), regularisationReasons),
         },
         decisionComments: [],
       });

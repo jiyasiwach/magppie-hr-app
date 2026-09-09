@@ -200,4 +200,12 @@
   .brandNote {
     display: none;
   }
+
+  .switcherLabel {
+    display: none;
+  }
+
+  .header {
+    padding: 0 var(--space-3);
+  }
 }

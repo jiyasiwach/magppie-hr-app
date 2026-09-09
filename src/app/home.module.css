@@ -1,0 +1,109 @@
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+
+.big {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.plain {
+  font-size: 14px;
+  color: var(--ink-2);
+}
+
+.balanceList,
+.itemList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+}
+
+.balanceList li,
+.itemList li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.balanceList li:last-child,
+.itemList li:last-child {
+  border-bottom: none;
+}
+
+.plainList {
+  list-style: none;
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  font-size: 13px;
+  color: var(--ink-2);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.linkRow {
+  margin-top: var(--space-3);
+  font-size: 13px;
+}
+
+.requestList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.moreRow {
+  padding: var(--space-4);
+  border-top: 1px solid var(--line-soft);
+  font-size: 14px;
+}
+
+.notifications {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.notifications li {
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.notifications li:last-child {
+  border-bottom: none;
+}
+
+.read {
+  opacity: 0.6;
+}
+
+.notificationButton {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: var(--space-2) 0;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.notificationBody {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+.notificationMeta {
+  font-size: 12px;
+  color: var(--ink-3);
+}

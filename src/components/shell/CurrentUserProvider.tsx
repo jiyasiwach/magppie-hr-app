@@ -16,24 +16,23 @@ const STORAGE_KEY = 'magppie-hr:mock-user';
 export function CurrentUserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<CurrentUser | null>(null);
 
-  const load = useCallback(async () => {
-    setUser(await getCurrentUser());
-  }, []);
-
   useEffect(() => {
     const stored = typeof window !== 'undefined' ? window.localStorage.getItem(STORAGE_KEY) : null;
     if (stored) setActiveMockUserId(stored);
-    void load();
-  }, [load]);
+    let cancelled = false;
+    getCurrentUser().then((resolved) => {
+      if (!cancelled) setUser(resolved);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-  const switchUser = useCallback(
-    (employeeId: string) => {
-      setActiveMockUserId(employeeId);
-      window.localStorage.setItem(STORAGE_KEY, employeeId);
-      void load();
-    },
-    [load],
-  );
+  const switchUser = useCallback((employeeId: string) => {
+    setActiveMockUserId(employeeId);
+    window.localStorage.setItem(STORAGE_KEY, employeeId);
+    void getCurrentUser().then(setUser);
+  }, []);
 
   if (!user) {
     return (
