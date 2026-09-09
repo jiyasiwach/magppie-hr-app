@@ -90,7 +90,20 @@ export interface TeammateRow {
  */
 export async function getTeammates(user: CurrentUser): Promise<TeammateRow[]> {
   return read(() => {
-    const ids = visibleEmployeeIds(user);
+    // Section 10 says this screen is visible to everyone showing their own
+    // department, so the list is the person's department plus, for a manager,
+    // their whole reporting line. Yourself is not your own teammate.
+    //
+    // FLAGGED: this shows a colleague's punch state to someone who does not
+    // manage them. That is what the four filter chips require, but nobody has
+    // confirmed it is the intended privacy rule.
+    const ids = new Set([
+      ...visibleEmployeeIds(user),
+      ...store.employees
+        .filter((e) => e.department === user.employee.department)
+        .map((e) => e.id),
+    ]);
+    ids.delete(user.employee.id);
     const wfhToday = new Set(
       store.requests
         .filter(
@@ -104,7 +117,7 @@ export async function getTeammates(user: CurrentUser): Promise<TeammateRow[]> {
     );
 
     return store.employees
-      .filter((e) => ids.includes(e.id) && e.status !== 'inactive')
+      .filter((e) => ids.has(e.id) && e.status !== 'inactive')
       .map((employee) => {
         const shift = shiftFor(employee);
         const day = store.attendanceDays.find(

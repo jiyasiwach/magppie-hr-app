@@ -180,10 +180,7 @@ function Teammates() {
           const manager = filtered.filter((r) => r.employee.id === managerId);
           const myReports = filtered.filter((r) => reports.includes(r.employee.id));
           const peers = filtered.filter(
-            (r) =>
-              r.employee.id !== managerId &&
-              !reports.includes(r.employee.id) &&
-              r.employee.id !== user.employee.id,
+            (r) => r.employee.id !== managerId && !reports.includes(r.employee.id),
           );
 
           const groups = [
