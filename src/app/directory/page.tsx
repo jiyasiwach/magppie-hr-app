@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useState } from 'react';
 import {
   AsyncSection,
@@ -9,8 +8,8 @@ import {
   DataTable,
   EmptyState,
   FilterBar,
-  Muted,
   PageHeader,
+  Person,
   StatusPill,
   type Column,
 } from '@/components/ui';
@@ -42,12 +41,7 @@ export default function DirectoryPage() {
       header: 'Name',
       primary: true,
       render: (e) => (
-        <div>
-          <Link href={`/directory/${e.id}`}>{e.fullName}</Link>{' '}
-          <Muted>
-            <span style={{ fontSize: 12 }}>{e.employeeCode}</span>
-          </Muted>
-        </div>
+        <Person name={e.fullName} href={`/directory/${e.id}`} secondary={e.employeeCode} />
       ),
     },
     { key: 'designation', header: 'Designation', render: (e) => e.designation },

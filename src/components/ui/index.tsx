@@ -24,16 +24,21 @@ export function PageHeader({
   title,
   description,
   actions,
+  leading,
 }: {
   title: string;
   description?: string;
   actions?: ReactNode;
+  leading?: ReactNode;
 }) {
   return (
     <header className={s.pageHeader}>
-      <div className={s.pageHeaderText}>
-        <h1>{title}</h1>
-        {description ? <p className={s.pageDescription}>{description}</p> : null}
+      <div className={s.pageHeaderMain}>
+        {leading}
+        <div className={s.pageHeaderText}>
+          <h1>{title}</h1>
+          {description ? <p className={s.pageDescription}>{description}</p> : null}
+        </div>
       </div>
       {actions ? <div className={s.pageActions}>{actions}</div> : null}
     </header>
@@ -209,6 +214,117 @@ export function AsyncSection<T>({
     return <>{empty ?? <EmptyState title="Nothing here yet" />}</>;
   }
   return <>{children(state.data)}</>;
+}
+
+// --- identity --------------------------------------------------------------
+
+/** Initials in a circle. No photo storage exists, so this is the avatar. */
+export function Avatar({ name, size = 'md' }: { name: string; size?: 'sm' | 'md' | 'lg' }) {
+  const initials = name
+    .split(' ')
+    .map((part) => part[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+  const classes = [s.avatar];
+  if (size === 'sm') classes.push(s.avatarSm);
+  if (size === 'lg') classes.push(s.avatarLg);
+  return (
+    <span className={classes.join(' ')} aria-hidden="true">
+      {initials}
+    </span>
+  );
+}
+
+/** Name with its avatar, the pairing used in every list of people. */
+export function Person({
+  name,
+  secondary,
+  href,
+  size = 'md',
+}: {
+  name: string;
+  secondary?: ReactNode;
+  href?: string;
+  size?: 'sm' | 'md' | 'lg';
+}) {
+  return (
+    <span className={s.person}>
+      <Avatar name={name} size={size} />
+      <span className={s.personText}>
+        <span className={s.personName}>{href ? <Link href={href}>{name}</Link> : name}</span>
+        {secondary ? <span className={s.personSecondary}>{secondary}</span> : null}
+      </span>
+    </span>
+  );
+}
+
+// --- quantity ---------------------------------------------------------------
+
+/**
+ * A bar showing how much of something is used. Purely a second reading of a
+ * number that is always printed next to it — never the only way to see a value.
+ */
+export function Meter({
+  value,
+  max,
+  tone = 'brand',
+  label,
+}: {
+  value: number;
+  max: number;
+  tone?: 'brand' | 'success' | 'warning' | 'danger';
+  label: string;
+}) {
+  const pct = max <= 0 ? 0 : Math.max(0, Math.min(100, (value / max) * 100));
+  const classes = [s.meterFill];
+  if (tone === 'success') classes.push(s.meterSuccess);
+  if (tone === 'warning') classes.push(s.meterWarning);
+  if (tone === 'danger') classes.push(s.meterDanger);
+  return (
+    <span
+      className={s.meter}
+      role="img"
+      aria-label={`${label}: ${value} of ${max}`}
+      title={`${value} of ${max}`}
+    >
+      <span className={classes.join(' ')} style={{ width: `${pct}%` }} />
+    </span>
+  );
+}
+
+/** Circular version of the same idea, for hours worked against a day. */
+export function Dial({
+  value,
+  max,
+  caption,
+  centre,
+}: {
+  value: number;
+  max: number;
+  caption: string;
+  centre: string;
+}) {
+  const r = 36;
+  const circumference = 2 * Math.PI * r;
+  const pct = max <= 0 ? 0 : Math.max(0, Math.min(1, value / max));
+  return (
+    <div className={s.dial}>
+      <svg width="88" height="88" viewBox="0 0 88 88" role="img" aria-label={`${caption}: ${centre}`}>
+        <circle cx="44" cy="44" r={r} className={s.dialTrack} />
+        <circle
+          cx="44"
+          cy="44"
+          r={r}
+          className={s.dialValue}
+          strokeDasharray={`${circumference * pct} ${circumference}`}
+          transform="rotate(-90 44 44)"
+        />
+      </svg>
+      <span className={s.dialCentre}>{centre}</span>
+    </div>
+  );
 }
 
 // --- status pill -----------------------------------------------------------

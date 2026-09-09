@@ -1,13 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { AsyncSection, Button, Card, Muted, Small, StatusPill, Working } from '@/components/ui';
+import { AsyncSection, Button, Card, Dial, Muted, Small, StatusPill, Working } from '@/components/ui';
 import { getTodayStatus, punch } from '@/data/attendance';
 import { useAsync } from '@/hooks/useAsync';
 import { now } from '@/lib/clock';
 import { formatDate, formatDayName, formatHours, formatTime } from '@/lib/date';
 import { attendanceStatusLabels, attendanceStatusTones, punchSourceLabels } from '@/lib/labels';
 import s from './attendance.module.css';
+
+/**
+ * FLAGGED: shift timings are not defined anywhere, so the dial needs a target
+ * and this is a stand-in. It is labelled as an assumption on screen rather than
+ * presented as policy.
+ */
+const ASSUMED_FULL_DAY_HOURS = 9;
 
 /**
  * One large control, usable one-handed. Showroom, site and factory staff punch
@@ -48,9 +55,16 @@ export function PunchControl({ employeeId }: { employeeId: string }) {
                     : `First in ${formatTime(today.punches[0].timestamp)} · ${today.punches.length} punch${today.punches.length === 1 ? '' : 'es'}`}
                 </span>
               </div>
-              <div className={s.punchStatus}>
-                <span className={`${s.punchStatusValue} ${s.punchHours}`}>{formatHours(today.hoursSoFar)}</span>
-                <span className={s.punchMeta}>Total so far today</span>
+              <div className={s.punchDial}>
+                <Dial
+                  value={today.hoursSoFar}
+                  max={ASSUMED_FULL_DAY_HOURS}
+                  caption="Hours today"
+                  centre={formatHours(today.hoursSoFar)}
+                />
+                <span className={s.punchMeta}>
+                  of an assumed {ASSUMED_FULL_DAY_HOURS}-hour day
+                </span>
               </div>
             </div>
 
@@ -108,7 +122,7 @@ export function PunchControl({ employeeId }: { employeeId: string }) {
                 )}
                 <li>
                   <span>
-                    Paired in/out spans{today.isPunchedIn ? `, plus the open span counted up to now` : ''}
+                    Paired in/out spans{today.isPunchedIn ? ', plus the open span counted up to now' : ''}
                   </span>
                   <span>{formatHours(today.hoursSoFar)}</span>
                 </li>

@@ -50,10 +50,18 @@
   margin-bottom: var(--space-5);
 }
 
+.pageHeaderMain {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
 .pageHeaderText {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+  min-width: 0;
 }
 
 .pageDescription {
@@ -418,4 +426,119 @@
 
 .small {
   font-size: 13px;
+}
+
+/* --- identity ------------------------------------------------------------ */
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  border: 1px solid var(--line);
+  color: var(--brand-dark);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.avatarSm {
+  width: 26px;
+  height: 26px;
+  flex-basis: 26px;
+  font-size: 10px;
+}
+
+.avatarLg {
+  width: 44px;
+  height: 44px;
+  flex-basis: 44px;
+  font-size: 15px;
+}
+
+.person {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.personText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.35;
+}
+
+.personName {
+  font-size: 14px;
+}
+
+.personSecondary {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+/* --- meters -------------------------------------------------------------- */
+
+.meter {
+  display: block;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--surface-3);
+  overflow: hidden;
+}
+
+.meterFill {
+  display: block;
+  height: 100%;
+  background: var(--brand);
+  border-radius: 999px;
+}
+
+.meterSuccess { background: var(--ok-fg); }
+.meterWarning { background: var(--warn-fg); }
+.meterDanger { background: var(--danger-fg); }
+
+.dial {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  flex: 0 0 88px;
+}
+
+.dialTrack {
+  fill: none;
+  stroke: var(--surface-3);
+  stroke-width: 7;
+}
+
+.dialValue {
+  fill: none;
+  stroke: var(--brand);
+  stroke-width: 7;
+  stroke-linecap: round;
+}
+
+.dialCentre {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+/* --- table polish -------------------------------------------------------- */
+
+.table tbody tr:hover td {
+  background: var(--surface-2);
 }

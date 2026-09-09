@@ -1,6 +1,6 @@
 'use client';
 
-import { AsyncSection, Card, EmptyState, Muted, Small, Working } from '@/components/ui';
+import { AsyncSection, Card, EmptyState, Meter, Muted, Small, Working } from '@/components/ui';
 import { getLeaveBalances } from '@/data/leave';
 import { useAsync } from '@/hooks/useAsync';
 import { formatDate } from '@/lib/date';
@@ -34,6 +34,20 @@ export function LeaveBalances({ employeeId }: { employeeId: string }) {
                   days available
                   {b.pendingDays > 0 ? ` · ${b.pendingDays} awaiting approval` : ''}
                 </span>
+
+                {b.credited > 0 ? (
+                  <div className={s.balanceMeter}>
+                    <Meter
+                      value={b.debited}
+                      max={b.credited + b.adjusted}
+                      label={`${b.leaveType.name} used`}
+                      tone={b.balance <= 0 ? 'danger' : b.balance <= 1 ? 'warning' : 'brand'}
+                    />
+                    <span className={s.balanceMeta}>
+                      {b.debited} of {Math.round((b.credited + b.adjusted) * 100) / 100} days taken
+                    </span>
+                  </div>
+                ) : null}
                 <span className={s.balanceMeta}>
                   {b.leaveType.accrues ? 'Accrues monthly' : 'Does not accrue'} ·{' '}
                   {b.leaveType.halfDaysAllowed ? 'half days allowed' : 'full days only'}

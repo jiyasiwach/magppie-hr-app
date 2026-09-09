@@ -1,10 +1,12 @@
 import type { CurrentUser } from '@/lib/auth';
+import type { NavIconName } from '@/components/ui/icons';
 import { canSeeApprovals } from '@/lib/permissions';
 
 export interface NavItem {
   href: string;
   label: string;
   shortLabel: string;
+  icon: NavIconName;
   visible: (user: CurrentUser) => boolean;
 }
 
@@ -22,25 +24,27 @@ export interface NavGroup {
 export const navGroups: NavGroup[] = [
   {
     title: null,
-    items: [{ href: '/', label: 'Home', shortLabel: 'Home', visible: () => true }],
+    items: [{ href: '/', label: 'Home', shortLabel: 'Home', icon: 'home', visible: () => true }],
   },
   {
     title: 'Me',
     items: [
-      { href: '/attendance', label: 'My Attendance', shortLabel: 'Attendance', visible: () => true },
-      { href: '/leave', label: 'My Leave', shortLabel: 'Leave', visible: () => true },
-      { href: '/documents', label: 'Documents', shortLabel: 'Docs', visible: () => true },
+      { href: '/attendance', label: 'My Attendance', shortLabel: 'Attendance', icon: 'clock', visible: () => true },
+      { href: '/leave', label: 'My Leave', shortLabel: 'Leave', icon: 'calendar', visible: () => true },
+      { href: '/documents', label: 'Documents', shortLabel: 'Docs', icon: 'document', visible: () => true },
     ],
   },
   {
     title: 'Team',
-    items: [{ href: '/approvals', label: 'Approvals', shortLabel: 'Approvals', visible: canSeeApprovals }],
+    items: [
+      { href: '/approvals', label: 'Approvals', shortLabel: 'Approvals', icon: 'inbox', visible: canSeeApprovals },
+    ],
   },
   {
     title: 'Organisation',
     items: [
-      { href: '/directory', label: 'Directory', shortLabel: 'People', visible: () => true },
-      { href: '/settings', label: 'Settings', shortLabel: 'Settings', visible: () => true },
+      { href: '/directory', label: 'Directory', shortLabel: 'People', icon: 'people', visible: () => true },
+      { href: '/settings', label: 'Settings', shortLabel: 'Settings', icon: 'settings', visible: () => true },
     ],
   },
 ];

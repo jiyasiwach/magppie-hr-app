@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useState } from 'react';
 import {
   AsyncSection,
@@ -8,8 +7,7 @@ import {
   Card,
   DataTable,
   EmptyState,
-  Muted,
-  Small,
+  Person,
   StatusPill,
   Working,
   type Column,
@@ -39,12 +37,11 @@ export function TeamToday({ team }: { team: Employee[] }) {
       header: 'Person',
       primary: true,
       render: (r) => (
-        <div>
-          <Link href={`/directory/${r.employee.id}`}>{r.employee.fullName}</Link>{' '}
-          <Muted>
-            <Small>{r.employee.designation}</Small>
-          </Muted>
-        </div>
+        <Person
+          name={r.employee.fullName}
+          href={`/directory/${r.employee.id}`}
+          secondary={r.employee.designation}
+        />
       ),
     },
     {

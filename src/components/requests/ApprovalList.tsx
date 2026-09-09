@@ -1,14 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import type { Request } from '@/lib/types';
 import { formatTimestamp } from '@/lib/date';
 import { requestStatusLabels, requestStatusTones, requestTypeLabels } from '@/lib/labels';
 import { canActOnRequest } from '@/lib/permissions';
 import { useCurrentUser } from '@/components/shell/CurrentUserProvider';
 import { findEmployeeSync } from '@/data/directory';
-import { Button, StatusPill } from '@/components/ui';
+import { Button, Person, StatusPill } from '@/components/ui';
 import { rendererFor } from './renderers';
 import s from './requests.module.css';
 
@@ -78,17 +77,16 @@ export function RequestCard({
     <li className={s.item}>
       <div className={s.top}>
         <div className={s.who}>
-          <span className={s.whoName}>
-            {requester ? (
-              <Link href={`/directory/${requester.id}`}>{requester.fullName}</Link>
-            ) : (
-              request.raisedBy
-            )}
-          </span>
-          <span className={s.meta}>
-            {requester ? `${requester.designation}, ${requester.department} · ` : ''}
-            raised {formatTimestamp(request.raisedOn)}
-          </span>
+          <Person
+            name={requester?.fullName ?? request.raisedBy}
+            href={requester ? `/directory/${requester.id}` : undefined}
+            secondary={
+              <>
+                {requester ? `${requester.designation}, ${requester.department} · ` : ''}
+                raised {formatTimestamp(request.raisedOn)}
+              </>
+            }
+          />
         </div>
         <div className={s.pills}>
           <StatusPill label={requestTypeLabels[request.type]} tone="neutral" />

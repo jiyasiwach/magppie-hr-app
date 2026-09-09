@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { use, useState } from 'react';
 import {
   AsyncSection,
+  Avatar,
   Button,
   Card,
   EmptyState,
@@ -63,6 +64,7 @@ export default function EmployeeProfilePage({ params }: { params: Promise<{ id: 
         return (
           <>
             <PageHeader
+              leading={<Avatar name={employee.fullName} size="lg" />}
               title={employee.fullName}
               description={`${employee.designation} · ${employee.department} · ${employee.employeeCode}`}
               actions={

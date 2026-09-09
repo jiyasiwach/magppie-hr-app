@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
+import { navIcons } from '@/components/ui/icons';
 import { mockPersonas, roleLabels } from '@/lib/auth';
 import { APP_BUILD_NOTE, APP_NAME } from '@/lib/constants';
 import { employees } from '@/mocks';
@@ -86,18 +87,22 @@ export function AppShell({ children }: { children: ReactNode }) {
             <div key={group.title ?? `group-${i}`} className={s.navGroup}>
               {group.title ? <h2 className={s.navGroupTitle}>{group.title}</h2> : null}
               <ul className={s.navList}>
-                {group.items.map((item) => (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className={`${s.navLink} ${isActive(item.href) ? s.navLinkActive : ''}`}
-                      aria-current={isActive(item.href) ? 'page' : undefined}
-                    >
-                      {item.label}
-                      {item.href === '/approvals' ? <PendingBadge /> : null}
-                    </Link>
-                  </li>
-                ))}
+                {group.items.map((item) => {
+                  const Icon = navIcons[item.icon];
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        className={`${s.navLink} ${isActive(item.href) ? s.navLinkActive : ''}`}
+                        aria-current={isActive(item.href) ? 'page' : undefined}
+                      >
+                        <Icon className={s.navIcon} />
+                        <span className={s.navLabel}>{item.label}</span>
+                        {item.href === '/approvals' ? <PendingBadge /> : null}
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}
@@ -108,18 +113,22 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       <nav className={s.bottomNav} aria-label="Main (mobile)">
         <ul className={s.bottomNavList}>
-          {items.map((item) => (
-            <li key={item.href}>
-              <Link
-                href={item.href}
-                className={`${s.bottomNavLink} ${isActive(item.href) ? s.bottomNavLinkActive : ''}`}
-                aria-current={isActive(item.href) ? 'page' : undefined}
-              >
-                {item.shortLabel}
-                {item.href === '/approvals' ? <PendingBadge /> : null}
-              </Link>
-            </li>
-          ))}
+          {items.map((item) => {
+            const Icon = navIcons[item.icon];
+            return (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className={`${s.bottomNavLink} ${isActive(item.href) ? s.bottomNavLinkActive : ''}`}
+                  aria-current={isActive(item.href) ? 'page' : undefined}
+                >
+                  <Icon size={20} />
+                  <span>{item.shortLabel}</span>
+                  {item.href === '/approvals' ? <PendingBadge /> : null}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </nav>
     </div>

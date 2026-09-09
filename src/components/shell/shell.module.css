@@ -145,8 +145,7 @@
 .navLink {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
+  gap: var(--space-3);
   padding: 9px 10px;
   border-radius: var(--radius-sm);
   color: var(--ink-2);
@@ -166,6 +165,20 @@
   border-left-color: var(--brand);
   color: var(--ink);
   font-weight: 600;
+}
+
+.navIcon {
+  flex: 0 0 18px;
+  color: var(--ink-3);
+}
+
+.navLinkActive .navIcon {
+  color: var(--brand);
+}
+
+.navLabel {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .navBadge {
@@ -230,13 +243,15 @@
   }
 
   .bottomNavLink {
+    position: relative;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 5px;
+    gap: 3px;
     min-height: var(--bottom-nav-height);
-    padding: 0 var(--space-3);
-    font-size: 12px;
+    padding: 6px var(--space-3) 4px;
+    font-size: 11px;
     color: var(--ink-3);
     text-decoration: none;
     white-space: nowrap;
@@ -251,6 +266,18 @@
 
   .identityText {
     display: none;
+  }
+
+  /* A count sits on the icon on a phone, rather than adding a third line. */
+  .bottomNavLink .navBadge {
+    position: absolute;
+    top: 4px;
+    right: 50%;
+    transform: translateX(22px);
+    font-size: 10px;
+    padding: 0 5px;
+    min-width: 17px;
+    line-height: 16px;
   }
 }
 
