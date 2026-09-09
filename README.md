@@ -32,12 +32,45 @@ no CSS framework.
 Onboarding, performance, payroll and hiring are **not** here, not even as
 placeholder pages.
 
-## The visual direction is deliberately absent
+## Name
 
-The look for this app has not been chosen. Everything is greyscale, system
-fonts, and structural spacing only — enough to review behaviour and hierarchy,
-and nothing that pretends to be a design. `src/app/globals.css` holds the tokens
-that a real design will replace.
+The product name has not been chosen. It lives in `src/lib/constants.ts` as
+`APP_NAME`, currently the literal placeholder `[APP_NAME]`. The shell and the
+document metadata read it from there — changing the name is a one-line change,
+and nothing else in the app types it out.
+
+## Visual direction
+
+Warm brown and white, flat. Tokens are in `src/app/globals.css`:
+
+| Role | Token | Value |
+| --- | --- | --- |
+| Page | `--bg` | `#faf7f2` |
+| Cards | `--surface` | `#ffffff` |
+| Primary brown | `--brand` | `#8b6f4e` |
+| Text | `--ink` | `#2e241c` |
+| Borders | `--line` | `#e3dace` |
+| Muted text | `--ink-3` | `#7a6a5a` |
+
+Rules the code follows:
+
+- **Status colours are never brown.** Green, amber, red, blue and a neutral tan
+  live in the same file as `--ok-*`, `--warn-*`, `--danger-*`, `--info-*` and
+  `--neutral-*`. They drive the status pills, the attendance calendar and the
+  team calendar. Colour is always backed by a label or a mark letter, so the
+  calendar is still readable without relying on colour alone.
+- **Contrast was measured, not assumed.** Every text-on-surface pair in the
+  palette clears WCAG AA (4.5:1). The tightest is white on the primary brown at
+  4.69:1, which is why button labels are 600 weight.
+- **Flat.** Solid surfaces and 1px borders. No gradients, no glassmorphism, no
+  decorative shadows.
+- **One sans-serif** (Inter, self-hosted via `next/font`), three weights.
+
+The structure follows how Keka organises an HR app — grouped left navigation
+with a person's own things above administrative things, a card-based personal
+home, one unmissable punch control, a single-window approvals queue, a month
+calendar with a day detail behind it, list-and-detail everywhere else. None of
+Keka's design work, wording, imagery or layouts is reproduced.
 
 ## Three rules the code actually enforces
 
