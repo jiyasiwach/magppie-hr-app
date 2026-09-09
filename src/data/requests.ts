@@ -1,6 +1,7 @@
 import type { CurrentUser } from '@/lib/auth';
 import type { Request, RequestStatus, RequestType } from '@/lib/types';
 import { canActOnRequest, visibleEmployeeIds } from '@/lib/permissions';
+import { applyEmployeeChanges, type EditableField } from './directory';
 import { read, store, write } from './store';
 
 export interface QueueFilters {
@@ -83,6 +84,14 @@ export async function decideRequest(
             source: 'leave-request',
           });
         }
+      }
+    }
+
+    if (request.type === 'profile-change' && decision === 'approved') {
+      const employee = store.employees.find((e) => e.id === request.payload.employeeId);
+      const field = request.payload.field as EditableField;
+      if (employee && field) {
+        applyEmployeeChanges(employee, [[field, request.payload.to as string]]);
       }
     }
 

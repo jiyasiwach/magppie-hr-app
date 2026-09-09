@@ -34,6 +34,14 @@ export async function archiveDocument(documentId: string): Promise<void> {
   });
 }
 
+/** Archiving the wrong document should not be a one-way door. */
+export async function restoreDocument(documentId: string): Promise<void> {
+  await write(() => {
+    const doc = store.documents.find((d) => d.id === documentId);
+    if (doc) doc.archived = false;
+  });
+}
+
 export async function uploadDocument(input: {
   employeeId: string;
   type: DocumentType;

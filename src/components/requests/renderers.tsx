@@ -1,8 +1,17 @@
 import type { ReactNode } from 'react';
 import type { Request, RequestType } from '@/lib/types';
 import { formatDate, formatTime } from '@/lib/date';
-import { attendanceStatusLabels, documentTypeLabels } from '@/lib/labels';
-import { leaveTypes } from '@/mocks';
+import { attendanceStatusLabels, documentTypeLabels, employeeFieldLabel } from '@/lib/labels';
+import { employees, leaveTypes } from '@/mocks';
+
+/** A manager id in a payload means nothing to a reader — show the person. */
+function displayValue(field: unknown, value: unknown): string {
+  if (value === null || value === undefined || value === '') return '—';
+  if (field === 'managerId') {
+    return employees.find((e) => e.id === value)?.fullName ?? String(value);
+  }
+  return String(value);
+}
 
 /**
  * The approvals queue does not know what a leave request or a regularisation
@@ -81,15 +90,16 @@ export const requestRenderers: Partial<Record<RequestType, RequestRenderer>> = {
     ),
   },
   'profile-change': {
-    summary: (r) => `${r.payload.field as string}: ${r.payload.from as string} → ${r.payload.to as string}`,
+    summary: (r) =>
+      `${employeeFieldLabel(r.payload.field)}: ${displayValue(r.payload.field, r.payload.from)} → ${displayValue(r.payload.field, r.payload.to)}`,
     details: (r) => (
       <>
         <span>Field</span>
-        <span>{r.payload.field as string}</span>
+        <span>{employeeFieldLabel(r.payload.field)}</span>
         <span>From</span>
-        <span>{r.payload.from as string}</span>
+        <span>{displayValue(r.payload.field, r.payload.from)}</span>
         <span>To</span>
-        <span>{r.payload.to as string}</span>
+        <span>{displayValue(r.payload.field, r.payload.to)}</span>
         <span>Reason</span>
         <span>{r.payload.reason as string}</span>
       </>

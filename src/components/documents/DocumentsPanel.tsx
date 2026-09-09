@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { AsyncSection, Button, Card, EmptyState, Small } from '@/components/ui';
 import { useCurrentUser } from '@/components/shell/CurrentUserProvider';
-import { archiveDocument, getDocuments, uploadDocument } from '@/data/documents';
+import { archiveDocument, getDocuments, restoreDocument, uploadDocument } from '@/data/documents';
 import { findEmployeeSync } from '@/data/directory';
 import { useAsync } from '@/hooks/useAsync';
 import { formatTimestamp } from '@/lib/date';
@@ -18,6 +18,7 @@ const visibilityEntries = Object.entries(documentVisibilityLabels) as Array<[Doc
 export function DocumentsPanel({ employeeId }: { employeeId: string }) {
   const { user } = useCurrentUser();
   const [includeArchived, setIncludeArchived] = useState(false);
+  const [asked, setAsked] = useState<string | null>(null);
   const allowed = canViewPersonalData(user, employeeId);
 
   const { state, reload } = useAsync(
@@ -69,15 +70,27 @@ export function DocumentsPanel({ employeeId }: { employeeId: string }) {
                           </span>
                         </div>
                         <div className={s.itemActions}>
-                          <Button variant="quiet" onClick={() => window.alert('No file store is wired up in this pass — there is nothing to download yet.')}>
+                          <Button variant="quiet" onClick={() => setAsked(doc.id)}>
                             Download
                           </Button>
-                          {!doc.archived && canEditEmployeeFully(user) ? (
-                            <Button variant="quiet" onClick={() => void archiveDocument(doc.id)}>
-                              Archive
-                            </Button>
+                          {canEditEmployeeFully(user) ? (
+                            doc.archived ? (
+                              <Button variant="quiet" onClick={() => void restoreDocument(doc.id)}>
+                                Restore
+                              </Button>
+                            ) : (
+                              <Button variant="quiet" onClick={() => void archiveDocument(doc.id)}>
+                                Archive
+                              </Button>
+                            )
                           ) : null}
                         </div>
+                        {asked === doc.id ? (
+                          <p className={s.inlineNote}>
+                            There is no file storage in this pass, so there is no file to download. The
+                            record — name, type, uploader and date — is real; the file behind it is not.
+                          </p>
+                        ) : null}
                       </li>
                     );
                   })}

@@ -196,6 +196,8 @@ export interface Policy {
   version: string;
   publishedOn: IsoDate;
   summary: string;
+  /** Paragraphs. There is something to read before acknowledging. */
+  body: string[];
 }
 
 export interface PolicyAcknowledgement {

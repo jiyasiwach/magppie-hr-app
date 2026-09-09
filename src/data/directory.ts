@@ -1,7 +1,9 @@
 import type { CurrentUser } from '@/lib/auth';
 import type { Employee, EmploymentRecord } from '@/lib/types';
-import { canViewPersonalData, visibleEmployeeIds } from '@/lib/permissions';
-import { read, reviewFlags, store } from './store';
+import { canEditEmployeeFully, canEditOwnField, canViewPersonalData, visibleEmployeeIds } from '@/lib/permissions';
+import { MOCK_TODAY } from '@/lib/clock';
+import { addDays } from '@/lib/date';
+import { read, reviewFlags, store, write } from './store';
 
 export interface DirectoryFilters {
   search?: string;
@@ -137,4 +139,129 @@ export async function listTeam(user: CurrentUser): Promise<Employee[]> {
 
 export function canOpenProfile(user: CurrentUser, employeeId: string): boolean {
   return canViewPersonalData(user, employeeId);
+}
+
+// ---------------------------------------------------------------------------
+// Editing
+// ---------------------------------------------------------------------------
+
+/** The fields HR admin may change directly on a profile. */
+export const editableByHr = [
+  'fullName',
+  'employeeCode',
+  'workEmail',
+  'personalPhone',
+  'department',
+  'designation',
+  'managerId',
+  'location',
+  'joiningDate',
+  'employmentType',
+  'status',
+  'probationEndDate',
+] as const;
+
+export type EditableField = (typeof editableByHr)[number];
+
+/** Changing any of these opens a new employment record rather than overwriting. */
+const jobFields: EditableField[] = ['department', 'designation', 'managerId'];
+
+export type SaveOutcome =
+  | { applied: true }
+  | { applied: false; reason: 'sent-for-approval'; requestIds: string[] };
+
+/**
+ * One write path for a profile.
+ *
+ * HR admin changes land immediately. Anyone editing their own record raises a
+ * profile-change request per field instead — the same generic Request object
+ * the approvals queue already renders, so nothing new was invented for this.
+ */
+export async function updateEmployee(
+  user: CurrentUser,
+  employeeId: string,
+  changes: Partial<Record<EditableField, string | null>>,
+): Promise<SaveOutcome> {
+  return write(() => {
+    const employee = store.employees.find((e) => e.id === employeeId);
+    if (!employee) throw new Error('That person is no longer in the directory.');
+
+    const entries = (Object.entries(changes) as Array<[EditableField, string | null]>).filter(
+      ([field, value]) => (employee[field] ?? null) !== (value ?? null),
+    );
+    if (entries.length === 0) return { applied: true as const };
+
+    if (!canEditEmployeeFully(user)) {
+      const disallowed = entries.filter(([field]) => !canEditOwnField(user, employeeId, field));
+      if (disallowed.length > 0) {
+        throw new Error(
+          `You cannot change ${disallowed.map(([f]) => f).join(', ')}. Ask HR to change it.`,
+        );
+      }
+      const requestIds = entries.map(([field, value]) => {
+        const id = `req-pc-${employeeId}-${field}-${Date.now()}`;
+        store.requests.unshift({
+          id,
+          type: 'profile-change',
+          raisedBy: user.employee.id,
+          raisedOn: new Date().toISOString(),
+          currentApprover: 'emp-005',
+          status: 'pending',
+          payload: {
+            employeeId,
+            field,
+            from: (employee[field] ?? '') as string,
+            to: (value ?? '') as string,
+            reason: 'Updated by the employee from their profile.',
+          },
+          decisionComments: [],
+        });
+        return id;
+      });
+      return { applied: false as const, reason: 'sent-for-approval' as const, requestIds };
+    }
+
+    applyEmployeeChanges(employee, entries);
+    return { applied: true as const };
+  });
+}
+
+/**
+ * Writes the change, and keeps the employment history honest: a change of
+ * department, designation or manager closes the current employment record and
+ * opens a new one rather than rewriting the past.
+ *
+ * FLAGGED: the change takes effect today. Back-dating and future-dating a
+ * transfer are not supported, and nobody has said whether they should be.
+ */
+export function applyEmployeeChanges(
+  employee: Employee,
+  entries: Array<[EditableField, string | null]>,
+): void {
+  const touchesJob = entries.some(([field]) => jobFields.includes(field));
+
+  if (touchesJob) {
+    const current = store.employmentRecords.find((r) => r.employeeId === employee.id && r.validTo === null);
+    if (current) current.validTo = addDays(MOCK_TODAY, -1);
+  }
+
+  entries.forEach(([field, value]) => {
+    if (field === 'managerId' || field === 'probationEndDate') {
+      (employee[field] as string | null) = value && value.length > 0 ? value : null;
+    } else {
+      (employee[field] as string) = (value ?? '') as string;
+    }
+  });
+
+  if (touchesJob) {
+    store.employmentRecords.push({
+      id: `er-c-${employee.id}-${MOCK_TODAY}`,
+      employeeId: employee.id,
+      department: employee.department,
+      designation: employee.designation,
+      managerId: employee.managerId,
+      validFrom: MOCK_TODAY,
+      validTo: null,
+    });
+  }
 }

@@ -16,6 +16,7 @@ import {
 } from '@/components/ui';
 import { useCurrentUser } from '@/components/shell/CurrentUserProvider';
 import { DocumentsPanel } from '@/components/documents/DocumentsPanel';
+import { ProfileEditor } from '@/components/directory/ProfileEditor';
 import { getActivityTrail, getEmployee, getEmploymentHistory, getManagerChain } from '@/data/directory';
 import { useAsync } from '@/hooks/useAsync';
 import { formatDate } from '@/lib/date';
@@ -24,12 +25,7 @@ import {
   employeeStatusTones,
   employmentTypeLabels,
 } from '@/lib/labels';
-import {
-  canEditEmployeeFully,
-  canViewPersonalData,
-  isSelf,
-  selfEditableFields,
-} from '@/lib/permissions';
+import { canEditEmployeeFully, canViewPersonalData, isSelf } from '@/lib/permissions';
 import s from './profile.module.css';
 
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
@@ -85,6 +81,19 @@ export default function EmployeeProfilePage({ params }: { params: Promise<{ id: 
             />
 
             <Stack>
+              {editing ? (
+                <Card
+                  title={canEditAll ? 'Edit profile' : 'Edit my details'}
+                  hint={
+                    canEditAll
+                      ? 'HR can change every field. A change of department, designation or manager opens a new employment record.'
+                      : 'Your changes go to HR for approval.'
+                  }
+                >
+                  <ProfileEditor employee={employee} onClose={() => setEditing(false)} />
+                </Card>
+              ) : null}
+
               {employee.status === 'probation' && employee.probationEndDate ? (
                 <Card>
                   <Small>
@@ -99,16 +108,7 @@ export default function EmployeeProfilePage({ params }: { params: Promise<{ id: 
                   <Grid>
                     <Field label="Full name" value={employee.fullName} />
                     <Field label="Work email" value={<a href={`mailto:${employee.workEmail}`}>{employee.workEmail}</a>} />
-                    <Field
-                      label="Personal phone"
-                      value={
-                        editing && (canEditAll || canEditSome) ? (
-                          <input defaultValue={employee.personalPhone} aria-label="Personal phone" />
-                        ) : (
-                          employee.personalPhone
-                        )
-                      }
-                    />
+                    <Field label="Personal phone" value={employee.personalPhone} />
                     <Field label="Photo" value={employee.photo ?? <Muted>Not uploaded</Muted>} />
                   </Grid>
                 ) : (
@@ -117,14 +117,10 @@ export default function EmployeeProfilePage({ params }: { params: Promise<{ id: 
                     body="You can see this person's job details and how they fit in the reporting tree, but not their personal contact information."
                   />
                 )}
-                {editing && !canEditAll ? (
+                {!editing && canEditSome && !canEditAll ? (
                   <p className={s.note}>
-                    You can change {selfEditableFields.join(' and ')}. Everything else is changed by HR.
-                    Saving is not wired up in this pass.
+                    You can change your phone number yourself — everything else is changed by HR.
                   </p>
-                ) : null}
-                {editing && canEditAll ? (
-                  <p className={s.note}>HR can edit every field. Saving is not wired up in this pass.</p>
                 ) : null}
               </Card>
 

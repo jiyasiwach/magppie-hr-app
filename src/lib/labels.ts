@@ -115,3 +115,24 @@ export const documentVisibilityLabels: Record<DocumentVisibility, string> = {
   manager: 'Visible to the employee and their manager',
   'hr-only': 'HR only',
 };
+
+/** Human names for the Employee fields a profile-change request can carry. */
+export const employeeFieldLabels: Record<string, string> = {
+  fullName: 'Full name',
+  employeeCode: 'Employee code',
+  workEmail: 'Work email',
+  personalPhone: 'Personal phone',
+  photo: 'Photo',
+  department: 'Department',
+  designation: 'Designation',
+  managerId: 'Manager',
+  location: 'Location',
+  joiningDate: 'Joining date',
+  employmentType: 'Employment type',
+  status: 'Status',
+  probationEndDate: 'Probation end date',
+};
+
+export function employeeFieldLabel(field: unknown): string {
+  return employeeFieldLabels[String(field)] ?? String(field);
+}

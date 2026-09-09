@@ -14,13 +14,15 @@ import {
 import { DayDetail } from '@/components/attendance/DayDetail';
 import { MonthCalendar } from '@/components/attendance/MonthCalendar';
 import { PunchControl } from '@/components/attendance/PunchControl';
+import { TeamToday } from '@/components/attendance/TeamToday';
 import { useCurrentUser } from '@/components/shell/CurrentUserProvider';
 import { getAttendanceMonth, getMonthSummary } from '@/data/attendance';
+import { listTeam } from '@/data/directory';
 import { useAsync } from '@/hooks/useAsync';
 import { MOCK_TODAY } from '@/lib/clock';
 import { addMonths, formatDate, formatHours, formatMonth } from '@/lib/date';
 import { attendanceStatusLabels } from '@/lib/labels';
-import { canViewPersonalData, visibleEmployeeIds } from '@/lib/permissions';
+import { canSeeTeamCalendar, canViewPersonalData, visibleEmployeeIds } from '@/lib/permissions';
 import type { AttendanceStatus } from '@/lib/types';
 import { employees } from '@/mocks';
 import s from './attendance.module.css';
@@ -34,6 +36,8 @@ export default function AttendancePage() {
   const isSelf = subjectId === user.employee.id;
   const allowed = canViewPersonalData(user, subjectId);
 
+  const showTeam = canSeeTeamCalendar(user);
+  const teamQuery = useAsync(() => listTeam(user), [user.employee.id]);
   const monthQuery = useAsync(() => getAttendanceMonth(subjectId, month), [subjectId, month]);
   const summaryQuery = useAsync(() => getMonthSummary(subjectId, month), [subjectId, month]);
 
@@ -50,6 +54,12 @@ export default function AttendancePage() {
 
       <Stack>
         {isSelf ? <PunchControl employeeId={user.employee.id} /> : null}
+
+        {showTeam ? (
+          <AsyncSection state={teamQuery.state} reload={teamQuery.reload} loadingRows={4}>
+            {(team) => <TeamToday team={team} />}
+          </AsyncSection>
+        ) : null}
 
         {selectable.length > 1 ? (
           <Card>
