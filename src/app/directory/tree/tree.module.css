@@ -1,0 +1,89 @@
+.pickerLabel {
+  display: block;
+  font-size: 12px;
+  color: var(--ink-3);
+  margin-bottom: var(--space-1);
+}
+
+.picker {
+  max-width: 420px;
+}
+
+.above {
+  margin-top: var(--space-3);
+}
+
+.treeCard {
+  margin-top: var(--space-4);
+}
+
+.tree,
+.children {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.children {
+  margin-left: var(--space-4);
+  border-left: 1px solid var(--line-soft);
+  padding-left: var(--space-3);
+}
+
+.node {
+  padding: 0;
+}
+
+.nodeRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.children .nodeRow {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.toggle {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.toggleSpacer {
+  width: 24px;
+  flex: 0 0 24px;
+}
+
+.nodeBody {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.nodeMeta {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.nodeRight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.leafNote {
+  padding: var(--space-3) var(--space-4);
+}
