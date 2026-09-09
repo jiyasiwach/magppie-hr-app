@@ -1,164 +1,281 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
 import {
   AsyncSection,
+  Avatar,
+  Button,
   Card,
   EmptyState,
-  Grid,
-  Muted,
   PageHeader,
-  Small,
   Stack,
   StatusPill,
 } from '@/components/ui';
-import { PunchControl } from '@/components/attendance/PunchControl';
-import { RequestCard } from '@/components/requests/ApprovalList';
+import {
+  IconCalendar,
+  IconChevronRight,
+  IconHome,
+  IconMegaphone,
+  IconPlus,
+} from '@/components/ui/icons';
+import { TodayCard } from '@/components/home/TodayCard';
 import { useCurrentUser } from '@/components/shell/CurrentUserProvider';
-import { getHomeSummary } from '@/data/home';
-import { markNotificationRead } from '@/data/notifications';
+import { getAnnouncements, canPostAnnouncement, createAnnouncement, getCelebrations } from '@/data/workplace';
+import { getUpcomingHolidays } from '@/data/attendance';
+import { getAwayThisWeek, currentWeek } from '@/data/team';
+import { findEmployeeSync } from '@/data/directory';
 import { useAsync } from '@/hooks/useAsync';
-import { MOCK_TODAY } from '@/lib/clock';
-import { formatDate, formatDayName, formatTimestamp } from '@/lib/date';
-import { roleGreeting } from '@/lib/home';
-import s from './home.module.css';
+import { formatDate, formatDayName } from '@/lib/date';
+import { visibleEmployeeIds } from '@/lib/permissions';
+import s from '@/components/home/home.module.css';
 
 export default function HomePage() {
   const { user } = useCurrentUser();
-  const { state, reload } = useAsync(() => getHomeSummary(user), [user.employee.id]);
+  const first = user.employee.fullName.split(' ')[0];
 
   return (
     <>
       <PageHeader
-        title={`${roleGreeting(user)}, ${user.employee.fullName.split(' ')[0]}`}
-        description={`${formatDayName(MOCK_TODAY)}, ${formatDate(MOCK_TODAY)}. Everything on this screen comes from mock data.`}
+        title={`Hello, ${first}`}
+        description={`${formatDayName(new Date().toISOString().slice(0, 10))} — everything on this screen comes from mock data.`}
       />
 
-      <AsyncSection state={state} reload={reload} loadingRows={6}>
-        {(home) => (
-          <Stack>
-            {home.today.holidayName ? (
-              <Card title="Today">
-                <p className={s.stack}>
-                  <StatusPill label="Holiday" tone="quiet" /> {home.today.holidayName}
-                </p>
-              </Card>
-            ) : (
-              <PunchControl employeeId={user.employee.id} />
-            )}
+      <Stack>
+        <QuickActions />
+        <TodayCard employeeId={user.employee.id} />
+        <OffThisWeek />
+        <WishThem />
+        <Announcements />
+        <UpcomingHolidays />
+      </Stack>
+    </>
+  );
+}
 
-            <Grid>
-              <Card title="Leave balance">
-                {home.leave.length === 0 ? (
-                  <p className={s.plain}>
-                    No leave has been credited to you yet, so every balance is zero.
-                  </p>
-                ) : (
-                  <ul className={s.balanceList}>
-                    {home.leave.map((b) => (
-                      <li key={b.leaveTypeId}>
-                        <span>{b.name}</span>
-                        <strong>{b.balance}</strong>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                <p className={s.linkRow}>
-                  <Link href="/leave">See how each balance was worked out</Link>
-                </p>
-              </Card>
+function QuickActions() {
+  const actions = [
+    { href: '/leave/apply', label: 'Apply Leave', Icon: IconCalendar },
+    { href: '/requests/new?type=wfh', label: 'Apply WFH', Icon: IconHome },
+    { href: '/leave', label: 'Leave Balance', Icon: IconPlus },
+  ];
+  return (
+    <div className={s.quickActions}>
+      {actions.map(({ href, label, Icon }) => (
+        <Link key={href} href={href} className={s.quickAction}>
+          <span className={s.quickActionCircle}>
+            <Icon size={22} />
+          </span>
+          {label}
+        </Link>
+      ))}
+    </div>
+  );
+}
 
-              <Card title="Your open items">
-                <ul className={s.itemList}>
-                  <li>
-                    <span>Requests you raised, still pending</span>
-                    <strong>{home.myOpenRequests.length}</strong>
-                  </li>
-                  <li>
-                    <span>Policies not yet acknowledged</span>
-                    <strong>{home.unacknowledgedPolicies}</strong>
-                  </li>
-                  <li>
-                    <span>Upcoming or current leave</span>
-                    <strong>{home.upcomingLeave.length}</strong>
-                  </li>
-                </ul>
-                {home.upcomingLeave.length > 0 ? (
-                  <ul className={s.plainList}>
-                    {home.upcomingLeave.map((l) => (
-                      <li key={l.id}>
-                        {formatDate(l.startDate)}
-                        {l.startDate === l.endDate ? '' : ` – ${formatDate(l.endDate)}`}{' '}
-                        <Muted>
-                          <Small>{l.status}</Small>
-                        </Muted>
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
-                <p className={s.linkRow}>
-                  <Link href="/documents">Open documents and policies</Link>
-                </p>
-              </Card>
-            </Grid>
+function OffThisWeek() {
+  const { user } = useCurrentUser();
+  const week = currentWeek();
+  const { state, reload } = useAsync(
+    () => getAwayThisWeek(visibleEmployeeIds(user)),
+    [user.employee.id],
+  );
 
-            <Card
-              title="Waiting on you"
-              hint="Requests you have to decide"
-              flush
-            >
-              {home.waitingOnMe.length === 0 ? (
-                <EmptyState
-                  title="Nothing is waiting on you"
-                  body={
-                    user.role === 'employee'
-                      ? 'You do not approve anything — this stays empty unless that changes.'
-                      : 'When your team raises something, it appears here and in Approvals.'
-                  }
+  return (
+    <AsyncSection state={state} reload={reload} loadingRows={1}>
+      {(away) => (
+        <Link href="/team" className={s.rowLink}>
+          <span className={s.rowText}>
+            <span className={s.rowTitle}>
+              {away.length === 0
+                ? 'Nobody is off this week'
+                : `${away.length} ${away.length === 1 ? 'person is' : 'people are'} off this week`}
+            </span>
+            <span className={s.rowMeta}>
+              {formatDate(week.start)} – {formatDate(week.end)}
+              {away.length > 0 ? ` · ${away.map((a) => a.employee.fullName.split(' ')[0]).join(', ')}` : ''}
+            </span>
+          </span>
+          <span className={s.faces}>
+            {away.slice(0, 4).map((a) => (
+              <Avatar key={a.employee.id} name={a.employee.fullName} size="sm" />
+            ))}
+            <IconChevronRight size={18} />
+          </span>
+        </Link>
+      )}
+    </AsyncSection>
+  );
+}
+
+function WishThem() {
+  const { user } = useCurrentUser();
+  const { state, reload } = useAsync(() => getCelebrations(), []);
+
+  return (
+    <Card title="Wish them" hint="Birthdays and work anniversaries coming up">
+      <AsyncSection
+        state={state}
+        reload={reload}
+        isEmpty={(rows) => rows.length === 0}
+        empty={
+          <EmptyState
+            title="Nothing coming up"
+            body="Birthdays and work anniversaries in the next three weeks appear here."
+          />
+        }
+        loadingRows={2}
+      >
+        {(rows) => (
+          <div className={s.strip}>
+            {rows.slice(0, 12).map((c) => (
+              <Link
+                key={`${c.employee.id}-${c.kind}`}
+                href={`/wall?wish=${c.employee.id}&kind=${c.kind}`}
+                className={s.wishCard}
+              >
+                <Avatar name={c.employee.fullName} size="lg" />
+                <StatusPill
+                  label={c.kind === 'birthday' ? 'Birthday' : `${c.years} years`}
+                  tone={c.kind === 'birthday' ? 'info' : 'success'}
                 />
-              ) : (
-                <ul className={s.requestList}>
-                  {home.waitingOnMe.slice(0, 3).map((r) => (
-                    <RequestCard key={r.id} request={r} showActions={false} />
-                  ))}
-                  {home.waitingOnMe.length > 3 ? (
-                    <li className={s.moreRow}>
-                      <Link href="/approvals">
-                        See all {home.waitingOnMe.length} in Approvals
-                      </Link>
-                    </li>
-                  ) : null}
-                </ul>
-              )}
-            </Card>
-
-            <Card title="Recent notifications">
-                {home.notifications.length === 0 ? (
-                  <p className={s.plain}>Nothing yet.</p>
-                ) : (
-                  <ul className={s.notifications}>
-                    {home.notifications.map((n) => (
-                      <li key={n.id} className={n.read ? s.read : undefined}>
-                        <button
-                          type="button"
-                          className={s.notificationButton}
-                          onClick={() => void markNotificationRead(n.id)}
-                        >
-                          <strong>{n.title}</strong>
-                          <span className={s.notificationBody}>{n.body}</span>
-                          <span className={s.notificationMeta}>
-                            {formatTimestamp(n.createdOn)}
-                            {n.read ? '' : ' · unread'}
-                          </span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-            </Card>
-          </Stack>
+                <span className={s.wishName}>
+                  {c.employee.id === user.employee.id ? 'You' : c.employee.fullName}
+                </span>
+                <span className={s.wishMeta}>{formatDate(c.onDate)}</span>
+              </Link>
+            ))}
+          </div>
         )}
       </AsyncSection>
-    </>
+    </Card>
+  );
+}
+
+function Announcements() {
+  const { user } = useCurrentUser();
+  const { state, reload } = useAsync(() => getAnnouncements(), []);
+  const [composing, setComposing] = useState(false);
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [busy, setBusy] = useState(false);
+  const mayPost = canPostAnnouncement(user);
+
+  const post = async () => {
+    if (!title.trim() || !body.trim()) return;
+    setBusy(true);
+    try {
+      await createAnnouncement(user.employee.id, title.trim(), body.trim());
+      setTitle('');
+      setBody('');
+      setComposing(false);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Card
+      title="Announcements"
+      hint="Company-wide notices"
+      flush
+      actions={
+        mayPost ? (
+          <Button onClick={() => setComposing((v) => !v)}>
+            {composing ? 'Cancel' : 'New announcement'}
+          </Button>
+        ) : null
+      }
+    >
+      {composing ? (
+        <div className={s.composer}>
+          <input
+            type="text"
+            value={title}
+            placeholder="Title"
+            aria-label="Announcement title"
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <textarea
+            value={body}
+            placeholder="What do people need to know?"
+            aria-label="Announcement body"
+            onChange={(e) => setBody(e.target.value)}
+          />
+          <Button variant="primary" onClick={post} disabled={busy || !title.trim() || !body.trim()}>
+            {busy ? 'Posting…' : 'Post announcement'}
+          </Button>
+        </div>
+      ) : null}
+
+      <AsyncSection
+        state={state}
+        reload={reload}
+        isEmpty={(rows) => rows.length === 0}
+        empty={
+          <EmptyState
+            title="No announcements"
+            body={
+              mayPost
+                ? 'Notices you post to the whole company will show here.'
+                : 'Company-wide notices from HR and department heads will show here.'
+            }
+          />
+        }
+      >
+        {(rows) => (
+          <div>
+            {rows.map((a) => {
+              const author = findEmployeeSync(a.authorId);
+              return (
+                <article key={a.id} className={s.announcement}>
+                  <span className={s.announcementTitle}>
+                    <IconMegaphone size={16} /> {a.title}
+                  </span>
+                  <p className={s.announcementBody}>{a.body}</p>
+                  <span className={s.announcementMeta}>
+                    {author?.fullName ?? a.authorId} · {formatDate(a.postedOn.slice(0, 10))}
+                  </span>
+                </article>
+              );
+            })}
+          </div>
+        )}
+      </AsyncSection>
+    </Card>
+  );
+}
+
+function UpcomingHolidays() {
+  const { state, reload } = useAsync(() => getUpcomingHolidays(6), []);
+  return (
+    <Card
+      title="Upcoming holidays"
+      actions={
+        <Link href="/me?tab=time" className={s.todayFooterLink}>
+          See all
+        </Link>
+      }
+    >
+      <AsyncSection
+        state={state}
+        reload={reload}
+        isEmpty={(rows) => rows.length === 0}
+        empty={<EmptyState title="No holidays left this year" body="Next year's calendar appears here once HR publishes it." />}
+        loadingRows={1}
+      >
+        {(rows) => (
+          <div className={s.strip}>
+            {rows.map((h) => (
+              <div key={h.id} className={s.holidayCard}>
+                <span className={s.holidayDate}>{formatDate(h.date)}</span>
+                <span className={s.holidayName}>{h.name}</span>
+                {h.optional ? <StatusPill label="Optional" tone="quiet" /> : null}
+              </div>
+            ))}
+          </div>
+        )}
+      </AsyncSection>
+    </Card>
   );
 }

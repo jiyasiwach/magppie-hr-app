@@ -434,6 +434,106 @@ function buildRequests(): Request[] {
     decisionComments: [],
   });
 
+  // Work from home, on duty, overtime and partial days — the other things
+  // section 8 lets a person raise. They ride the same generic Request object.
+  const wfh: Array<[string, string, string, string, Request['status']]> = [
+    ['emp-008', '2026-09-09', '2026-09-09', 'Waiting for the plumber at home.', 'approved'],
+    ['emp-012', '2026-09-09', '2026-09-11', 'Rendering the Al Wasl set — quieter at home.', 'approved'],
+    ['emp-023', '2026-09-09', '2026-09-09', 'Client calls all day, no showroom appointments.', 'approved'],
+    ['emp-034', '2026-09-08', '2026-09-12', 'Recovering from dengue, able to work.', 'approved'],
+    ['emp-010', '2026-09-15', '2026-09-16', 'Mumbai showroom shut for maintenance.', 'pending'],
+  ];
+  wfh.forEach(([employeeId, startDate, endDate, reason, status], i) => {
+    const employee = byId.get(employeeId);
+    out.push({
+      id: `req-wfh-${employeeId}-${i}`,
+      type: 'wfh',
+      raisedBy: employeeId,
+      raisedOn: `${addDays(startDate, -2)}T10:00:00${IST}`,
+      currentApprover: status === 'pending' ? (employee?.managerId ?? 'emp-005') : null,
+      status,
+      payload: { startDate, endDate, reason },
+      decisionComments: [],
+    });
+  });
+
+  out.push({
+    id: 'req-od-emp-030',
+    type: 'on-duty',
+    raisedBy: 'emp-030',
+    raisedOn: `2026-09-08T18:20:00${IST}`,
+    currentApprover: 'emp-007',
+    status: 'pending',
+    payload: { date: '2026-09-08', location: 'Client site — Golf Course Road', reason: 'Full day at the site, no biometric there.' },
+    decisionComments: [],
+  });
+
+  out.push({
+    id: 'req-ot-emp-016',
+    type: 'overtime',
+    raisedBy: 'emp-016',
+    raisedOn: `2026-09-07T20:10:00${IST}`,
+    currentApprover: 'emp-003',
+    status: 'pending',
+    payload: { date: '2026-09-07', hours: 3, reason: 'Edge polishing to finish the Al Wasl island for dispatch.' },
+    decisionComments: [],
+  });
+
+  out.push({
+    id: 'req-pd-emp-028',
+    type: 'partial-day',
+    raisedBy: 'emp-028',
+    raisedOn: `2026-09-09T08:05:00${IST}`,
+    currentApprover: 'emp-022',
+    status: 'pending',
+    payload: { date: '2026-09-09', from: '14:00', to: '18:30', reason: 'Passport appointment in the afternoon.' },
+    decisionComments: [],
+  });
+
+  out.push({
+    id: 'req-ast-emp-013',
+    type: 'asset',
+    raisedBy: 'emp-013',
+    raisedOn: `2026-09-06T11:30:00${IST}`,
+    currentApprover: 'emp-005',
+    status: 'pending',
+    payload: { assetName: 'Second monitor', category: 'other', reason: 'Drafting on one screen is slowing the detailing work.' },
+    decisionComments: [],
+  });
+
+  out.push({
+    id: 'req-ast-emp-031',
+    type: 'asset',
+    raisedBy: 'emp-031',
+    raisedOn: `2026-08-20T09:15:00${IST}`,
+    currentApprover: null,
+    status: 'approved',
+    payload: { assetName: 'Replacement site tool kit', category: 'tool', reason: 'Old kit was damaged on site.' },
+    decisionComments: [
+      { by: 'emp-005', on: `2026-08-21T10:00:00${IST}`, comment: 'Issued from the store.', decision: 'approved' as const },
+    ],
+  });
+
+  // Notices from HR. These are not approvals — they sit in the same list
+  // because the Inbox is "everything waiting on you", not "everything to sign".
+  const notices: Array<[string, string, string, string]> = [
+    ['emp-008', 'Acknowledge the attendance policy', 'Attendance & Shift Policy v1.4 is pending your acknowledgement.', '2026-09-01T09:00:00'],
+    ['emp-003', 'Team probation review due', 'Nothing is built for probation confirmation yet — this is a reminder only.', '2026-09-08T09:00:00'],
+    ['emp-005', 'Nine people have not acknowledged the safety policy', 'Factory Floor Safety v2.2 was published in May.', '2026-09-02T09:00:00'],
+  ];
+  notices.forEach(([recipient, title, body, on], i) => {
+    out.push({
+      id: `req-notice-${i}`,
+      type: 'hr-notice',
+      raisedBy: 'emp-005',
+      raisedOn: `${on}${IST}`,
+      currentApprover: recipient,
+      status: 'pending',
+      payload: { title, body, forEmployeeId: recipient },
+      decisionComments: [],
+    });
+  });
+
   return out.sort((a, b) => b.raisedOn.localeCompare(a.raisedOn));
 }
 

@@ -30,6 +30,7 @@ export interface Employee {
   employmentType: EmploymentType;
   status: EmployeeStatus;
   probationEndDate: IsoDate | null;
+  dateOfBirth: IsoDate;
 }
 
 /**
@@ -45,6 +46,16 @@ export interface EmploymentRecord {
   validFrom: IsoDate;
   /** null means "current" */
   validTo: IsoDate | null;
+}
+
+/** 13.3 Shift */
+export interface Shift {
+  id: string;
+  name: string;
+  startTime: string; // "09:30"
+  endTime: string; // "18:30"
+  expectedHours: number;
+  flexible: boolean;
 }
 
 export type PunchDirection = 'in' | 'out';
@@ -127,7 +138,18 @@ export interface LeaveRequest {
   status: LeaveRequestStatus;
 }
 
-export type RequestType = 'leave' | 'regularisation' | 'document' | 'profile-change';
+export type RequestType =
+  | 'leave'
+  | 'regularisation'
+  | 'document'
+  | 'profile-change'
+  | 'wfh'
+  | 'on-duty'
+  | 'overtime'
+  | 'partial-day'
+  | 'asset'
+  | 'expense'
+  | 'hr-notice';
 export type RequestStatus = 'pending' | 'approved' | 'rejected' | 'cancelled';
 
 /**
@@ -163,10 +185,10 @@ export type DocumentType =
   | 'other';
 export type DocumentVisibility = 'employee' | 'manager' | 'hr-only';
 
-/** 9.9 Document */
+/** 13.10 Document. `employeeId` is null for an organisation-wide document. */
 export interface EmployeeDocument {
   id: string;
-  employeeId: string;
+  employeeId: string | null;
   type: DocumentType;
   fileName: string;
   uploadedBy: string;
@@ -176,7 +198,7 @@ export interface EmployeeDocument {
   archived: boolean;
 }
 
-/** 9.10 Notification */
+/** 13.15 Notification */
 export interface Notification {
   id: string;
   recipientId: string;
@@ -207,9 +229,61 @@ export interface PolicyAcknowledgement {
   acknowledgedOn: IsoTimestamp;
 }
 
+/** 13.12 Holiday */
 export interface Holiday {
+  id: string;
   date: IsoDate;
   name: string;
+  optional: boolean;
+}
+
+export type AssetCategory = 'laptop' | 'phone' | 'vehicle' | 'tool' | 'access' | 'other';
+export type AssetStatus = 'assigned' | 'returned' | 'in-repair' | 'lost';
+
+/** 13.11 Asset */
+export interface Asset {
+  id: string;
+  employeeId: string;
+  name: string;
+  category: AssetCategory;
+  serial: string;
+  assignedOn: IsoDate;
+  status: AssetStatus;
+}
+
+/** 13.13 Announcement */
+export interface Announcement {
+  id: string;
+  authorId: string;
+  title: string;
+  body: string;
+  postedOn: IsoTimestamp;
+}
+
+export type ReactionType = 'like' | 'celebrate' | 'support';
+
+export interface PostReaction {
+  type: ReactionType;
+  employeeIds: string[];
+}
+
+export interface PostComment {
+  id: string;
+  authorId: string;
+  body: string;
+  postedOn: IsoTimestamp;
+}
+
+/** 13.14 Post */
+export interface Post {
+  id: string;
+  authorId: string;
+  body: string;
+  /** No file storage in this pass — a caption stands in for the image. */
+  image: string | null;
+  postedOn: IsoTimestamp;
+  reactions: PostReaction[];
+  comments: PostComment[];
 }
 
 export type Role = 'employee' | 'manager' | 'hr-admin';

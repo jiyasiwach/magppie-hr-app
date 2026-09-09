@@ -2,15 +2,17 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { navIcons } from '@/components/ui/icons';
-import { mockPersonas, roleLabels } from '@/lib/auth';
-import { APP_BUILD_NOTE, APP_NAME } from '@/lib/constants';
-import { employees } from '@/mocks';
 import { getPendingCount } from '@/data/requests';
 import { useAsync } from '@/hooks/useAsync';
-import { useCurrentUser } from './CurrentUserProvider';
-import { visibleNavGroups, visibleNavItems } from './nav';
+import { mockPersonas } from '@/lib/auth';
+import { APP_NAME } from '@/lib/constants';
+import { employees } from '@/mocks';
+import { ColleagueSearch } from './ColleagueSearch';
+import { CurrentUserProvider, useCurrentUser } from './CurrentUserProvider';
+import { navItems } from './nav';
+import { ProfileDrawer } from './ProfileDrawer';
 import s from './shell.module.css';
 
 function useIsActive() {
@@ -20,20 +22,15 @@ function useIsActive() {
 
 function RoleSwitcher() {
   const { user, switchUser } = useCurrentUser();
-  const options = mockPersonas.map((p) => {
-    const employee = employees.find((e) => e.id === p.employeeId);
-    return { id: p.employeeId, label: `${p.label} — ${employee?.fullName ?? p.employeeId}` };
-  });
-
   return (
     <div className={s.switcher}>
       <label className={s.switcherLabel} htmlFor="role-switcher">
         Viewing as
       </label>
       <select id="role-switcher" value={user.employee.id} onChange={(e) => switchUser(e.target.value)}>
-        {options.map((o) => (
-          <option key={o.id} value={o.id}>
-            {o.label}
+        {mockPersonas.map((p) => (
+          <option key={p.employeeId} value={p.employeeId}>
+            {p.label} — {employees.find((e) => e.id === p.employeeId)?.fullName ?? p.employeeId}
           </option>
         ))}
       </select>
@@ -41,79 +38,76 @@ function RoleSwitcher() {
   );
 }
 
-function PendingBadge() {
+function InboxBadge() {
   const { user } = useCurrentUser();
   const { state } = useAsync(() => getPendingCount(user), [user.employee.id]);
   if (state.status !== 'ready' || state.data === 0) return null;
   return <span className={s.navBadge}>{state.data}</span>;
 }
 
-export function AppShell({ children }: { children: ReactNode }) {
+function Chrome({ children }: { children: ReactNode }) {
   const { user } = useCurrentUser();
   const isActive = useIsActive();
-  const groups = visibleNavGroups(user);
-  const items = visibleNavItems(user);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const initials = user.employee.fullName
+    .split(' ')
+    .map((part) => part[0])
+    .slice(0, 2)
+    .join('');
 
   return (
     <div className={s.shell}>
-      <header className={s.header}>
-        <Link href="/" className={s.brand}>
-          {APP_NAME}
-          <span className={s.brandNote}>{APP_BUILD_NOTE}</span>
-        </Link>
-        <div className={s.headerRight}>
-          <div className={s.identity}>
-            <span className={s.avatar} aria-hidden="true">
-              {user.employee.fullName
-                .split(' ')
-                .map((part) => part[0])
-                .slice(0, 2)
-                .join('')}
-            </span>
-            <span className={s.identityText}>
-              <span className={s.identityName}>{user.employee.fullName}</span>
-              <span className={s.identityRole}>
-                {roleLabels[user.role]} · {user.employee.designation}
-              </span>
-            </span>
-          </div>
+      <header className={s.topBar}>
+        <button
+          type="button"
+          className={s.avatarButton}
+          onClick={() => setDrawerOpen(true)}
+          aria-label={`Open your account menu, ${user.employee.fullName}`}
+        >
+          <span className={s.avatarButtonInner} aria-hidden="true">
+            {initials}
+          </span>
+        </button>
+
+        <ColleagueSearch />
+
+        <div className={s.topBarRight}>
+          <span className={s.brand}>{APP_NAME}</span>
           <RoleSwitcher />
         </div>
       </header>
 
+      <ProfileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+
       <div className={s.body}>
-        <nav className={s.sideNav} aria-label="Main">
-          {groups.map((group, i) => (
-            <div key={group.title ?? `group-${i}`} className={s.navGroup}>
-              {group.title ? <h2 className={s.navGroupTitle}>{group.title}</h2> : null}
-              <ul className={s.navList}>
-                {group.items.map((item) => {
-                  const Icon = navIcons[item.icon];
-                  return (
-                    <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        className={`${s.navLink} ${isActive(item.href) ? s.navLinkActive : ''}`}
-                        aria-current={isActive(item.href) ? 'page' : undefined}
-                      >
-                        <Icon className={s.navIcon} />
-                        <span className={s.navLabel}>{item.label}</span>
-                        {item.href === '/approvals' ? <PendingBadge /> : null}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
+        <nav className={s.sideNav} aria-label="Sections">
+          <ul className={s.navList}>
+            {navItems.map((item) => {
+              const Icon = navIcons[item.icon];
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={`${s.navLink} ${isActive(item.href) ? s.navLinkActive : ''}`}
+                    aria-current={isActive(item.href) ? 'page' : undefined}
+                  >
+                    <Icon className={s.navIcon} />
+                    <span className={s.navLabel}>{item.label}</span>
+                    {item.href === '/inbox' ? <InboxBadge /> : null}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
         </nav>
 
         <main className={s.main}>{children}</main>
       </div>
 
-      <nav className={s.bottomNav} aria-label="Main (mobile)">
+      <nav className={s.bottomNav} aria-label="Sections">
         <ul className={s.bottomNavList}>
-          {items.map((item) => {
+          {navItems.map((item) => {
             const Icon = navIcons[item.icon];
             return (
               <li key={item.href}>
@@ -122,9 +116,9 @@ export function AppShell({ children }: { children: ReactNode }) {
                   className={`${s.bottomNavLink} ${isActive(item.href) ? s.bottomNavLinkActive : ''}`}
                   aria-current={isActive(item.href) ? 'page' : undefined}
                 >
-                  <Icon size={20} />
-                  <span>{item.shortLabel}</span>
-                  {item.href === '/approvals' ? <PendingBadge /> : null}
+                  <Icon size={21} />
+                  <span>{item.label}</span>
+                  {item.href === '/inbox' ? <InboxBadge /> : null}
                 </Link>
               </li>
             );
@@ -132,5 +126,13 @@ export function AppShell({ children }: { children: ReactNode }) {
         </ul>
       </nav>
     </div>
+  );
+}
+
+export function AppShell({ children }: { children: ReactNode }) {
+  return (
+    <CurrentUserProvider>
+      <Chrome>{children}</Chrome>
+    </CurrentUserProvider>
   );
 }

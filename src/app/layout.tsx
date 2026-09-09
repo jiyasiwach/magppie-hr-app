@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { AppShell } from '@/components/shell/AppShell';
-import { CurrentUserProvider } from '@/components/shell/CurrentUserProvider';
 import { APP_NAME } from '@/lib/constants';
 import './globals.css';
 
@@ -22,9 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en-IN" className={sans.variable}>
       <body>
-        <CurrentUserProvider>
-          <AppShell>{children}</AppShell>
-        </CurrentUserProvider>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

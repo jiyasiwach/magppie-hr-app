@@ -8,6 +8,17 @@ export interface DocumentGroup {
   documents: EmployeeDocument[];
 }
 
+/** Company-wide documents — employeeId is null and everyone can read them. */
+export async function getOrgDocuments(): Promise<DocumentGroup[]> {
+  return read(() => {
+    const visible = store.documents.filter((d) => d.employeeId === null && !d.archived);
+    const order: DocumentType[] = ['policy', 'other', 'identity', 'education', 'employment', 'payroll', 'medical'];
+    return order
+      .map((type) => ({ type, documents: visible.filter((d) => d.type === type) }))
+      .filter((group) => group.documents.length > 0);
+  });
+}
+
 export async function getDocuments(
   user: CurrentUser,
   employeeId: string,

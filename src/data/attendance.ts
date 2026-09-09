@@ -1,4 +1,4 @@
-import type { AttendanceDay, AttendanceStatus, Punch } from '@/lib/types';
+import type { AttendanceDay, AttendanceStatus, Holiday, Punch } from '@/lib/types';
 import { MOCK_TODAY } from '@/lib/clock';
 import { datesBetween, endOfMonth, startOfMonth } from '@/lib/date';
 import { read, store, write } from './store';
@@ -37,7 +37,12 @@ export interface TodayStatus {
   day: AttendanceDay | null;
 }
 
-function computeWorkedHours(punches: Punch[], upto: Date): number {
+/**
+ * Paired in/out spans, plus the open span counted up to `upto`. Exported so a
+ * live display can recompute against the current second rather than showing a
+ * number from whenever the data was fetched.
+ */
+export function workedHours(punches: Punch[], upto: Date): number {
   let total = 0;
   let openedAt: number | null = null;
   punches.forEach((p) => {
@@ -63,7 +68,7 @@ export async function getTodayStatus(employeeId: string, at: Date): Promise<Toda
       date: MOCK_TODAY,
       punches,
       isPunchedIn: last?.direction === 'in',
-      hoursSoFar: computeWorkedHours(punches, at),
+      hoursSoFar: workedHours(punches, at),
       day: store.attendanceDays.find((d) => d.employeeId === employeeId && d.date === MOCK_TODAY) ?? null,
     };
   });
@@ -86,7 +91,7 @@ export async function punch(employeeId: string, direction: 'in' | 'out', at: Dat
     const existing = store.attendanceDays.find((d) => d.employeeId === employeeId && d.date === MOCK_TODAY);
     const firstIn = dayPunches.find((p) => p.direction === 'in')?.timestamp ?? null;
     const lastOut = [...dayPunches].reverse().find((p) => p.direction === 'out')?.timestamp ?? null;
-    const totalHours = computeWorkedHours(dayPunches, at);
+    const totalHours = workedHours(dayPunches, at);
     if (existing) {
       existing.firstIn = firstIn;
       existing.lastOut = lastOut;
@@ -184,4 +189,14 @@ export async function getTeamAttendanceForDate(employeeIds: string[], date: stri
   return read(() =>
     store.attendanceDays.filter((d) => d.date === date && employeeIds.includes(d.employeeId)),
   );
+}
+
+/** 13.12 Holidays from today forward, for the Home strip and the Time tab. */
+export async function getUpcomingHolidays(limit?: number): Promise<Holiday[]> {
+  return read(() => {
+    const upcoming = store.holidays
+      .filter((h) => h.date >= MOCK_TODAY)
+      .sort((a, b) => a.date.localeCompare(b.date));
+    return limit ? upcoming.slice(0, limit) : upcoming;
+  });
 }

@@ -9,3 +9,9 @@ export const APP_NAME = '[APP_NAME]';
 
 /** Shown next to the name while this build runs on mock data. */
 export const APP_BUILD_NOTE = 'mock data — front end only';
+
+/** The organisation this instance belongs to. Shown in the account drawer. */
+export const ORGANISATION_NAME = 'Magppie';
+
+/** Shown under About. Bump it with a release, not with every commit. */
+export const APP_VERSION = '0.1.0';

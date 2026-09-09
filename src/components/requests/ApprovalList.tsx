@@ -11,7 +11,8 @@ import { Button, Person, StatusPill } from '@/components/ui';
 import { rendererFor } from './renderers';
 import s from './requests.module.css';
 
-export type RequestAction = (requestId: string, decision: 'approved' | 'rejected' | 'commented', comment: string) => Promise<void>;
+export type RequestDecision = 'approved' | 'rejected' | 'commented' | 'acknowledged';
+export type RequestAction = (requestId: string, decision: RequestDecision, comment: string) => Promise<void>;
 
 /**
  * One list that holds every kind of pending request. It knows only that a
@@ -55,7 +56,7 @@ export function RequestCard({
   const approver = findEmployeeSync(request.currentApprover);
   const canAct = showActions && Boolean(onAct) && canActOnRequest(user, request);
 
-  const act = async (decision: 'approved' | 'rejected' | 'commented') => {
+  const act = async (decision: RequestDecision) => {
     if (!onAct) return;
     if (decision === 'rejected' && comment.trim().length === 0) {
       setError('A rejection needs a comment — the person has to know why.');
@@ -119,7 +120,16 @@ export function RequestCard({
 
       {error ? <p className={s.error}>{error}</p> : null}
 
-      {canAct ? (
+      {canAct && request.type === 'hr-notice' ? (
+        <div className={s.actions}>
+          <Button variant="primary" onClick={() => act('acknowledged')} disabled={busy}>
+            {busy ? 'Saving…' : 'Mark as read'}
+          </Button>
+          <span className={s.meta}>A notice from HR — nothing to approve.</span>
+        </div>
+      ) : null}
+
+      {canAct && request.type !== 'hr-notice' ? (
         <div className={s.actions}>
           <label className={s.comment}>
             <span className="visually-hidden">Comment on this request</span>

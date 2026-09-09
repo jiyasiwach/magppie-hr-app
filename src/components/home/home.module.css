@@ -1,0 +1,369 @@
+/* --- quick actions -------------------------------------------------------- */
+
+.quickActions {
+  display: flex;
+  gap: var(--space-5);
+  justify-content: space-around;
+  padding: var(--space-4) var(--space-2);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.quickAction {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+  color: var(--ink);
+  font-size: 12px;
+  text-align: center;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.quickActionCircle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  border: 1px solid var(--line);
+  color: var(--brand-dark);
+}
+
+.quickAction:hover .quickActionCircle {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--on-brand);
+}
+
+/* --- today card ----------------------------------------------------------- */
+
+.today {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.todayHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.todayDate {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.todayDay {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.todayMeta {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.todayBody {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.todayHours {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.todayHoursText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.todayHoursValue {
+  font-size: 22px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--ok-bg);
+  border: 1px solid var(--ok-line);
+  color: var(--ok-fg);
+  font-size: 13px;
+}
+
+.timerValue {
+  font-size: 19px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.timerIdle {
+  background: var(--surface-2);
+  border-color: var(--line);
+  color: var(--ink-3);
+}
+
+.clockActions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.clockButton {
+  flex: 1 1 200px;
+  min-height: 56px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--on-brand);
+}
+
+.clockIn {
+  background: var(--ok-fg);
+  border-color: var(--ok-fg);
+}
+
+.clockIn:hover:not(:disabled) {
+  background: #175730;
+}
+
+.clockOut {
+  background: var(--danger-fg);
+  border-color: var(--danger-fg);
+}
+
+.clockButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.punchButton {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 56px;
+  padding: 0 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--ink);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.punchButton:hover:not(:disabled) {
+  border-color: var(--brand);
+}
+
+.todayFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--line-soft);
+  background: var(--surface-2);
+  font-size: 13px;
+}
+
+.todayFooterLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--brand-dark);
+}
+
+.error {
+  font-size: 13px;
+  color: var(--danger-fg);
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-line);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+}
+
+/* --- horizontal strips ---------------------------------------------------- */
+
+.strip {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+  scrollbar-width: thin;
+}
+
+.wishCard {
+  flex: 0 0 156px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  text-align: center;
+}
+
+.wishName {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.wishMeta {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.holidayCard {
+  flex: 0 0 150px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.holidayDate {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--brand-dark);
+}
+
+.holidayName {
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+/* --- rows ----------------------------------------------------------------- */
+
+.rowLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.rowLink:hover {
+  border-color: var(--brand);
+}
+
+.rowText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rowTitle {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.rowMeta {
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+.faces {
+  display: flex;
+}
+
+.faces > * {
+  margin-left: -8px;
+  border: 2px solid var(--surface);
+}
+
+.faces > *:first-child {
+  margin-left: 0;
+}
+
+/* --- announcements -------------------------------------------------------- */
+
+.announcement {
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--line-soft);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.announcement:last-child {
+  border-bottom: none;
+}
+
+.announcementTitle {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.announcementBody {
+  font-size: 14px;
+  color: var(--ink-2);
+  max-width: 78ch;
+}
+
+.announcementMeta {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.composer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--line-soft);
+  background: var(--surface-2);
+}
+
+.punchWorking {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: 13px;
+  color: var(--ink-2);
+}

@@ -7,10 +7,11 @@
 export { employees, departments, locations, designations } from './employees';
 export { employmentRecords } from './employmentRecords';
 export { leaveTypes } from './leaveTypes';
-export { holidays, weeklyOffDays } from './calendar';
+export { holidays, shifts, shiftIdForLocation, weeklyOffDays } from './calendar';
 export { employeeDocuments } from './documents';
 export { policies, policyAcknowledgements } from './policies';
 export { notifications } from './notifications';
+export { assets, announcements, posts } from './workplace';
 export {
   punches,
   attendanceDays,

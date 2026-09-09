@@ -105,6 +105,85 @@ export const requestRenderers: Partial<Record<RequestType, RequestRenderer>> = {
       </>
     ),
   },
+  wfh: {
+    summary: (r) => {
+      const start = formatDate(r.payload.startDate as string);
+      const end = formatDate(r.payload.endDate as string);
+      return `Work from home · ${start === end ? start : `${start} – ${end}`}`;
+    },
+    details: (r) => (
+      <>
+        <span>Dates</span>
+        <span>
+          {formatDate(r.payload.startDate as string)} – {formatDate(r.payload.endDate as string)}
+        </span>
+        <span>Reason</span>
+        <span>{r.payload.reason as string}</span>
+      </>
+    ),
+  },
+  'on-duty': {
+    summary: (r) => `On duty · ${formatDate(r.payload.date as string)} · ${r.payload.location as string}`,
+    details: (r) => (
+      <>
+        <span>Date</span>
+        <span>{formatDate(r.payload.date as string)}</span>
+        <span>Where</span>
+        <span>{r.payload.location as string}</span>
+        <span>Reason</span>
+        <span>{r.payload.reason as string}</span>
+      </>
+    ),
+  },
+  overtime: {
+    summary: (r) => `Overtime · ${r.payload.hours as number}h on ${formatDate(r.payload.date as string)}`,
+    details: (r) => (
+      <>
+        <span>Date</span>
+        <span>{formatDate(r.payload.date as string)}</span>
+        <span>Hours</span>
+        <span>{r.payload.hours as number}</span>
+        <span>Reason</span>
+        <span>{r.payload.reason as string}</span>
+      </>
+    ),
+  },
+  'partial-day': {
+    summary: (r) =>
+      `Partial day · ${formatDate(r.payload.date as string)} · ${r.payload.from as string}–${r.payload.to as string}`,
+    details: (r) => (
+      <>
+        <span>Date</span>
+        <span>{formatDate(r.payload.date as string)}</span>
+        <span>Away between</span>
+        <span>
+          {r.payload.from as string} and {r.payload.to as string}
+        </span>
+        <span>Reason</span>
+        <span>{r.payload.reason as string}</span>
+      </>
+    ),
+  },
+  asset: {
+    summary: (r) => `Asset request · ${r.payload.assetName as string}`,
+    details: (r) => (
+      <>
+        <span>Asset</span>
+        <span>{r.payload.assetName as string}</span>
+        <span>Reason</span>
+        <span>{r.payload.reason as string}</span>
+      </>
+    ),
+  },
+  'hr-notice': {
+    summary: (r) => r.payload.title as string,
+    details: (r) => (
+      <>
+        <span>Notice</span>
+        <span>{r.payload.body as string}</span>
+      </>
+    ),
+  },
 };
 
 /** Fallback for a request type nobody has written a renderer for yet. */

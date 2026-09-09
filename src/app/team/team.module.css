@@ -1,0 +1,145 @@
+.deptList,
+.awayList,
+.mateList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.deptRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--line-soft);
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.deptList li:last-child .deptRow {
+  border-bottom: none;
+}
+
+.deptRow:hover {
+  background: var(--surface-2);
+}
+
+.deptText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.deptName {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.deptMeta {
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+.awayRow,
+.mateRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--line-soft);
+  flex-wrap: wrap;
+}
+
+.awayList li:last-child,
+.mateList li:last-child {
+  border-bottom: none;
+}
+
+.mateRow {
+  padding: var(--space-3) var(--space-4);
+}
+
+.chips {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--ink-2);
+}
+
+.chip:hover {
+  border-color: var(--brand);
+}
+
+.chipActive,
+.chipActive:hover {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--on-brand);
+  font-weight: 600;
+}
+
+.chipCount {
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.group {
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.group:last-of-type {
+  border-bottom: none;
+}
+
+.groupTitle {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+  padding: var(--space-3) var(--space-4) 0;
+}
+
+.viewAll {
+  background: none;
+  border: none;
+  color: var(--brand-dark);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0 var(--space-4) var(--space-3);
+}
+
+.footnote {
+  font-size: 12px;
+  color: var(--ink-3);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--line-soft);
+  max-width: 78ch;
+}
+
+.link {
+  font-size: 13px;
+}

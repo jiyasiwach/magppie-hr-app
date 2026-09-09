@@ -118,3 +118,42 @@ export async function commentOnRequest(user: CurrentUser, requestId: string, com
     });
   });
 }
+
+/** A notice from HR is acknowledged, not approved. */
+export async function acknowledgeRequest(user: CurrentUser, requestId: string): Promise<void> {
+  await write(() => {
+    const request = store.requests.find((r) => r.id === requestId);
+    if (!request) throw new Error('Request not found');
+    request.status = 'approved';
+    request.currentApprover = null;
+    request.decisionComments.push({
+      by: user.employee.id,
+      on: new Date().toISOString(),
+      comment: 'Read',
+      decision: 'commented',
+    });
+  });
+}
+
+export type AttendanceRequestType = 'wfh' | 'on-duty' | 'overtime' | 'partial-day';
+
+/** Raise Request — the four things section 8 lets a person ask for. */
+export async function submitAttendanceRequest(
+  employeeId: string,
+  type: AttendanceRequestType,
+  payload: Record<string, unknown>,
+): Promise<void> {
+  await write(() => {
+    const employee = store.employees.find((e) => e.id === employeeId);
+    store.requests.unshift({
+      id: `req-${type}-${employeeId}-${Date.now()}`,
+      type,
+      raisedBy: employeeId,
+      raisedOn: new Date().toISOString(),
+      currentApprover: employee?.managerId ?? 'emp-005',
+      status: 'pending',
+      payload,
+      decisionComments: [],
+    });
+  });
+}

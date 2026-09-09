@@ -63,6 +63,8 @@ export function canEditOwnField(user: CurrentUser, employeeId: string, field: st
 }
 
 export function canViewDocument(user: CurrentUser, document: EmployeeDocument): boolean {
+  // An organisation-wide document belongs to nobody and is readable by everyone.
+  if (document.employeeId === null) return true;
   if (user.role === 'hr-admin') return true;
   if (document.visibility === 'hr-only') return false;
   if (isSelf(user, document.employeeId)) return true;

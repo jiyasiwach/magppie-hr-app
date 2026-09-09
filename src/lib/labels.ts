@@ -74,6 +74,36 @@ export const requestTypeLabels: Record<RequestType, string> = {
   regularisation: 'Regularisation',
   document: 'Document',
   'profile-change': 'Profile change',
+  wfh: 'Work from home',
+  'on-duty': 'On duty',
+  overtime: 'Overtime',
+  'partial-day': 'Partial day',
+  asset: 'Asset',
+  expense: 'Expense',
+  'hr-notice': 'From HR',
+};
+
+export const assetCategoryLabels: Record<string, string> = {
+  laptop: 'Laptop',
+  phone: 'Phone',
+  vehicle: 'Vehicle',
+  tool: 'Tool',
+  access: 'Access',
+  other: 'Other',
+};
+
+export const assetStatusLabels: Record<string, string> = {
+  assigned: 'Assigned',
+  returned: 'Returned',
+  'in-repair': 'In repair',
+  lost: 'Lost',
+};
+
+export const assetStatusTones: Record<string, Tone> = {
+  assigned: 'success',
+  returned: 'quiet',
+  'in-repair': 'warning',
+  lost: 'danger',
 };
 
 export const requestStatusLabels: Record<RequestStatus, string> = {

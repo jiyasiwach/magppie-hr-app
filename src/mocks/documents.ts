@@ -35,6 +35,32 @@ function build(): EmployeeDocument[] {
     }
   });
 
+  // 8.3: organisation-wide documents. employeeId is null — these belong to the
+  // company, not a person, and everyone can read them.
+  const orgDocs: Array<{ type: DocumentType; fileName: string }> = [
+    { type: 'policy', fileName: 'code-of-conduct-v3-1.pdf' },
+    { type: 'policy', fileName: 'leave-policy-v2-0.pdf' },
+    { type: 'policy', fileName: 'attendance-and-shift-policy-v1-4.pdf' },
+    { type: 'policy', fileName: 'factory-floor-safety-v2-2.pdf' },
+    { type: 'policy', fileName: 'it-and-data-usage-v1-1.pdf' },
+    { type: 'policy', fileName: 'posh-policy-v2-0.pdf' },
+    { type: 'other', fileName: 'holiday-calendar-2026.pdf' },
+    { type: 'other', fileName: 'expense-claim-form.pdf' },
+    { type: 'other', fileName: 'employee-handbook-2026.pdf' },
+  ];
+  orgDocs.forEach((spec, i) => {
+    out.push({
+      id: `doc-org-${i}`,
+      employeeId: null,
+      type: spec.type,
+      fileName: spec.fileName,
+      uploadedBy: 'emp-005',
+      uploadedOn: `2026-04-01T09:${String(10 + i).padStart(2, '0')}:00+05:30`,
+      visibility: 'employee',
+      archived: false,
+    });
+  });
+
   // One archived document, so the archive state is visible somewhere real.
   out.push({
     id: 'doc-emp-008-archived',

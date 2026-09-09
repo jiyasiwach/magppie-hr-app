@@ -1,4 +1,6 @@
 import type {
+  Announcement,
+  Asset,
   AttendanceDay,
   EmployeeDocument,
   Employee,
@@ -6,6 +8,7 @@ import type {
   LeaveTransaction,
   Notification,
   PolicyAcknowledgement,
+  Post,
   Punch,
   Request,
 } from '@/lib/types';
@@ -35,6 +38,10 @@ export const store = {
   policies: [...mocks.policies],
   policyAcknowledgements: [...mocks.policyAcknowledgements] as PolicyAcknowledgement[],
   holidays: [...mocks.holidays],
+  shifts: [...mocks.shifts],
+  assets: [...mocks.assets] as Asset[],
+  announcements: [...mocks.announcements] as Announcement[],
+  posts: [...mocks.posts] as Post[],
 };
 
 /** Bumped by every mutation so open screens know to re-read. */
