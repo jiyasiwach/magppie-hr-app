@@ -1,0 +1,263 @@
+/* --- punch control ------------------------------------------------------- */
+
+.punch {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.punchTop {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.punchStatus {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.punchStatusValue {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.punchMeta {
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+.punchHours {
+  font-variant-numeric: tabular-nums;
+}
+
+.punchList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.punchChip {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 4px 8px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- month calendar ------------------------------------------------------ */
+
+.calendarHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-3);
+}
+
+.monthName {
+  font-weight: 600;
+}
+
+.weekdays,
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.weekdays {
+  margin-bottom: 4px;
+}
+
+.weekday {
+  font-size: 11px;
+  color: var(--ink-3);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.day {
+  aspect-ratio: 1 / 1;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 4px 6px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.day:hover {
+  background: var(--surface-2);
+}
+
+.dayEmpty {
+  border: none;
+  background: none;
+  cursor: default;
+}
+
+.dayNumber {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.dayMark {
+  font-size: 13px;
+  font-weight: 600;
+  align-self: flex-end;
+}
+
+.dayToday {
+  outline: 2px solid var(--ink);
+  outline-offset: -2px;
+}
+
+.daySelected {
+  background: var(--surface-3);
+}
+
+.dayOff {
+  background: var(--surface-2);
+  color: var(--ink-3);
+}
+
+.dayAbsent {
+  background: var(--ink);
+  color: #fff;
+}
+
+.dayPending {
+  border-style: dashed;
+  border-color: var(--ink);
+}
+
+.dayNoRecord {
+  border-style: dotted;
+  color: var(--ink-3);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin-top: var(--space-4);
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* --- day detail ---------------------------------------------------------- */
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2) var(--space-4);
+  font-size: 14px;
+}
+
+.detailKey {
+  color: var(--ink-3);
+}
+
+.punchTable {
+  margin-top: var(--space-3);
+  font-size: 13px;
+}
+
+.punchTable th,
+.punchTable td {
+  text-align: left;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line-soft);
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.formActions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.formError {
+  font-size: 13px;
+  border: 1px solid var(--ink);
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3);
+}
+
+.summaryList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+}
+
+.summaryList li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.summaryList li:last-child {
+  border-bottom: none;
+  font-weight: 600;
+}

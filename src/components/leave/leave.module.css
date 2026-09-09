@@ -1,0 +1,204 @@
+.balances {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4);
+}
+
+.balance {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.balanceValue {
+  font-size: 28px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.balanceName {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.balanceMeta {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.ledger {
+  width: 100%;
+  font-size: 13px;
+  margin-top: var(--space-2);
+}
+
+.ledger th,
+.ledger td {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--line-soft);
+  vertical-align: top;
+}
+
+.ledger th {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ledgerTotal td {
+  font-weight: 600;
+  border-top: 1px solid var(--line);
+  border-bottom: none;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-3);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.checkboxRow {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 14px;
+}
+
+.checkbox input {
+  width: auto;
+  min-height: auto;
+}
+
+.formError {
+  font-size: 13px;
+  border: 1px solid var(--ink);
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3);
+}
+
+.formActions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.preview {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+/* --- team calendar ------------------------------------------------------- */
+
+.calendarScroll {
+  overflow-x: auto;
+}
+
+.teamGrid {
+  border-collapse: collapse;
+  font-size: 12px;
+  min-width: 640px;
+}
+
+.teamGrid th,
+.teamGrid td {
+  border: 1px solid var(--line-soft);
+  padding: 0;
+  text-align: center;
+}
+
+.teamName {
+  text-align: left;
+  padding: 4px 8px;
+  white-space: nowrap;
+  position: sticky;
+  left: 0;
+  background: var(--surface);
+  min-width: 160px;
+}
+
+.dayHead {
+  width: 22px;
+  font-weight: 500;
+  color: var(--ink-3);
+  padding: 4px 0;
+}
+
+.dayHeadOff {
+  background: var(--surface-2);
+}
+
+.cell {
+  width: 22px;
+  height: 24px;
+}
+
+.cellOff {
+  background: var(--surface-2);
+}
+
+.cellApproved {
+  background: var(--ink);
+  color: #fff;
+}
+
+.cellPending {
+  background: var(--surface-3);
+  outline: 1px dashed var(--ink-3);
+  outline-offset: -2px;
+}
+
+.clash {
+  font-weight: 700;
+}
+
+.clashList {
+  list-style: none;
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: 13px;
+}
+
+.clashItem {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3);
+}
