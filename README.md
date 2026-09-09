@@ -131,6 +131,22 @@ Only these, in this order:
 No screen or component reads mock data directly, and no screen reshapes a
 record, so nothing above the `src/data` layer should need to change.
 
+## What is deliberately not real
+
+Three things behave honestly rather than pretending:
+
+- **No file storage.** Documents record the file name, type, uploader, date and
+  visibility. There is no file behind the record, and the download button says
+  so rather than failing silently.
+- **Policy text is placeholder wording** written for this build, not the
+  company's approved policies.
+- **Nothing persists.** Everything you change lives in memory for the session.
+  Reload and the mock data resets.
+
+Everything else does what it looks like it does, including the writes: punching,
+applying for leave, raising a regularisation, approving or rejecting, uploading
+and archiving a document, acknowledging a policy, and editing a profile.
+
 ## Known gaps and open questions
 
 See the handover notes — the short version is that role definitions, leave
