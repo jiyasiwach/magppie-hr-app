@@ -1,0 +1,312 @@
+e2e133a  2026-09-10  Add the Supabase schema, row-level security and business rules
+43bd3a6  2026-09-09  Scope My teammates to the department, not just the viewer
+291308d  2026-09-09  Build the five sections and make the mock punches respect each shift
+4c9e1b1  2026-09-09  Restructure into five sections and extend the data contract
+b27eb68  2026-09-09  Raise the visual fidelity: original icons, avatars, meters and a dial
+ea57170  2026-09-09  Record that this repository's home is temporary
+f0c8b79  2026-09-09  Name the package magppie-hr-app to match the repository
+5dc7d5a  2026-09-09  Say plainly in the README which three things are not real
+24679fe  2026-09-09  Finish the partial screens: profile editing, policies, documents, team day
+b0219b3  2026-09-09  Move to the three-layer beige, white and brown palette
+582643a  2026-09-09  Document the palette, the name placeholder and the contrast results
+7ad5197  2026-09-09  Apply the brown-and-white visual direction and the Keka-shaped structure
+24a983c  2026-09-09  Add Home, Settings, and a README that names the swap points
+c77e5b2  2026-09-09  Add Attendance and Leave screens
+2d6ebf1  2026-09-09  Add the app shell, shared components, Directory and Documents
+64c8a5b  2026-09-09  Add data contract, mock data and the auth seam
+5e963c8  2026-09-09  Initial commit from Create Next App
+
+=== e2e133a 2026-09-10 Add the Supabase schema, row-level security and business rules ===
+ .gitignore                                  |   4 +
+ package-lock.json                           | 132 +++++++++-
+ package.json                                |   2 +
+ src/lib/supabase/client.ts                  |  24 ++
+ src/lib/supabase/server.ts                  |  38 +++
+ supabase/migrations/0001_schema.sql         | 371 +++++++++++++++++++++++++++
+ supabase/migrations/0002_rls.sql            | 321 +++++++++++++++++++++++
+ supabase/migrations/0003_functions.sql      | 383 ++++++++++++++++++++++++++++
+ supabase/migrations/0004_reference_data.sql |  41 +++
+ 9 files changed, 1314 insertions(+), 2 deletions(-)
+
+
+=== 43bd3a6 2026-09-09 Scope My teammates to the department, not just the viewer ===
+ src/app/team/page.tsx |  5 +----
+ src/data/team.ts      | 17 +++++++++++++++--
+ 2 files changed, 16 insertions(+), 6 deletions(-)
+
+
+=== 291308d 2026-09-09 Build the five sections and make the mock punches respect each shift ===
+ README.md                              | 27 +++++++++++++++++----------
+ src/components/shell/AppShell.tsx      | 16 +++++++++++-----
+ src/components/shell/ProfileDrawer.tsx |  9 +++++++--
+ src/components/shell/shell.module.css  | 30 +++++++++++++++++++++++++++++-
+ src/mocks/attendanceAndLeave.ts        | 34 ++++++++++++++++++++++++----------
+ 5 files changed, 88 insertions(+), 28 deletions(-)
+
+
+=== 4c9e1b1 2026-09-09 Restructure into five sections and extend the data contract ===
+ src/app/about/about.module.css            |  24 ++
+ src/app/about/page.tsx                    |  42 ++++
+ src/app/approvals/page.tsx                |  91 -------
+ src/app/documents/documents.module.css    |  10 -
+ src/app/documents/page.tsx                |  60 -----
+ src/app/feedback/feedback.module.css      |  33 +++
+ src/app/feedback/page.tsx                 |  59 +++++
+ src/app/inbox/inbox.module.css            |  52 ++++
+ src/app/inbox/page.tsx                    | 102 ++++++++
+ src/app/layout.tsx                        |   5 +-
+ src/app/leave/apply/page.tsx              |  21 ++
+ src/app/leave/leave.module.css            |  34 ---
+ src/app/leave/page.tsx                    |  73 +-----
+ src/app/me/id-card/idCard.module.css      |  76 ++++++
+ src/app/me/id-card/page.tsx               |  62 +++++
+ src/app/me/me.module.css                  | 119 ++++++++++
+ src/app/me/page.tsx                       | 237 ++++++++++++++++++
+ src/app/page.tsx                          | 383 +++++++++++++++++++-----------
+ src/app/policies/page.tsx                 |  17 ++
+ src/app/requests/new/page.tsx             | 223 +++++++++++++++++
+ src/app/requests/new/request.module.css   |  91 +++++++
+ src/app/requests/page.tsx                 |  72 ++++++
+ src/app/requests/requests.module.css      |  28 +++
+ src/app/team/page.tsx                     | 288 ++++++++++++++++++++++
+ src/app/team/team.module.css              | 145 +++++++++++
+ src/app/wall/page.tsx                     | 255 ++++++++++++++++++++
+ src/app/wall/wall.module.css              | 176 ++++++++++++++
+ src/components/assets/AssetsPanel.tsx     | 151 ++++++++++++
+ src/components/assets/assets.module.css   |  31 +++
+ src/components/documents/OrgDocuments.tsx |  62 +++++
+ src/components/home/TodayCard.tsx         | 180 ++++++++++++++
+ src/components/home/home.module.css       | 369 ++++++++++++++++++++++++++++
+ src/components/requests/ApprovalList.tsx  |  16 +-
+ src/components/requests/renderers.tsx     |  79 ++++++
+ src/components/shell/AppShell.tsx         | 138 +++++------
+ src/components/shell/ColleagueSearch.tsx  |  71 ++++++
+ src/components/shell/ProfileDrawer.tsx    |  91 +++++++
+ src/components/shell/nav.ts               |  59 +----
+ src/components/shell/shell.module.css     | 352 +++++++++++++++++++--------
+ src/components/ui/icons.tsx               | 118 +++++++++
+ src/data/attendance.ts                    |  23 +-
+ src/data/documents.ts                     |  11 +
+ src/data/requests.ts                      |  39 +++
+ src/data/store.ts                         |   7 +
+ src/data/team.ts                          | 203 ++++++++++++++++
+ src/data/workplace.ts                     | 175 ++++++++++++++
+ src/hooks/useTicker.ts                    |  26 ++
+ src/lib/constants.ts                      |   6 +
+ src/lib/labels.ts                         |  30 +++
+ src/lib/permissions.ts                    |   2 +
+ src/lib/types.ts                          |  82 ++++++-
+ src/mocks/attendanceAndLeave.ts           | 100 ++++++++
+ src/mocks/calendar.ts                     |  53 ++++-
+ src/mocks/documents.ts                    |  26 ++
+ src/mocks/employees.ts                    |  94 ++++----
+ src/mocks/index.ts                        |   3 +-
+ src/mocks/workplace.ts                    | 146 ++++++++++++
+ 57 files changed, 4837 insertions(+), 684 deletions(-)
+
+
+=== b27eb68 2026-09-09 Raise the visual fidelity: original icons, avatars, meters and a dial ===
+ src/app/directory/[id]/page.tsx                 |   2 +
+ src/app/directory/page.tsx                      |  10 +-
+ src/components/attendance/PunchControl.tsx      |  24 +++-
+ src/components/attendance/TeamToday.tsx         |  15 +-
+ src/components/attendance/attendance.module.css |   8 ++
+ src/components/leave/LeaveBalances.tsx          |  16 ++-
+ src/components/leave/leave.module.css           |   7 +
+ src/components/requests/ApprovalList.tsx        |  24 ++--
+ src/components/shell/AppShell.tsx               |  57 ++++----
+ src/components/shell/nav.ts                     |  18 ++-
+ src/components/shell/shell.module.css           |  37 ++++-
+ src/components/ui/icons.tsx                     | 174 ++++++++++++++++++++++++
+ src/components/ui/index.tsx                     | 122 ++++++++++++++++-
+ src/components/ui/ui.module.css                 | 123 +++++++++++++++++
+ 14 files changed, 562 insertions(+), 75 deletions(-)
+
+
+=== ea57170 2026-09-09 Record that this repository's home is temporary ===
+ README.md | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+
+=== f0c8b79 2026-09-09 Name the package magppie-hr-app to match the repository ===
+ package.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+
+=== 5dc7d5a 2026-09-09 Say plainly in the README which three things are not real ===
+ README.md | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+
+=== 24679fe 2026-09-09 Finish the partial screens: profile editing, policies, documents, team day ===
+ src/app/attendance/page.tsx                       |  12 +-
+ src/app/directory/[id]/page.tsx                   |  40 ++--
+ src/components/attendance/TeamToday.tsx           | 152 +++++++++++++++
+ src/components/attendance/attendance.module.css   |   7 +
+ src/components/directory/ProfileEditor.tsx        | 213 ++++++++++++++++++++++
+ src/components/directory/profileEditor.module.css |  85 +++++++++
+ src/components/documents/DocumentsPanel.tsx       |  25 ++-
+ src/components/documents/PolicyList.tsx           | 107 +++++++----
+ src/components/documents/documents.module.css     |  39 ++++
+ src/components/requests/renderers.tsx             |  22 ++-
+ src/data/directory.ts                             | 131 ++++++++++++-
+ src/data/documents.ts                             |   8 +
+ src/data/requests.ts                              |   9 +
+ src/hooks/useAsync.ts                             |  24 ++-
+ src/lib/labels.ts                                 |  21 +++
+ src/lib/types.ts                                  |   2 +
+ src/mocks/attendanceAndLeave.ts                   |   8 +-
+ src/mocks/policies.ts                             |  94 +++++++++-
+ 18 files changed, 915 insertions(+), 84 deletions(-)
+
+
+=== b0219b3 2026-09-09 Move to the three-layer beige, white and brown palette ===
+ README.md                             | 21 ++++++++++++++-------
+ src/app/globals.css                   | 34 ++++++++++++++++++++--------------
+ src/components/shell/shell.module.css | 15 ++++++++-------
+ src/components/ui/ui.module.css       |  8 ++++----
+ 4 files changed, 46 insertions(+), 32 deletions(-)
+
+
+=== 582643a 2026-09-09 Document the palette, the name placeholder and the contrast results ===
+ README.md | 45 +++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 39 insertions(+), 6 deletions(-)
+
+
+=== 7ad5197 2026-09-09 Apply the brown-and-white visual direction and the Keka-shaped structure ===
+ src/app/directory/tree/tree.module.css          |  10 ++-
+ src/app/globals.css                             | 108 +++++++++++++++++------
+ src/app/home.module.css                         |   6 +-
+ src/app/layout.tsx                              |  14 ++-
+ src/app/leave/leave.module.css                  |  11 ++-
+ src/app/page.tsx                                | 111 ++++++++++--------------
+ src/app/settings/page.tsx                       |   2 +-
+ src/components/attendance/MonthCalendar.tsx     |  51 ++++++-----
+ src/components/attendance/PunchControl.tsx      |   9 +-
+ src/components/attendance/attendance.module.css |  65 ++++++++++----
+ src/components/documents/PolicyList.tsx         |   4 +-
+ src/components/leave/leave.module.css           |  32 ++++---
+ src/components/requests/ApprovalList.tsx        |   2 +-
+ src/components/requests/requests.module.css     |  17 ++--
+ src/components/shell/AppShell.tsx               |  56 +++++++-----
+ src/components/shell/nav.ts                     |  53 ++++++++---
+ src/components/shell/shell.module.css           |  91 +++++++++++++++----
+ src/components/ui/index.tsx                     |  17 ++--
+ src/components/ui/ui.module.css                 |  88 +++++++++++++++----
+ src/lib/constants.ts                            |  11 +++
+ src/lib/labels.ts                               |  37 ++++----
+ 21 files changed, 542 insertions(+), 253 deletions(-)
+
+
+=== 24a983c 2026-09-09 Add Home, Settings, and a README that names the swap points ===
+ .claude/launch.json                          |  11 ++
+ README.md                                    | 106 ++++++++++++---
+ src/app/home.module.css                      | 109 ++++++++++++++++
+ src/app/page.tsx                             | 184 ++++++++++++++++++++++++++-
+ src/app/settings/page.tsx                    | 163 ++++++++++++++++++++++++
+ src/app/settings/settings.module.css         |  55 ++++++++
+ src/components/leave/leave.module.css        |   2 +-
+ src/components/shell/CurrentUserProvider.tsx |  29 ++---
+ src/components/shell/shell.module.css        |   8 ++
+ src/data/home.ts                             |  70 ++++++++++
+ src/hooks/useAsync.ts                        |  17 ++-
+ src/lib/home.ts                              |  14 ++
+ src/mocks/attendanceAndLeave.ts              |  16 ++-
+ 13 files changed, 738 insertions(+), 46 deletions(-)
+
+
+=== c77e5b2 2026-09-09 Add Attendance and Leave screens ===
+ src/app/attendance/attendance.module.css        |  49 +++++
+ src/app/attendance/page.tsx                     | 163 +++++++++++++++
+ src/app/leave/leave.module.css                  |  27 +++
+ src/app/leave/page.tsx                          |  81 ++++++++
+ src/components/attendance/DayDetail.tsx         | 217 +++++++++++++++++++
+ src/components/attendance/MonthCalendar.tsx     | 101 +++++++++
+ src/components/attendance/PunchControl.tsx      | 119 +++++++++++
+ src/components/attendance/attendance.module.css | 263 ++++++++++++++++++++++++
+ src/components/leave/LeaveBalances.tsx          | 103 ++++++++++
+ src/components/leave/LeaveHistory.tsx           |  60 ++++++
+ src/components/leave/LeaveRequestForm.tsx       | 163 +++++++++++++++
+ src/components/leave/TeamCalendar.tsx           | 131 ++++++++++++
+ src/components/leave/leave.module.css           | 204 ++++++++++++++++++
+ 13 files changed, 1681 insertions(+)
+
+
+=== 2d6ebf1 2026-09-09 Add the app shell, shared components, Directory and Documents ===
+ .gitignore                                    |   3 +
+ src/app/approvals/page.tsx                    |  91 ++++++++++
+ src/app/directory/[id]/page.tsx               | 249 ++++++++++++++++++++++++++
+ src/app/directory/[id]/profile.module.css     |  82 +++++++++
+ src/app/directory/page.tsx                    | 122 +++++++++++++
+ src/app/directory/tree/page.tsx               | 156 ++++++++++++++++
+ src/app/directory/tree/tree.module.css        |  89 +++++++++
+ src/app/documents/documents.module.css        |  10 ++
+ src/app/documents/page.tsx                    |  60 +++++++
+ src/app/page.tsx                              |  72 +-------
+ src/components/documents/DocumentsPanel.tsx   | 173 ++++++++++++++++++
+ src/components/documents/PolicyList.tsx       |  72 ++++++++
+ src/components/documents/documents.module.css |  94 ++++++++++
+ src/components/requests/ApprovalList.tsx      | 152 ++++++++++++++++
+ src/components/requests/renderers.tsx         | 117 ++++++++++++
+ src/components/requests/requests.module.css   |  98 ++++++++++
+ 16 files changed, 1573 insertions(+), 67 deletions(-)
+
+
+=== 64c8a5b 2026-09-09 Add data contract, mock data and the auth seam ===
+ package-lock.json                            | 6144 ++++++++++++++++++++++++++
+ src/app/globals.css                          |  126 +-
+ src/app/layout.tsx                           |   31 +-
+ src/app/page.module.css                      |  150 -
+ src/components/shell/AppShell.tsx            |  111 +
+ src/components/shell/CurrentUserProvider.tsx |   53 +
+ src/components/shell/nav.ts                  |   24 +
+ src/components/shell/shell.module.css        |  203 +
+ src/components/ui/index.tsx                  |  389 ++
+ src/components/ui/ui.module.css              |  371 ++
+ src/data/attendance.ts                       |  187 +
+ src/data/directory.ts                        |  140 +
+ src/data/documents.ts                        |   86 +
+ src/data/leave.ts                            |  165 +
+ src/data/notifications.ts                    |   17 +
+ src/data/requests.ts                         |  111 +
+ src/data/store.ts                            |   88 +
+ src/hooks/useAsync.ts                        |   43 +
+ src/lib/auth.ts                              |   69 +
+ src/lib/clock.ts                             |   13 +
+ src/lib/date.ts                              |   86 +
+ src/lib/labels.ts                            |  112 +
+ src/lib/permissions.ts                       |   95 +
+ src/lib/types.ts                             |  213 +
+ src/mocks/attendanceAndLeave.ts              |  422 ++
+ src/mocks/calendar.ts                        |   18 +
+ src/mocks/documents.ts                       |   53 +
+ src/mocks/employees.ts                       |   63 +
+ src/mocks/employmentRecords.ts               |   37 +
+ src/mocks/index.ts                           |   24 +
+ src/mocks/leaveTypes.ts                      |   10 +
+ src/mocks/notifications.ts                   |   15 +
+ src/mocks/policies.ts                        |   25 +
+ src/mocks/seed.ts                            |   34 +
+ 34 files changed, 9532 insertions(+), 196 deletions(-)
+
+
+=== 5e963c8 2026-09-09 Initial commit from Create Next App ===
+ .gitignore              |  41 +++++++++++++
+ AGENTS.md               |   9 +++
+ CLAUDE.md               |   1 +
+ README.md               |  36 ++++++++++++
+ eslint.config.mjs       |  18 ++++++
+ next.config.ts          |   7 +++
+ package.json            |  24 ++++++++
+ public/file.svg         |   1 +
+ public/globe.svg        |   1 +
+ public/next.svg         |   1 +
+ public/vercel.svg       |   1 +
+ public/window.svg       |   1 +
+ src/app/favicon.ico     | Bin 0 -> 25931 bytes
+ src/app/globals.css     |  49 ++++++++++++++++
+ src/app/layout.tsx      |  26 +++++++++
+ src/app/page.module.css | 150 ++++++++++++++++++++++++++++++++++++++++++++++++
+ src/app/page.tsx        |  69 ++++++++++++++++++++++
+ tsconfig.json           |  34 +++++++++++
+ 18 files changed, 469 insertions(+)

@@ -1,171 +1,214 @@
-# Magppie HR — front end
+# `[APP_NAME]` — Magppie HR
 
-In-house HR app for Magppie, intended to replace Keka. **This repository is the
-front end only, running entirely on mock data.** There is no back end, no API
-routes, no database and no authentication in it yet.
+In-house HR application for **Magppie**, a manufacturer of engineered-stone kitchens,
+intended to replace Keka. Phone-first, because most of the workforce is on a factory
+floor, a showroom floor or a client site rather than at a desk.
 
-> **This repository has a temporary home.** It belongs to the Magppie GitHub
-> account (`Magppie1234`) and is to be transferred there. It currently sits under
-> `jiyasiwach` only because that is the account with push access on the machine
-> it was built on. The URL will change when it moves.
+> **The product name has not been chosen.** The app renders the literal placeholder
+> `[APP_NAME]`, defined once in `src/lib/constants.ts`. Changing it is a one-line change.
 
-All forty employees, their departments, emails and reporting lines are invented
-for this build. Nothing here is real staff data.
+> **This repository has a temporary home.** It belongs to the Magppie GitHub account
+> (`Magppie1234`) and is to be transferred there. It sits under `jiyasiwach` only because
+> that is the account with push access on the machine it was built on.
 
-Nothing in this project is shared with, imported from, or deployed alongside any
-other product.
+**Live:** https://magppie-hr-app.vercel.app
 
-## Running it
+---
+
+## Status at a glance
+
+| | |
+| --- | --- |
+| Front end | **Complete** for the current scope, deployed |
+| Data | **100% invented mock data**, in memory, resets on reload |
+| Backend | **Designed, not applied** — four migrations in `supabase/migrations/`, never run |
+| Auth | **None.** A role switcher stands in for sign-in. |
+| Tests | **None automated.** Manual checklist in `docs/12-testing.md`. |
+
+**New here — including if you are an AI assistant — read [`AI_MEMORY.md`](AI_MEMORY.md)
+first.** It contains the hard constraints, the decisions already taken, and the 24 open
+questions that were deliberately flagged rather than guessed.
+
+---
+
+## Stack
+
+Next.js 16 (App Router) · TypeScript · **plain CSS Modules** — no Tailwind, no UI library ·
+React 19 · Inter via `next/font` · Supabase (Postgres) for the backend.
+
+---
+
+## Getting started
 
 ```bash
+git clone https://github.com/jiyasiwach/magppie-hr-app.git
+cd magppie-hr-app
 npm install
+cp .env.example .env.local     # optional today — the app runs on mocks
 npm run dev -- -p 3040
 ```
 
-Then open http://localhost:3040.
+Open http://localhost:3040.
 
-Stack: Next.js 16 (App Router), TypeScript, plain CSS Modules. No UI library and
-no CSS framework.
+Port 3040 avoids collisions with other Magppie projects (3020, 3021, 3060, 3080).
 
-## What is in this pass
+### Trying it out
+Use the **role switcher** in the top bar (or in the account drawer on a phone) to move
+between the three views:
 
-Five sections, reached from a bottom bar on a phone and the same five, in the
-same order, as a left navigation on desktop:
-
-| Section | What it holds |
+| Persona | Sees |
 | --- | --- |
-| **Home** | Quick actions, the Today card (shift, hours against expected, clock in/out, live timer, location punch), off this week, wish them, announcements, upcoming holidays |
-| **Inbox** | Every pending thing in one list — approvals to decide and notices from HR — filtered by type |
-| **Wall** | Company feed: posts, reactions, comments, compose |
-| **Me** | Four tabs: Time, Finances, Documents, Assets |
-| **My Team** | Departments, off this week, teammates with live filter counts, and for a manager the team's attendance and leave calendar |
+| **Employee** — Priya Sharma | Own records; department colleagues |
+| **Manager** — Vikram Nair | Eight reports, an approvals queue, team calendars |
+| **HR admin** — Imran Qureshi | Everything, plus editing and organisation settings |
 
-Everything else is reached from inside one of those: the colleague search and
-profiles, the reporting tree, attendance logs, leave, requests, policies, the ID
-card, settings, feedback and about.
+Worth opening: **Home** (clock in and watch the timer), **Inbox** as the manager,
+**My Leave → "How was this balance worked out?"**, and **Settings → Review aids**, which
+force the loading, empty and error states so you can check them rather than trust them.
 
-Not in this pass: sign-in, any back end, payslips beyond a not-configured state,
-hiring, and performance reviews.
+---
 
-## Name
+## Scripts
 
-The product name has not been chosen. It lives in `src/lib/constants.ts` as
-`APP_NAME`, currently the literal placeholder `[APP_NAME]`. The shell and the
-document metadata read it from there — changing the name is a one-line change,
-and nothing else in the app types it out.
+| Command | Does |
+| --- | --- |
+| `npm run dev` | Dev server (pass `-- -p 3040`) |
+| `npm run build` | Production build |
+| `npm start` | Serve the build |
+| `npm run lint` | ESLint |
+| `npx tsc --noEmit` | Type check |
 
-## Visual direction
+There is no `test` script because there are no tests.
 
-Warm brown and white, flat. Tokens are in `src/app/globals.css`:
+---
 
-Three layers, and the layering does the layout work: a beige page, white
-content cards on it, and beige again for the chrome. Cards are never tinted.
+## Configuration
 
-| Role | Token | Value |
-| --- | --- | --- |
-| Page | `--bg` | `#f1e9dd` |
-| Content cards | `--surface` | `#ffffff` |
-| Chrome — sidebar, header, table heads, filter bars | `--surface-2` | `#e8dece` |
-| Primary brown | `--brand` | `#8b6f4e` |
-| Text | `--ink` | `#2e241c` |
-| Borders | `--line` | `#ddd1bf` |
-| Muted text | `--ink-3` | `#6e5f50` |
+Two variables, both public by design — see `docs/09-integrations-and-env.md`.
 
-Rules the code follows:
-
-- **Status colours are never brown.** Green, amber, red, blue and a neutral tan
-  live in the same file as `--ok-*`, `--warn-*`, `--danger-*`, `--info-*` and
-  `--neutral-*`. They drive the status pills, the attendance calendar and the
-  team calendar. Colour is always backed by a label or a mark letter, so the
-  calendar is still readable without relying on colour alone.
-- **Contrast was measured, not assumed.** All 23 text-on-surface pairs clear
-  WCAG AA (4.5:1). Two results are worth knowing: muted text is `#6e5f50`
-  rather than the `#7a6a5a` in the brief, because that value measured 4.32:1 on
-  the beige page and 3.9:1 on the beige chrome — both under AA; and white on the
-  primary brown is 4.69:1, which passes with no headroom, so button labels are
-  600 weight.
-- **Flat.** Solid surfaces and 1px borders. No gradients, no glassmorphism, no
-  decorative shadows.
-- **One sans-serif** (Inter, self-hosted via `next/font`), three weights.
-
-The structure follows how Keka organises an HR app — grouped left navigation
-with a person's own things above administrative things, a card-based personal
-home, one unmissable punch control, a single-window approvals queue, a month
-calendar with a day detail behind it, list-and-detail everywhere else. None of
-Keka's design work, wording, imagery or layouts is reproduced.
-
-## Three rules the code actually enforces
-
-**There is no fake login.** `getCurrentUser()` in `src/lib/auth.ts` is the only
-place that decides who is signed in. No component hardcodes a person, and there
-is no demo-user button. The role switcher in the header changes which mock
-person that function returns so all three views can be checked.
-
-**Nothing is destructive.** There are no delete buttons. Documents archive,
-leave requests cancel, employees go inactive.
-
-**Calculated numbers show their working.** Every leave balance and every monthly
-attendance count has an expander next to it listing the transactions or days
-that produced it.
-
-## Where the mock data lives
-
-```
-src/lib/types.ts      the data contract — the shapes, defined once
-src/mocks/            the mock records themselves
-src/data/             the read/write layer every screen goes through
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://<PROJECT_REF>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon / publishable key>
 ```
 
-Screens never import from `src/mocks` for record data — they call `src/data`.
+There is deliberately **no service-role key**. Nothing needs to bypass row-level security,
+and a service key in a Next.js project is one careless import away from the browser.
 
-- `src/mocks/employees.ts`, `employmentRecords.ts`, `leaveTypes.ts`,
-  `documents.ts`, `policies.ts`, `notifications.ts`, `calendar.ts` are
-  hand-written records.
-- `src/mocks/attendanceAndLeave.ts` generates punches, attendance days, leave
-  requests, the leave ledger and the generic requests **deterministically** —
-  40 people over three months is too much to hand-write, and a fixed seed means
-  every reviewer sees identical screens. The generated records use exactly the
-  same shapes.
-- `src/lib/clock.ts` pins "today" to 2026-09-09 so the screens are stable.
+Until these are filled in the app still runs — it never constructs a Supabase client while
+on mock data.
 
-## What a back-end developer replaces
+---
 
-Only these, in this order:
+## Backend setup (not yet done)
 
-1. **`src/lib/auth.ts`** — replace the body of `getCurrentUser()` with a real
-   session lookup, and delete `setActiveMockUserId`, `mockPersonas` and the
-   switcher that calls it. `deriveRole()` should be replaced by a real role
-   stored against the user; today it is guessed from department and reports.
-2. **`src/data/*.ts`** — each exported function keeps its signature and return
-   type and calls the API instead of `src/data/store.ts`. The functions are
-   already async, so no screen changes.
-3. **`src/data/store.ts`** and **`src/mocks/`** — delete both once step 2 is
-   done. `reviewFlags` (the failure/empty/latency toggles on the Settings
-   screen) go with them.
+1. Create a Supabase project: org `Magppie1234's Org`, name `magppie-hr-prod`, region
+   `ap-southeast-1`.
+2. Apply `supabase/migrations/0001` → `0004` in order.
+3. Run the Supabase advisors; fix what they flag.
+4. Copy the URL and anon key into `.env.local` and into Vercel.
+5. Configure Google OAuth (needs a Workspace admin) — `docs/10-authentication.md`.
 
-No screen or component reads mock data directly, and no screen reshapes a
-record, so nothing above the `src/data` layer should need to change.
+---
 
-## What is deliberately not real
+## Deployment
 
-Three things behave honestly rather than pretending:
+```bash
+npx vercel@latest --prod --yes
+```
 
-- **No file storage.** Documents record the file name, type, uploader, date and
-  visibility. There is no file behind the record, and the download button says
-  so rather than failing silently.
-- **Policy text is placeholder wording** written for this build, not the
-  company's approved policies.
-- **Nothing persists.** Everything you change lives in memory for the session.
-  Reload and the mock data resets.
+Manual, from a machine with the Vercel CLI signed in. There is no CI. Transferring the
+repo to `Magppie1234` unlocks git-linked auto-deploy on the Magppie Vercel team —
+see `docs/11-deployment.md`.
 
-Everything else does what it looks like it does, including the writes: punching,
-applying for leave, raising a regularisation, approving or rejecting, uploading
-and archiving a document, acknowledging a policy, and editing a profile.
+---
 
-## Known gaps and open questions
+## Three things that are deliberately not real
 
-See the handover notes — the short version is that role definitions, leave
-policy rules (holidays inside a leave range, negative balances, notice periods),
-per-location weekly offs and shift timings, the approval chain beyond one
-manager, and file storage for documents are all unspecified and are marked in
-the UI where they bite.
+They say so on screen rather than pretending, and that is intentional. **Do not "fix"
+them by faking success.**
+
+1. **No file storage** — documents are records; the Download button explains there is
+   nothing behind it; a post's image is a caption.
+2. **Salary and Expenses** show an explicit not-configured state. There is no expense
+   policy to validate against and no payroll.
+3. **The feedback form** says plainly that nothing was sent, because there is nowhere for
+   it to go yet.
+
+Everything else does what it looks like it does, including the writes.
+
+---
+
+## Documentation
+
+| File | Contents |
+| --- | --- |
+| [`AI_MEMORY.md`](AI_MEMORY.md) | **Start here.** Constraints, conventions, decisions, philosophy |
+| [`docs/01`](docs/01-project-overview.md) | Vision, scope, features, roles, roadmap |
+| [`docs/02`](docs/02-conversation-history.md) | Full project history, including rejected ideas |
+| [`docs/03`](docs/03-architecture.md) | Layers, state, module responsibilities |
+| [`docs/04`](docs/04-database.md) | Schema, ER diagram, RLS |
+| [`docs/05`](docs/05-api.md) | RPC and REST surface |
+| [`docs/06`](docs/06-ui-ux.md) | Design system, screens, flows, accessibility |
+| [`docs/07`](docs/07-business-logic.md) | Every calculation and edge case |
+| [`docs/08`](docs/08-workflows.md) | Step-by-step workflows |
+| [`docs/09`](docs/09-integrations-and-env.md) | Integrations, environment variables |
+| [`docs/10`](docs/10-authentication.md) | Auth and authorisation |
+| [`docs/11`](docs/11-deployment.md) | Hosting, CI, backups |
+| [`docs/12`](docs/12-testing.md) | Manual checklist, proposed suite |
+| [`docs/13`](docs/13-bugs-and-open-questions.md) | Bugs and the open questions |
+| [`docs/14`](docs/14-backlog.md) | Prioritised backlog |
+| [`docs/15`](docs/15-code-reference.md) | Every module and export |
+| [`docs/16`](docs/16-folder-structure.md) | Directory map |
+
+---
+
+## Troubleshooting
+
+**The app shows `[APP_NAME]` everywhere.** Correct — the name has not been chosen.
+
+**`Supabase is not configured`.** You called `createClient()` without env vars. The app on
+mock data never does; fill in `.env.local` if you are wiring the backend.
+
+**Everything I changed disappeared after a reload.** Expected. The store is in memory.
+
+**Dates look wrong / it is always 9 September 2026.** `MOCK_TODAY` in `src/lib/clock.ts`
+pins the app so screens are deterministic. The Home timer deliberately uses real time.
+
+**Lint fails with "Cannot call impure function during render".** React 19's purity rule.
+Do not call `Date.now()` in render — use `useNow()` from `src/hooks/useTicker.ts`.
+
+**`repo_no_access` when linking Vercel to GitHub.** The Magppie Vercel team's GitHub app
+can only see the `Magppie1234` org; the repo is under `jiyasiwach`. Transfer it.
+
+**Commits show the wrong author.** The machine's global git identity is
+`SUNROOOF <sunrooof@Magppie.local>`. This repo overrides it locally to
+`Magppie <info@mymagppie.com>`. Keep the override.
+
+**Port 3040 is busy.** `lsof -ti:3040 | xargs kill`.
+
+---
+
+## FAQ
+
+**Why no Tailwind?** The project owner chose plain CSS Modules.
+
+**Why is the palette brown and beige?** It is the owner's specified direction. Status
+colours are deliberately *not* brown — people must not misread their own attendance.
+
+**Why is muted text `#6E5F50` when the brief says `#7A6A5A`?** The briefed value measured
+4.32:1 on the page and 3.90:1 on the chrome, both below WCAG AA. The brief's own rule said
+contrast must be checked rather than assumed.
+
+**Why can I not delete anything?** By design. Records go inactive, cancelled or archived.
+Punches cannot even be updated — a wrong day is corrected by a regularisation, which
+leaves a trail.
+
+**Why is there a role switcher instead of a login?** The brief forbade faking a login. One
+function, `getCurrentUser()`, decides who is signed in; the switcher changes what it
+returns. Real auth replaces that one function.
+
+**Why are balances not stored?** So every number can show its working. A balance is the
+sum of its ledger.
+
+**Can I copy screens from Keka?** No. Follow how it *works*; never reproduce its design,
+icons, wording or layouts.
