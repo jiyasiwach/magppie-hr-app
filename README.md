@@ -4,6 +4,9 @@ In-house HR application for **Magppie**, a manufacturer of engineered-stone kitc
 intended to replace Keka. Phone-first, because most of the workforce is on a factory
 floor, a showroom floor or a client site rather than at a desk.
 
+Six sections — **Home · Inbox · Wall · Me · My Team · Policies** — as a bottom bar on a
+phone and a left navigation on desktop.
+
 > **The product name has not been chosen.** The app renders the literal placeholder
 > `[APP_NAME]`, defined once in `src/lib/constants.ts`. Changing it is a one-line change.
 

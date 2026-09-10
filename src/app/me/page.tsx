@@ -17,7 +17,6 @@ import {
   IconCalendar,
   IconChevronRight,
   IconClock,
-  IconDocument,
   IconIdCard,
   IconInbox,
   IconPlus,
@@ -211,16 +210,6 @@ function DocumentsTab({ employeeId }: { employeeId: string }) {
             title="View ID card"
             body="Your name, code, department and designation."
             Icon={IconIdCard}
-          />
-        </div>
-      </Card>
-      <Card title="Policies">
-        <div className={s.actionGrid}>
-          <ActionCard
-            href="/policies"
-            title="Policy acknowledgements"
-            body="Read a policy and record that you have."
-            Icon={IconDocument}
           />
         </div>
       </Card>

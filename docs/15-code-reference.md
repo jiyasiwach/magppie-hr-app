@@ -104,7 +104,8 @@ a value so nothing calls `Date.now()` during render (an ESLint purity rule catch
 ### `documents.ts`
 `getOrgDocuments()` · `getDocuments(user, employeeId, includeArchived)` ·
 `archiveDocument(id)` · `restoreDocument(id)` · `uploadDocument(input)` ·
-`getPolicies(employeeId)` · `acknowledgePolicy(policyId, employeeId)`.
+`getPolicies(employeeId)` · `getUnacknowledgedPolicyCount(employeeId)` ·
+`acknowledgePolicy(policyId, employeeId)`.
 
 ### `workplace.ts`
 `getAnnouncements()` · `canPostAnnouncement(user)` · `createAnnouncement(...)` ·
@@ -154,7 +155,7 @@ no-permission state — this is how rule 4.4 is satisfied everywhere.
 | `shell/CurrentUserProvider.tsx` | `useCurrentUser()`, `switchUser()` |
 | `shell/ColleagueSearch.tsx` | Top-bar search, 2-char threshold, click-outside |
 | `shell/ProfileDrawer.tsx` | Account drawer |
-| `shell/nav.ts` | The five items as data |
+| `shell/nav.ts` | The six nav items as data (`label`, `shortLabel`, `icon`) |
 | `home/TodayCard.tsx` | Shift, dial, timer, clock control, punch, working expander |
 | `attendance/PunchControl.tsx` | Standalone punch card on `/attendance` |
 | `attendance/MonthCalendar.tsx` | Month grid, status colours + mark letters, legend |
@@ -177,9 +178,11 @@ no-permission state — this is how rule 4.4 is satisfied everywhere.
 ## `src/app/` — routes
 
 `/` Home · `/inbox` · `/wall` · `/me` (`?tab=time|finances|documents|assets`) ·
-`/me/id-card` · `/team` · `/directory` · `/directory/[id]` · `/directory/tree` ·
-`/attendance` · `/leave` · `/leave/apply` · `/requests` · `/requests/new` · `/policies` ·
-`/settings` · `/feedback` · `/about`
+`/me/id-card` · `/team` · **`/policies`** · `/directory` · `/directory/[id]` ·
+`/directory/tree` · `/attendance` · `/leave` · `/leave/apply` · `/requests` ·
+`/requests/new` · `/settings` · `/feedback` · `/about`
+
+The first six are top-level navigation; the rest are reached from inside them.
 
 `layout.tsx` loads Inter, sets metadata from `APP_NAME`, mounts `AppShell`.
 `globals.css` holds the palette and the reset.

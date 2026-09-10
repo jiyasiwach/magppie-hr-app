@@ -276,6 +276,17 @@ export function IconMegaphone(props: IconProps) {
   );
 }
 
+export function IconPolicy(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M13 3.5H7.5A1.5 1.5 0 0 0 6 5v14a1.5 1.5 0 0 0 1.5 1.5h9A1.5 1.5 0 0 0 18 19v-6" />
+      <path d="M13 3.5V8.5H18" />
+      <path d="m14 16.5 1.8 1.8L20 14" />
+      <path d="M9 12h4M9 15.5h2.5" />
+    </Svg>
+  );
+}
+
 /** Named lookup for the navigation, so nav config stays data. */
 export const navIcons = {
   home: IconHome,
@@ -287,6 +298,7 @@ export const navIcons = {
   settings: IconSettings,
   wall: IconWall,
   user: IconUser,
+  policy: IconPolicy,
 } as const;
 
 export type NavIconName = keyof typeof navIcons;

@@ -21,7 +21,7 @@ Keka currently covers (payroll, onboarding, performance) once the core is truste
 ## Scope
 
 ### In scope, and built
-- App shell: five sections, top bar with colleague search, account drawer
+- App shell: six sections, top bar with colleague search, account drawer
 - Home dashboard with clock in/out
 - Inbox — one generic approvals + notices queue
 - Wall — company social feed
@@ -48,7 +48,7 @@ Keka currently covers (payroll, onboarding, performance) once the core is truste
 
 | Area | Feature | Status |
 | --- | --- | --- |
-| Shell | Five-section nav, phone + desktop | Done |
+| Shell | Six-section nav, phone + desktop, badges on Inbox and Policies | Done |
 | Shell | Colleague search (2-char threshold) | Done |
 | Shell | Account drawer: settings, ID card, feedback, about, logout | Done |
 | Shell | Role switcher (mock only — goes with real auth) | Done |
@@ -58,7 +58,8 @@ Keka currently covers (payroll, onboarding, performance) once the core is truste
 | Wall | Posts, reactions, comments, composer | Done (no image upload) |
 | Me · Time | Raise request, logs and shifts, request history, apply leave, balances, holidays | Done |
 | Me · Finances | Salary, Expenses | Not-configured state, by design |
-| Me · Documents | Org documents, my documents, ID card, policies | Done (no file store) |
+| Me · Documents | Org documents, my documents, ID card | Done (no file store) |
+| Policies | Top-level section: read and acknowledge, with an unacknowledged badge | Done |
 | Me · Assets | Assigned assets, asset requests | Done |
 | My Team | Departments, off this week, teammates + 4 live-count chips, manager views | Done |
 | Directory | Search, filters, table/cards, profile, reporting tree, HR editing | Done |

@@ -71,7 +71,11 @@ transitions, no entrance animations. This is a tool opened ten times a day.
 
 ## Layout and navigation
 
-**Five sections**, same order everywhere: Home · Inbox · Wall · Me · My Team.
+**Six sections**, same order everywhere: Home · Inbox · Wall · Me · My Team · Policies.
+
+The brief fixes five; Policies was promoted to a top-level item at the owner's request.
+The bottom bar uses a `shortLabel` per item ("Team" rather than "My Team") so six fit —
+63px each at 375px, no overflow. Inbox and Policies both carry a count badge.
 
 | Breakpoint | Layout |
 | --- | --- |
@@ -116,8 +120,14 @@ inline add box. `?wish=<id>&kind=<kind>` pre-fills a birthday or anniversary mes
 ### Me `/me?tab=`
 Four tabs: **Time** (Raise Request, Logs and shifts, Request History, Apply Leave, Leave
 Balances, full holiday list) · **Finances** (Salary and Expenses, both in an explicit
-not-configured state) · **Documents** (org documents, my documents, ID card, policies) ·
+not-configured state) · **Documents** (org documents, my documents, ID card) ·
 **Assets** (assigned assets, asset requests).
+
+### Policies `/policies`
+Its own section. Each row: title, version, summary, published date, and an
+Acknowledged / Not acknowledged pill. **Read** expands the text; the acknowledge button
+stays disabled until it has been opened. Viewing someone else's record shows status but
+no acknowledge action.
 
 ### My Team `/team`
 Departments with headcount and recent joiners → Off this week → Teammates with four

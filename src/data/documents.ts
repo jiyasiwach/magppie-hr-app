@@ -91,6 +91,16 @@ export async function getPolicies(employeeId: string): Promise<PolicyRow[]> {
   );
 }
 
+/** Drives the badge on the Policies navigation item. */
+export async function getUnacknowledgedPolicyCount(employeeId: string): Promise<number> {
+  return read(() => {
+    const acknowledged = new Set(
+      store.policyAcknowledgements.filter((a) => a.employeeId === employeeId).map((a) => a.policyId),
+    );
+    return store.policies.filter((p) => !acknowledged.has(p.id)).length;
+  });
+}
+
 export async function acknowledgePolicy(policyId: string, employeeId: string): Promise<void> {
   await write(() => {
     const already = store.policyAcknowledgements.some((a) => a.policyId === policyId && a.employeeId === employeeId);

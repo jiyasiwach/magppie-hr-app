@@ -130,10 +130,15 @@ was a real bug found in testing. Do not "simplify" it back.
 ## 6. What is built, precisely
 
 ### Front end — complete and deployed
-Five sections, bottom bar on phones, left nav on desktop, same order in both:
-**Home · Inbox · Wall · Me · My Team**. Plus, reached from inside them: colleague search,
-employee profile, reporting tree, attendance logs, leave balances + apply, raise request,
-request history, policies, ID card, settings, feedback, about.
+Six sections, bottom bar on phones, left nav on desktop, same order in both:
+**Home · Inbox · Wall · Me · My Team · Policies**. Plus, reached from inside them:
+colleague search, employee profile, reporting tree, attendance logs, leave balances +
+apply, raise request, request history, ID card, settings, feedback, about.
+
+> The brief fixes the navigation at five. **Policies was promoted to a sixth item at the
+> owner's explicit request**, after the trade-off (a tighter bottom bar on a phone) was
+> put to them. The bar uses `shortLabel` so six items fit — measured at 63px each on a
+> 375px screen, no overflow. Both navs carry a count badge of unacknowledged policies.
 
 ### Backend — designed, NOT applied
 `supabase/migrations/` — 1,116 lines across four files:

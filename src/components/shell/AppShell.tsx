@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, type ReactNode } from 'react';
 import { navIcons } from '@/components/ui/icons';
+import { getUnacknowledgedPolicyCount } from '@/data/documents';
 import { getPendingCount } from '@/data/requests';
 import { useAsync } from '@/hooks/useAsync';
 import { mockPersonas } from '@/lib/auth';
@@ -45,6 +46,17 @@ export function RoleSwitcher({ block = false }: { block?: boolean }) {
 function InboxBadge() {
   const { user } = useCurrentUser();
   const { state } = useAsync(() => getPendingCount(user), [user.employee.id]);
+  if (state.status !== 'ready' || state.data === 0) return null;
+  return <span className={s.navBadge}>{state.data}</span>;
+}
+
+/** How many policies this person still has to acknowledge. */
+function PolicyBadge() {
+  const { user } = useCurrentUser();
+  const { state } = useAsync(
+    () => getUnacknowledgedPolicyCount(user.employee.id),
+    [user.employee.id],
+  );
   if (state.status !== 'ready' || state.data === 0) return null;
   return <span className={s.navBadge}>{state.data}</span>;
 }
@@ -101,6 +113,7 @@ function Chrome({ children }: { children: ReactNode }) {
                     <Icon className={s.navIcon} />
                     <span className={s.navLabel}>{item.label}</span>
                     {item.href === '/inbox' ? <InboxBadge /> : null}
+                    {item.href === '/policies' ? <PolicyBadge /> : null}
                   </Link>
                 </li>
               );
@@ -123,8 +136,9 @@ function Chrome({ children }: { children: ReactNode }) {
                   aria-current={isActive(item.href) ? 'page' : undefined}
                 >
                   <Icon size={21} />
-                  <span>{item.label}</span>
+                  <span>{item.shortLabel}</span>
                   {item.href === '/inbox' ? <InboxBadge /> : null}
+                  {item.href === '/policies' ? <PolicyBadge /> : null}
                 </Link>
               </li>
             );
