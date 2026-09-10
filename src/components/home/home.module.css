@@ -52,11 +52,23 @@
 
 .todayHead {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
   padding: var(--space-4);
   border-bottom: 1px solid var(--line-soft);
+  text-decoration: none;
+  color: inherit;
+}
+
+.todayHead:hover {
+  background: var(--surface-2);
+  color: inherit;
+}
+
+.todayHeadChevron {
+  color: var(--ink-3);
+  flex: 0 0 18px;
 }
 
 .todayDate {

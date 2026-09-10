@@ -68,7 +68,10 @@ export function TodayCard({ employeeId }: { employeeId: string }) {
 
           return (
             <>
-              <div className={s.todayHead}>
+              {/* The header is the card's tap target. The card is not wrapped as a
+                  whole because it contains the clock and punch buttons, and a link
+                  around them would swallow those taps. */}
+              <Link href="/attendance" className={s.todayHead}>
                 <div className={s.todayDate}>
                   <span className={s.todayDay}>
                     {formatDayName(MOCK_TODAY)}, {formatDate(MOCK_TODAY)}
@@ -87,7 +90,8 @@ export function TodayCard({ employeeId }: { employeeId: string }) {
                 ) : (
                   <StatusPill label="No record yet" tone="quiet" />
                 )}
-              </div>
+                <IconChevronRight size={18} className={s.todayHeadChevron} />
+              </Link>
 
               <div className={s.todayBody}>
                 <div className={s.todayHours}>
