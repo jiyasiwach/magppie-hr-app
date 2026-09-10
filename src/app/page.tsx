@@ -26,6 +26,7 @@ import { getUpcomingHolidays } from '@/data/attendance';
 import { getAwayThisWeek, currentWeek } from '@/data/team';
 import { findEmployeeSync } from '@/data/directory';
 import { useAsync } from '@/hooks/useAsync';
+import { MOCK_TODAY } from '@/lib/clock';
 import { formatDate, formatDayName } from '@/lib/date';
 import { visibleEmployeeIds } from '@/lib/permissions';
 import s from '@/components/home/home.module.css';
@@ -38,7 +39,7 @@ export default function HomePage() {
     <>
       <PageHeader
         title={`Hello, ${first}`}
-        description={`${formatDayName(new Date().toISOString().slice(0, 10))} — everything on this screen comes from mock data.`}
+        description={`${formatDayName(MOCK_TODAY)}, ${formatDate(MOCK_TODAY)} — everything on this screen comes from mock data.`}
       />
 
       <Stack>

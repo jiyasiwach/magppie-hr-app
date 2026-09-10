@@ -8,7 +8,7 @@ import { getTodayStatus, punch, workedHours } from '@/data/attendance';
 import { getShift } from '@/data/team';
 import { useAsync } from '@/hooks/useAsync';
 import { formatElapsed, useNow } from '@/hooks/useTicker';
-import { MOCK_TODAY, now } from '@/lib/clock';
+import { MOCK_TODAY, effectiveNow, mockDayIsToday, now } from '@/lib/clock';
 import { formatDate, formatDayName, formatHours, formatTime } from '@/lib/date';
 import { attendanceStatusLabels, attendanceStatusTones, punchSourceLabels } from '@/lib/labels';
 import s from './home.module.css';
@@ -61,10 +61,13 @@ export function TodayCard({ employeeId }: { employeeId: string }) {
           const shift = shiftQuery.state.status === 'ready' ? shiftQuery.state.data : null;
           const expected = shift?.expectedHours ?? 9;
           const lastIn = [...today.punches].reverse().find((p) => p.direction === 'in');
-          const elapsed = today.isPunchedIn && lastIn ? nowMs - Date.parse(lastIn.timestamp) : 0;
-          // Recomputed against the current second so the dial and the timer
-          // never disagree with each other.
-          const hours = workedHours(today.punches, new Date(nowMs));
+          // Measured against the mock day once the wall clock has moved past it,
+          // so a pinned punch is never compared with a later real date.
+          const at = effectiveNow(nowMs);
+          const elapsed = today.isPunchedIn && lastIn ? at.getTime() - Date.parse(lastIn.timestamp) : 0;
+          // Recomputed against the same instant so the dial and the timer never
+          // disagree with each other.
+          const hours = workedHours(today.punches, at);
 
           return (
             <>
@@ -117,7 +120,10 @@ export function TodayCard({ employeeId }: { employeeId: string }) {
                   {today.isPunchedIn && lastIn ? (
                     <>
                       <span className={s.timerValue}>{formatElapsed(elapsed)}</span>
-                      <span>since you clocked in at {formatTime(lastIn.timestamp)}</span>
+                      <span>
+                        since you clocked in at {formatTime(lastIn.timestamp)}
+                        {mockDayIsToday() ? '' : ' · frozen, the mock day has passed'}
+                      </span>
                     </>
                   ) : (
                     <span>Not clocked in. The timer starts when you clock in.</span>
