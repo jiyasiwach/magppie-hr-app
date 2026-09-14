@@ -167,8 +167,8 @@ export default function ApprovalChainsPage() {
                         {step.delegation && step.actingFor ? (
                           <span className={s.delegated}>
                             Delegated to <strong>{step.actingFor.fullName}</strong> until{' '}
-                            {formatDate(step.delegation.validTo)} — {step.delegation.reason}. The trail
-                            will show who actually approved and on whose behalf.
+                            {formatDate(step.delegation.validTo)} — {step.delegation.reason.replace(/\.$/, '')}.
+                            The trail will show who actually approved and on whose behalf.
                           </span>
                         ) : null}
 
