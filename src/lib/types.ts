@@ -203,6 +203,27 @@ export interface EmployeeDocument {
   visibility: DocumentVisibility;
   /** Records are never deleted — they are archived. */
   archived: boolean;
+  /** Only set on documents that require signing. See SigningState. */
+  signing?: DocumentSigning;
+}
+
+export type SigningState = 'not-sent' | 'awaiting-signature' | 'signed' | 'declined' | 'expired';
+
+/**
+ * The signing record. Once `state` is 'signed' this is immutable — a signature
+ * that can be edited afterwards is not a signature.
+ */
+export interface DocumentSigning {
+  state: SigningState;
+  sentOn: IsoTimestamp | null;
+  signedOn: IsoTimestamp | null;
+  signedBy: string | null;
+  /** The provider's envelope/document id. Null until a provider is chosen. */
+  signatureReference: string | null;
+  /** Where it was signed from, as reported by the provider. */
+  signedFrom: string | null;
+  declinedReason: string | null;
+  expiresOn: IsoDate | null;
 }
 
 /** 13.15 Notification */
@@ -531,4 +552,186 @@ export interface VoiceHandler {
   employeeId: string;
   validFrom: IsoDate;
   validTo: IsoDate | null;
+}
+
+// ===========================================================================
+// Custom fields
+// ===========================================================================
+
+export type CustomFieldRecordType = 'employee' | 'request' | 'asset' | 'document';
+export type CustomFieldType = 'text' | 'number' | 'date' | 'dropdown' | 'yesno' | 'file';
+
+/** Who may read a custom field. Defaults to the narrowest. */
+export type FieldAudience = 'hr-only' | 'manager' | 'employee';
+/** Who may write it. */
+export type FieldEditor = 'hr-only' | 'employee';
+
+/** 7.1 Custom field */
+export interface CustomField {
+  id: string;
+  recordType: CustomFieldRecordType;
+  label: string;
+  /** Stable key used in exports and report columns. Never changes. */
+  key: string;
+  fieldType: CustomFieldType;
+  /** Only for dropdowns. Editable without touching the field itself. */
+  options: string[];
+  required: boolean;
+  visibleTo: FieldAudience;
+  editableBy: FieldEditor;
+  displayOrder: number;
+  /** Retired, never deleted — old records keep their values. */
+  active: boolean;
+  helpText: string | null;
+}
+
+/** 7.2 Custom field value */
+export interface CustomFieldValue {
+  id: string;
+  fieldId: string;
+  recordId: string;
+  value: string;
+}
+
+// ===========================================================================
+// Surveys
+// ===========================================================================
+
+export type SurveyStatus = 'draft' | 'open' | 'closed';
+export type SurveyQuestionType = 'rating' | 'single-choice' | 'multi-choice' | 'free-text' | 'enps';
+
+/** 7.4 Survey */
+export interface Survey {
+  id: string;
+  title: string;
+  description: string;
+  /** Policy group ids, entity ids, or 'everyone'. */
+  audience: string[];
+  anonymous: boolean;
+  opensOn: IsoDate;
+  closesOn: IsoDate;
+  status: SurveyStatus;
+  createdBy: string;
+}
+
+/** 7.5 Survey question */
+export interface SurveyQuestion {
+  id: string;
+  surveyId: string;
+  type: SurveyQuestionType;
+  text: string;
+  options: string[];
+  order: number;
+  required: boolean;
+}
+
+/**
+ * 7.6 Survey response. `respondentId` is NULL on an anonymous survey and is
+ * never written — the same rule as the Employee Voice module.
+ */
+export interface SurveyResponse {
+  id: string;
+  surveyId: string;
+  respondentId: string | null;
+  submittedOn: IsoTimestamp;
+}
+
+/**
+ * Records THAT a person responded, without recording WHAT they said.
+ *
+ * Without this, an anonymous survey either allows unlimited resubmission or
+ * has to link answers to people. This is the standard way out: participation
+ * and answers live in separate tables with no key between them.
+ *
+ * FLAGGED: it does reveal that someone took part, which in a very small
+ * audience is itself information. The five-respondent floor is what keeps that
+ * from becoming identifying.
+ */
+export interface SurveyParticipation {
+  id: string;
+  surveyId: string;
+  employeeId: string;
+  respondedOn: IsoDate;
+}
+
+/** 7.7 Survey answer */
+export interface SurveyAnswer {
+  id: string;
+  responseId: string;
+  questionId: string;
+  value: string;
+}
+
+// ===========================================================================
+// HR assistant
+// ===========================================================================
+
+export type AssistantRole = 'person' | 'assistant';
+
+export interface AssistantMessage {
+  id: string;
+  role: AssistantRole;
+  body: string;
+  /** Policy ids the answer was drawn from. Empty means it cited nothing. */
+  citations: string[];
+  createdOn: IsoTimestamp;
+  /** True when the assistant declined and offered a handoff instead. */
+  handoff: boolean;
+}
+
+/** 7.8 Assistant conversation */
+export interface AssistantConversation {
+  id: string;
+  employeeId: string;
+  startedOn: IsoTimestamp;
+  messages: AssistantMessage[];
+  endedInHandoff: boolean;
+}
+
+// ===========================================================================
+// Saved reports
+// ===========================================================================
+
+export type ReportRecordType = 'employee' | 'attendance' | 'leave' | 'request' | 'asset';
+export type FilterOperator = 'eq' | 'ne' | 'contains' | 'gt' | 'lt';
+
+export interface ReportFilter {
+  column: string;
+  operator: FilterOperator;
+  value: string;
+}
+
+/** 7.9 Saved report */
+export interface SavedReport {
+  id: string;
+  name: string;
+  recordType: ReportRecordType;
+  /** Column keys, including `custom:<fieldKey>` for custom fields. */
+  columns: string[];
+  filters: ReportFilter[];
+  groupBy: string | null;
+  createdBy: string;
+  /** Roles it is shared with. Visibility is still evaluated for the runner. */
+  sharedWith: Role[];
+  createdOn: IsoTimestamp;
+}
+
+// ===========================================================================
+// Integrations
+// ===========================================================================
+
+export type IntegrationId = 'zoho-crm' | 'zoho-books' | 'lnd-portal' | 'email' | 'whatsapp';
+export type IntegrationStatus = 'not-configured' | 'connected' | 'degraded' | 'unreachable';
+export type IntegrationDirection = 'read' | 'write' | 'both';
+
+export interface Integration {
+  id: IntegrationId;
+  name: string;
+  purpose: string;
+  direction: IntegrationDirection;
+  status: IntegrationStatus;
+  /** What the user is shown when the other system cannot be reached. */
+  failureBehaviour: string;
+  /** What must be agreed before this can be built. */
+  openQuestions: string[];
 }

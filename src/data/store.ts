@@ -58,6 +58,18 @@ export const store = {
   approvalSteps: [...mocks.approvalSteps] as ApprovalStep[],
   delegations: [...mocks.delegations],
 
+  // Zoho-derived additions
+  customFields: [...mocks.customFields],
+  customFieldValues: [...mocks.customFieldValues],
+  surveys: [...mocks.surveys],
+  surveyQuestions: [...mocks.surveyQuestions],
+  surveyResponses: [...mocks.surveyResponses],
+  surveyAnswers: [...mocks.surveyAnswers],
+  surveyParticipation: [...mocks.surveyParticipation],
+  assistantConversations: [...mocks.assistantConversations],
+  savedReports: [...mocks.savedReports],
+  integrations: [...mocks.integrations],
+
   // Employee Voice
   voiceTickets: [...mocks.voiceTickets] as VoiceTicket[],
   voiceMessages: [...mocks.voiceMessages] as VoiceMessage[],

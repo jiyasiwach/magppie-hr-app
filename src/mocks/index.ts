@@ -26,6 +26,18 @@ export {
 } from './organisation';
 export { voiceTickets, voiceMessages, committeeMembers, voiceHandlers } from './voice';
 export {
+  customFields,
+  customFieldValues,
+  surveys,
+  surveyQuestions,
+  surveyResponses,
+  surveyAnswers,
+  surveyParticipation,
+  assistantConversations,
+  savedReports,
+  integrations,
+} from './extensions';
+export {
   punches,
   attendanceDays,
   leaveRequests,

@@ -35,6 +35,40 @@ function build(): EmployeeDocument[] {
     }
   });
 
+  // Documents that require signing carry a signing state. Offer and
+  // appointment letters are the obvious ones; an unsigned document is never
+  // treated as accepted.
+  const signingByFile: Record<string, EmployeeDocument['signing']> = {};
+  out
+    .filter((d) => d.fileName.includes('appointment-letter') || d.fileName.includes('offer-letter'))
+    .forEach((d, i) => {
+      const signed = i % 3 !== 0;
+      signingByFile[d.id] = signed
+        ? {
+            state: 'signed',
+            sentOn: `${d.uploadedOn.slice(0, 10)}T10:00:00+05:30`,
+            signedOn: `${d.uploadedOn.slice(0, 10)}T14:22:00+05:30`,
+            signedBy: d.employeeId,
+            signatureReference: null,
+            signedFrom: 'Reported by the e-signature provider once one is chosen',
+            declinedReason: null,
+            expiresOn: null,
+          }
+        : {
+            state: 'awaiting-signature',
+            sentOn: '2026-09-01T10:00:00+05:30',
+            signedOn: null,
+            signedBy: null,
+            signatureReference: null,
+            signedFrom: null,
+            declinedReason: null,
+            expiresOn: '2026-09-30',
+          };
+    });
+  out.forEach((d) => {
+    if (signingByFile[d.id]) d.signing = signingByFile[d.id];
+  });
+
   // 8.3: organisation-wide documents. employeeId is null — these belong to the
   // company, not a person, and everyone can read them.
   const orgDocs: Array<{ type: DocumentType; fileName: string }> = [
