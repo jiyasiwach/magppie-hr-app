@@ -18,6 +18,8 @@ import {
 import { useCurrentUser } from '@/components/shell/CurrentUserProvider';
 import { DocumentsPanel } from '@/components/documents/DocumentsPanel';
 import { ProfileEditor } from '@/components/directory/ProfileEditor';
+import { EmployeeTimeline } from '@/components/directory/EmployeeTimeline';
+import { findEntitySync, findPolicyGroupSync } from '@/data/organisation';
 import { getActivityTrail, getEmployee, getEmploymentHistory, getManagerChain } from '@/data/directory';
 import { useAsync } from '@/hooks/useAsync';
 import { formatDate } from '@/lib/date';
@@ -147,6 +149,18 @@ export default function EmployeeProfilePage({ params }: { params: Promise<{ id: 
                   <Field label="Employment type" value={employmentTypeLabels[employee.employmentType]} />
                   <Field label="Employee code" value={employee.employeeCode} />
                   <Field
+                    label="Legal entity"
+                    value={findEntitySync(employee.entityId)?.legalName ?? <Muted>Not set</Muted>}
+                  />
+                  <Field
+                    label="Working rules"
+                    value={
+                      <Link href={`/me/rules`}>
+                        {findPolicyGroupSync(employee.policyGroupId)?.name ?? 'Not set'}
+                      </Link>
+                    }
+                  />
+                  <Field
                     label="Probation ends"
                     value={employee.probationEndDate ? formatDate(employee.probationEndDate) : <Muted>—</Muted>}
                   />
@@ -205,6 +219,8 @@ export default function EmployeeProfilePage({ params }: { params: Promise<{ id: 
               </Card>
 
               <DocumentsPanel employeeId={employee.id} />
+
+              <EmployeeTimeline employeeId={employee.id} />
 
               <Card title="Activity trail" hint="Derived from records that exist — there is no audit log yet">
                 <AsyncSection

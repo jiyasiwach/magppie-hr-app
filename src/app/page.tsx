@@ -27,6 +27,7 @@ import { getAwayThisWeek, currentWeek } from '@/data/team';
 import { findEmployeeSync } from '@/data/directory';
 import { useAsync } from '@/hooks/useAsync';
 import { MOCK_TODAY } from '@/lib/clock';
+import { VOICE_MODULE_NAME } from '@/lib/constants';
 import { formatDate, formatDayName } from '@/lib/date';
 import { visibleEmployeeIds } from '@/lib/permissions';
 import s from '@/components/home/home.module.css';
@@ -55,10 +56,13 @@ export default function HomePage() {
 }
 
 function QuickActions() {
+  // The main brief asks for three; the Voice module asks to be reachable from
+  // Home as a quick action. Four it is — flagged in the report.
   const actions = [
     { href: '/leave/apply', label: 'Apply Leave', Icon: IconCalendar },
     { href: '/requests/new?type=wfh', label: 'Apply WFH', Icon: IconHome },
     { href: '/leave', label: 'Leave Balance', Icon: IconPlus },
+    { href: '/voice/new', label: VOICE_MODULE_NAME, Icon: IconMegaphone },
   ];
   return (
     <div className={s.quickActions}>

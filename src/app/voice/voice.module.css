@@ -1,0 +1,17 @@
+.queueLinks {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  font-size: 14px;
+}
+
+.note {
+  font-size: 13px;
+  color: var(--ink-3);
+  max-width: 76ch;
+}
+
+.linkRow {
+  margin-top: var(--space-3);
+  font-size: 14px;
+}

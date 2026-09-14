@@ -11,6 +11,12 @@ export interface DirectoryFilters {
   location?: string;
   designation?: string;
   status?: string;
+  /**
+   * A filter, never a boundary. The directory is deliberately NOT scoped by
+   * entity — people work together across the group, and hiding colleagues from
+   * each other helps nobody.
+   */
+  entityId?: string;
 }
 
 export async function listEmployees(filters: DirectoryFilters = {}): Promise<Employee[]> {
@@ -18,6 +24,7 @@ export async function listEmployees(filters: DirectoryFilters = {}): Promise<Emp
     if (reviewFlags.simulateEmpty) return [];
     const search = filters.search?.trim().toLowerCase() ?? '';
     return store.employees
+      .filter((e) => (filters.entityId ? e.entityId === filters.entityId : true))
       .filter((e) => (filters.department ? e.department === filters.department : true))
       .filter((e) => (filters.location ? e.location === filters.location : true))
       .filter((e) => (filters.designation ? e.designation === filters.designation : true))

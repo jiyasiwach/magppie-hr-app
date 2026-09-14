@@ -14,6 +14,8 @@ import {
 } from '@/components/ui';
 import {
   IconArchive,
+  IconMegaphone,
+  IconPolicy,
   IconCalendar,
   IconChevronRight,
   IconClock,
@@ -26,6 +28,7 @@ import { OrgDocuments } from '@/components/documents/OrgDocuments';
 import { AssetsPanel } from '@/components/assets/AssetsPanel';
 import { useCurrentUser } from '@/components/shell/CurrentUserProvider';
 import { getUpcomingHolidays } from '@/data/attendance';
+import { VOICE_MODULE_NAME } from '@/lib/constants';
 import { useAsync } from '@/hooks/useAsync';
 import { formatDate } from '@/lib/date';
 import s from './me.module.css';
@@ -65,6 +68,15 @@ function MeScreen() {
             {t.label}
           </button>
         ))}
+      </div>
+
+      <div className={s.voiceRow}>
+        <ActionCard
+          href="/voice"
+          title={VOICE_MODULE_NAME}
+          body="Raise a problem, a grievance, a suggestion or a question with HR. Your manager never sees it."
+          Icon={IconMegaphone}
+        />
       </div>
 
       {tab === 'time' ? <TimeTab /> : null}
@@ -124,6 +136,12 @@ function TimeTab() {
             title="Request History"
             body="Everything you have raised, and where it got to."
             Icon={IconInbox}
+          />
+          <ActionCard
+            href="/me/rules"
+            title="My working rules"
+            body="Your shift, your week off, and exactly how your leave is earned."
+            Icon={IconPolicy}
           />
         </div>
       </Card>

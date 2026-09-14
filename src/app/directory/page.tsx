@@ -18,7 +18,7 @@ import { listEmployees } from '@/data/directory';
 import { useAsync } from '@/hooks/useAsync';
 import { employeeStatusLabels, employeeStatusTones, employmentTypeLabels } from '@/lib/labels';
 import type { Employee, EmployeeStatus } from '@/lib/types';
-import { departments, designations, locations } from '@/mocks';
+import { departments, designations, entities, locations } from '@/mocks';
 
 const statusOptions = Object.entries(employeeStatusLabels);
 
@@ -29,10 +29,11 @@ export default function DirectoryPage() {
   const [location, setLocation] = useState('');
   const [designation, setDesignation] = useState('');
   const [status, setStatus] = useState('');
+  const [entityId, setEntityId] = useState('');
 
   const { state, reload } = useAsync(
-    () => listEmployees({ search, department, location, designation, status }),
-    [search, department, location, designation, status],
+    () => listEmployees({ search, department, location, designation, status, entityId }),
+    [search, department, location, designation, status, entityId],
   );
 
   const columns: Column<Employee>[] = [
@@ -46,6 +47,11 @@ export default function DirectoryPage() {
     },
     { key: 'designation', header: 'Designation', render: (e) => e.designation },
     { key: 'department', header: 'Department', render: (e) => e.department },
+    {
+      key: 'entity',
+      header: 'Entity',
+      render: (e) => entities.find((x) => x.id === e.entityId)?.shortName ?? '—',
+    },
     { key: 'location', header: 'Location', render: (e) => e.location },
     { key: 'type', header: 'Type', render: (e) => employmentTypeLabels[e.employmentType] },
     {
@@ -63,8 +69,8 @@ export default function DirectoryPage() {
         title="Directory"
         description={
           user.role === 'hr-admin'
-            ? 'Everyone at Magppie. You can edit any profile.'
-            : 'Everyone at Magppie. Personal details are visible only for you and, if you manage people, your team.'
+            ? 'Everyone across every Magppie company. You can edit any profile.'
+            : 'Everyone across every Magppie company. Personal details are visible only for you and, if you manage people, your team.'
         }
         actions={<ButtonLink href="/directory/tree">Reporting tree</ButtonLink>}
       />
@@ -72,6 +78,13 @@ export default function DirectoryPage() {
       <FilterBar
         search={{ value: search, onChange: setSearch }}
         filters={[
+          {
+            key: 'entity',
+            label: 'Entity',
+            options: entities.map((e) => e.shortName),
+            value: entities.find((e) => e.id === entityId)?.shortName ?? '',
+            onChange: (name) => setEntityId(entities.find((e) => e.shortName === name)?.id ?? ''),
+          },
           { key: 'department', label: 'Department', options: departments, value: department, onChange: setDepartment },
           { key: 'location', label: 'Location', options: locations, value: location, onChange: setLocation },
           { key: 'designation', label: 'Designation', options: designations, value: designation, onChange: setDesignation },
@@ -91,6 +104,7 @@ export default function DirectoryPage() {
           setLocation('');
           setDesignation('');
           setStatus('');
+          setEntityId('');
         }}
       />
 

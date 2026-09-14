@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import { useState } from 'react';
 import { Card, DataTable, NoAccessState, PageHeader, Small, Stack, StatusPill, type Column } from '@/components/ui';
 import { useCurrentUser } from '@/components/shell/CurrentUserProvider';
@@ -117,6 +119,18 @@ export default function SettingsPage() {
           <p className={s.note}>
             <Small>These are mock-only and are removed with the mock data layer.</Small>
           </p>
+        </Card>
+
+        <Card title="Configuration" hint="HR admin only">
+          {isHr ? (
+            <div className={s.links}>
+              <Link href="/chains">Approval chains and delegations</Link>
+              <Link href="/reports">Reports</Link>
+              <Link href="/me/rules">Working rules by person</Link>
+            </div>
+          ) : (
+            <NoAccessState what="configuration" />
+          )}
         </Card>
 
         <Card title="Organisation settings" hint="HR admin only">

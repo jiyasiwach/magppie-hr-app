@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import {
   AsyncSection,
+  ButtonLink,
   Card,
   EmptyState,
   PageHeader,
@@ -52,6 +53,7 @@ export default function TeamPage() {
             ? 'Your departments, who is off, and where your team is today.'
             : 'Your department and the people in it.'
         }
+        actions={isManager ? <ButtonLink href="/reports">Reports</ButtonLink> : undefined}
       />
       <Stack>
         <Departments />

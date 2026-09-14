@@ -14,4 +14,13 @@ export const APP_BUILD_NOTE = 'mock data — front end only';
 export const ORGANISATION_NAME = 'Magppie';
 
 /** Shown under About. Bump it with a release, not with every commit. */
-export const APP_VERSION = '0.1.0';
+export const APP_VERSION = '0.2.0';
+
+/**
+ * The Employee Voice module's name, also not chosen.
+ *
+ * Deliberately NOT "Complaint Box" — that sets the tone wrong and people stop
+ * using it for suggestions. Candidates to choose between: Speak Up, Your Voice,
+ * Talk to HR, Suggestion Box. Change this one line when it is decided.
+ */
+export const VOICE_MODULE_NAME = '[VOICE_MODULE_NAME]';

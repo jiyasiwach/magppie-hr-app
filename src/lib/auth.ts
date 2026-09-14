@@ -27,6 +27,9 @@ export const mockPersonas: Array<{ employeeId: string; label: string }> = [
   { employeeId: 'emp-008', label: 'Employee' },
   { employeeId: 'emp-003', label: 'Manager' },
   { employeeId: 'emp-005', label: 'HR admin' },
+  // Not a role — a committee seat. Added so the Internal Committee queue can be
+  // reviewed, and to show that committee membership is independent of being HR.
+  { employeeId: 'emp-017', label: 'Committee member' },
 ];
 
 let activeMockUserId = DEFAULT_MOCK_USER_ID;
