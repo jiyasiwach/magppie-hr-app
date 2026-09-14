@@ -97,9 +97,9 @@ export default function AssistantPage() {
                       );
                     })}
                   </span>
-                ) : m.role === 'assistant' && !m.handoff ? (
+                ) : m.role === 'assistant' && m.usedRecords ? (
                   <span className={s.noCitation}>
-                    <Small>No policy cited — this came from your own records.</Small>
+                    <Small>Read from your own records.</Small>
                   </span>
                 ) : null}
 

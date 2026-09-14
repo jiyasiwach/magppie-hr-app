@@ -677,6 +677,8 @@ export interface AssistantMessage {
   createdOn: IsoTimestamp;
   /** True when the assistant declined and offered a handoff instead. */
   handoff: boolean;
+  /** True when the answer read the asker's own records. Drives provenance. */
+  usedRecords?: boolean;
 }
 
 /** 7.8 Assistant conversation */

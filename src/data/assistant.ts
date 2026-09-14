@@ -32,6 +32,8 @@ export interface AssistantReply {
   body: string;
   citations: string[];
   handoff: boolean;
+  /** Whether the answer actually read the asker's own records. */
+  usedRecords?: boolean;
 }
 
 /** Subjects the assistant must not attempt, however it is asked. */
@@ -45,7 +47,25 @@ const REFUSE = [
 
 /** Questions about other people. The assistant sees only the asker's data. */
 const ABOUT_SOMEONE_ELSE =
-  /\b(my team|their|his |her |someone else|other employee|colleague'?s|who else|everyone'?s)\b/i;
+  /\b(my team|their|his |her |someone else|other employee|colleagues?|co-?worker|teammate|who else|everyone'?s)\b/i;
+
+/**
+ * Catches a question about a named colleague.
+ *
+ * Without this, "what is Ramesh's leave balance" fell through to the leave
+ * branch and answered with the ASKER'S OWN numbers — not a leak, but
+ * misleading, which is its own kind of wrong. Anyone else's name means hand it
+ * back rather than answer something adjacent.
+ */
+function namesSomeoneElse(question: string, user: CurrentUser): boolean {
+  const q = question.toLowerCase();
+  return store.employees.some((e) => {
+    if (e.id === user.employee.id) return false;
+    const first = e.fullName.split(' ')[0].toLowerCase();
+    if (first.length < 4) return false;
+    return q.includes(e.fullName.toLowerCase()) || new RegExp(`\\b${first}\\b`).test(q);
+  });
+}
 
 function findPolicy(...keywords: string[]) {
   return store.policies.find((p) =>
@@ -82,7 +102,7 @@ export function answer(user: CurrentUser, question: string): AssistantReply {
     }
   }
 
-  if (ABOUT_SOMEONE_ELSE.test(q)) {
+  if (ABOUT_SOMEONE_ELSE.test(q) || namesSomeoneElse(q, user)) {
     return {
       body: 'I can only answer about you and your own records — not about anyone else, including your team if you manage people. For someone else’s details, their profile and your team screens are the right place, and anything beyond that goes through HR.',
       citations: [],
@@ -96,6 +116,7 @@ export function answer(user: CurrentUser, question: string): AssistantReply {
       body: `Here is where your leave stands today:\n\n${leaveBalanceLine(user)}\n\nEvery credit and debit behind those numbers is on your Leave Balances screen, so you can check the arithmetic rather than take my word for it.`,
       citations: policy ? [policy.id] : [],
       handoff: false,
+      usedRecords: true,
     };
   }
 
@@ -110,6 +131,7 @@ export function answer(user: CurrentUser, question: string): AssistantReply {
         : 'There is no attendance record for you today yet.',
       citations: policy ? [policy.id] : [],
       handoff: false,
+      usedRecords: true,
     };
   }
 
@@ -219,6 +241,7 @@ export async function ask(user: CurrentUser, conversationId: string, question: s
       citations: reply.citations,
       createdOn: now,
       handoff: reply.handoff,
+      usedRecords: reply.usedRecords ?? false,
     };
 
     conversation.messages.push(asked, replied);

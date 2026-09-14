@@ -194,6 +194,17 @@ export const surveys: Survey[] = [
     createdBy: 'emp-005',
   },
   {
+    id: 'sv-enps-q2',
+    title: 'How is work going?',
+    description: 'The previous quarterly check, kept so the trend has something to compare against.',
+    audience: ['everyone'],
+    anonymous: true,
+    opensOn: '2026-06-01',
+    closesOn: '2026-06-30',
+    status: 'closed',
+    createdBy: 'emp-005',
+  },
+  {
     id: 'sv-canteen',
     title: 'Canteen and break facilities at the Noida plant',
     description: 'We are reviewing the canteen contract and want the floor’s view first.',
@@ -223,6 +234,9 @@ export const surveyQuestions: SurveyQuestion[] = [
   { id: 'sq-3', surveyId: 'sv-enps-q3', type: 'rating', text: 'I know who to go to when something is wrong.', options: [], order: 3, required: true },
   { id: 'sq-4', surveyId: 'sv-enps-q3', type: 'single-choice', text: 'Where do you mostly work?', options: ['Head office', 'Showroom', 'Factory', 'Client site'], order: 4, required: true },
   { id: 'sq-5', surveyId: 'sv-enps-q3', type: 'free-text', text: 'Anything you would change, in your own words?', options: [], order: 5, required: false },
+
+  { id: 'sq-1b', surveyId: 'sv-enps-q2', type: 'enps', text: 'How likely are you to recommend Magppie as a place to work?', options: [], order: 1, required: true },
+  { id: 'sq-2b', surveyId: 'sv-enps-q2', type: 'rating', text: 'I have what I need to do my job well.', options: [], order: 2, required: true },
 
   { id: 'sq-6', surveyId: 'sv-canteen', type: 'rating', text: 'The canteen food is good enough.', options: [], order: 1, required: true },
   { id: 'sq-7', surveyId: 'sv-canteen', type: 'multi-choice', text: 'What would help most?', options: ['Longer opening hours', 'More vegetarian options', 'Cleaner seating', 'Lower prices', 'Drinking water points'], order: 2, required: true },
@@ -278,6 +292,15 @@ function buildResponses(): { responses: SurveyResponse[]; answers: SurveyAnswer[
     if (c) answers.push({ id: `sa-e-${i}-5`, responseId: rid, questionId: 'sq-5', value: c });
   }
 
+  // The previous quarter, so the trend has two points. Deliberately a lower
+  // score than the current one — a flat line proves nothing.
+  for (let i = 0; i < 18; i += 1) {
+    const rng = makeRng(`enpsq2:${i}`);
+    const rid = add('sv-enps-q2', i, true, null, `2026-06-${String(4 + (i % 10)).padStart(2, '0')}`);
+    answers.push({ id: `sa-q2-${i}-1`, responseId: rid, questionId: 'sq-1b', value: String(intBetween(rng, 3, 9)) });
+    answers.push({ id: `sa-q2-${i}-2`, responseId: rid, questionId: 'sq-2b', value: String(intBetween(rng, 2, 4)) });
+  }
+
   // Canteen — only 3 responses. Below the threshold on purpose.
   for (let i = 0; i < 3; i += 1) {
     const rng = makeRng(`cant:${i}`);
@@ -305,6 +328,12 @@ export const surveyAnswers: SurveyAnswer[] = built.answers;
 
 /** Who took part, with no key back to what they said. */
 export const surveyParticipation: SurveyParticipation[] = [
+  ...employees.slice(0, 18).map((e, i) => ({
+    id: `sp-enpsq2-${i}`,
+    surveyId: 'sv-enps-q2',
+    employeeId: e.id,
+    respondedOn: `2026-06-${String(4 + (i % 10)).padStart(2, '0')}`,
+  })),
   ...employees.slice(0, 22).map((e, i) => ({
     id: `sp-enps-${i}`,
     surveyId: 'sv-enps-q3',

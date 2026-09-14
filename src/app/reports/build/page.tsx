@@ -295,7 +295,8 @@ function RunResult({ report }: { report: SavedReport }) {
                 <p className={s.hidden}>
                   {run.hiddenColumns.join(', ')} {run.hiddenColumns.length === 1 ? 'is' : 'are'} not
                   visible to you, so {run.hiddenColumns.length === 1 ? 'that column is' : 'those columns are'}{' '}
-                  blank. They are not filled in from the rights of whoever built this report.
+                  blank. {run.hiddenColumns.length === 1 ? 'It is' : 'They are'} not filled in from the
+                  rights of whoever built this report.
                 </p>
               ) : null}
 
