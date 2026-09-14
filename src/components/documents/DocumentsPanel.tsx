@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { AsyncSection, Button, Card, EmptyState, Small } from '@/components/ui';
+import { AsyncSection, Button, Card, EmptyState, Small, StatusPill } from '@/components/ui';
 import { useCurrentUser } from '@/components/shell/CurrentUserProvider';
 import { archiveDocument, getDocuments, restoreDocument, uploadDocument } from '@/data/documents';
 import { findEmployeeSync } from '@/data/directory';
 import { useAsync } from '@/hooks/useAsync';
 import { formatTimestamp } from '@/lib/date';
-import { documentTypeLabels, documentVisibilityLabels } from '@/lib/labels';
+import { documentTypeLabels, documentVisibilityLabels, signingStateLabels, signingStateTones } from '@/lib/labels';
+import { recordSignature } from '@/data/signing';
 import { canEditEmployeeFully, canViewPersonalData, isSelf } from '@/lib/permissions';
 import type { DocumentType, DocumentVisibility } from '@/lib/types';
 import s from './documents.module.css';
@@ -68,11 +69,29 @@ export function DocumentsPanel({ employeeId }: { employeeId: string }) {
                             {formatTimestamp(doc.uploadedOn)} · {documentVisibilityLabels[doc.visibility]}
                             {doc.archived ? ' · Archived' : ''}
                           </span>
+                          {doc.signing ? (
+                            <span className={s.meta}>
+                              <StatusPill
+                                label={signingStateLabels[doc.signing.state]}
+                                tone={signingStateTones[doc.signing.state]}
+                              />
+                              {doc.signing.state === 'signed' && doc.signing.signedOn
+                                ? ` Signed ${formatTimestamp(doc.signing.signedOn)} — this record cannot be changed.`
+                                : doc.signing.state === 'awaiting-signature'
+                                  ? ' Not signed, and not treated as accepted.'
+                                  : ''}
+                            </span>
+                          ) : null}
                         </div>
                         <div className={s.itemActions}>
                           <Button variant="quiet" onClick={() => setAsked(doc.id)}>
                             Download
                           </Button>
+                          {doc.signing?.state === 'awaiting-signature' && isSelf(user, employeeId) ? (
+                            <Button variant="quiet" onClick={() => void recordSignature(user, doc.id)}>
+                              Sign
+                            </Button>
+                          ) : null}
                           {canEditEmployeeFully(user) ? (
                             doc.archived ? (
                               <Button variant="quiet" onClick={() => void restoreDocument(doc.id)}>

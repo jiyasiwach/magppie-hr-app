@@ -1,0 +1,55 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-3);
+}
+
+.value {
+  margin: 0;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.empty {
+  color: var(--ink-3);
+}
+
+.help {
+  color: var(--ink-3);
+}
+
+.inputWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.error {
+  font-size: 12px;
+  color: var(--danger-fg);
+}
+
+.saved {
+  color: var(--ok-fg);
+}

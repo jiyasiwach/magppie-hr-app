@@ -51,7 +51,8 @@ export async function getSignablesFor(user: CurrentUser, employeeId: string): Pr
             document.signing.expiresOn < MOCK_TODAY,
         ),
       }))
-      .sort((a, b) => (a.document.signing?.state === 'awaiting-signature' ? -1 : 1)),
+      // Anything still needing a signature first.
+      .sort((a) => (a.document.signing?.state === 'awaiting-signature' ? -1 : 1)),
   );
 }
 

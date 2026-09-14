@@ -1,0 +1,210 @@
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--line-soft);
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.list li:last-child .row {
+  border-bottom: none;
+}
+
+.row:hover {
+  background: var(--surface-2);
+}
+
+.rowMain {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.rowTitle {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.rowMeta {
+  font-size: 13px;
+  color: var(--ink-3);
+  max-width: 72ch;
+}
+
+.pills {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.rules {
+  margin: 0;
+  padding-left: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: 14px;
+  color: var(--ink-2);
+  max-width: 78ch;
+}
+
+/* --- taking a survey ------------------------------------------------------ */
+
+.question {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.question:last-child {
+  border-bottom: none;
+}
+
+.questionText {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.scale {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.scaleButton {
+  min-width: 42px;
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  cursor: pointer;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.scaleButton:hover {
+  border-color: var(--brand);
+}
+
+.scaleActive,
+.scaleActive:hover {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--on-brand);
+  font-weight: 600;
+}
+
+.scaleEnds {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--ink-3);
+  max-width: 520px;
+}
+
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 14px;
+}
+
+.choice input {
+  width: auto;
+  min-height: auto;
+}
+
+/* --- results -------------------------------------------------------------- */
+
+.bar {
+  display: grid;
+  grid-template-columns: 64px 1fr 48px;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: 13px;
+  padding: 3px 0;
+}
+
+.barTrack {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--surface-3);
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  background: var(--brand);
+  border-radius: 999px;
+}
+
+.texts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.text {
+  font-size: 14px;
+  padding: var(--space-3);
+  background: var(--surface-2);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+  max-width: 76ch;
+}
+
+.enps {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+
+.enpsScore {
+  font-size: 34px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--brand-dark);
+}
+
+.note {
+  color: var(--ink-3);
+  max-width: 78ch;
+}
+
+.done {
+  font-size: 13px;
+  color: var(--ok-fg);
+  background: var(--ok-bg);
+  border: 1px solid var(--ok-line);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+}
+
+.error {
+  font-size: 13px;
+  color: var(--danger-fg);
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-line);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+}

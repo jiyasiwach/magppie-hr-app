@@ -242,3 +242,79 @@ export const voiceStatusMeaning: Record<string, string> = {
   resolved: 'Finished, with an explanation of the outcome.',
   'closed-without-action': 'Closed, with an honest reason why nothing was done.',
 };
+
+// --- custom fields ----------------------------------------------------------
+
+export const fieldAudienceLabels: Record<string, string> = {
+  'hr-only': 'HR only',
+  manager: 'Manager and HR',
+  employee: 'The person, their manager and HR',
+};
+
+export const fieldEditorLabels: Record<string, string> = {
+  'hr-only': 'HR only',
+  employee: 'The person themselves',
+};
+
+export const fieldTypeLabels: Record<string, string> = {
+  text: 'Text',
+  number: 'Number',
+  date: 'Date',
+  dropdown: 'Dropdown',
+  yesno: 'Yes / No',
+  file: 'File',
+};
+
+// --- signing ----------------------------------------------------------------
+
+export const signingStateLabels: Record<string, string> = {
+  'not-sent': 'Not sent',
+  'awaiting-signature': 'Awaiting signature',
+  signed: 'Signed',
+  declined: 'Declined',
+  expired: 'Expired',
+};
+
+export const signingStateTones: Record<string, Tone> = {
+  'not-sent': 'quiet',
+  'awaiting-signature': 'warning',
+  signed: 'success',
+  declined: 'danger',
+  expired: 'danger',
+};
+
+// --- surveys ----------------------------------------------------------------
+
+export const surveyStatusLabels: Record<string, string> = {
+  draft: 'Draft',
+  open: 'Open',
+  closed: 'Closed',
+};
+
+export const surveyStatusTones: Record<string, Tone> = {
+  draft: 'quiet',
+  open: 'success',
+  closed: 'neutral',
+};
+
+// --- integrations -----------------------------------------------------------
+
+export const integrationStatusLabels: Record<string, string> = {
+  'not-configured': 'Not configured',
+  connected: 'Connected',
+  degraded: 'Degraded',
+  unreachable: 'Unreachable',
+};
+
+export const integrationStatusTones: Record<string, Tone> = {
+  'not-configured': 'quiet',
+  connected: 'success',
+  degraded: 'warning',
+  unreachable: 'danger',
+};
+
+export const integrationDirectionLabels: Record<string, string> = {
+  read: 'Reads into this app',
+  write: 'Writes out of this app',
+  both: 'Two-way',
+};

@@ -1,0 +1,51 @@
+.head {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-3);
+}
+
+.purpose {
+  font-size: 14px;
+  color: var(--ink-2);
+  max-width: 78ch;
+}
+
+.block {
+  margin-top: var(--space-4);
+}
+
+.subhead {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+  margin-bottom: var(--space-2);
+}
+
+.failure {
+  font-size: 14px;
+  color: var(--ink-2);
+  background: var(--surface-2);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  max-width: 82ch;
+}
+
+.questions {
+  margin: 0;
+  padding-left: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  color: var(--ink-2);
+  max-width: 80ch;
+}
+
+.note {
+  font-size: 13px;
+  color: var(--ink-3);
+  max-width: 80ch;
+}

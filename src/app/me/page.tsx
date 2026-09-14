@@ -14,6 +14,7 @@ import {
 } from '@/components/ui';
 import {
   IconArchive,
+  IconComment,
   IconMegaphone,
   IconPolicy,
   IconCalendar,
@@ -71,12 +72,20 @@ function MeScreen() {
       </div>
 
       <div className={s.voiceRow}>
-        <ActionCard
-          href="/voice"
-          title={VOICE_MODULE_NAME}
-          body="Raise a problem, a grievance, a suggestion or a question with HR. Your manager never sees it."
-          Icon={IconMegaphone}
-        />
+        <div className={s.actionGrid}>
+          <ActionCard
+            href="/voice"
+            title={VOICE_MODULE_NAME}
+            body="Raise a problem, a grievance, a suggestion or a question with HR. Your manager never sees it."
+            Icon={IconMegaphone}
+          />
+          <ActionCard
+            href="/assistant"
+            title="Ask HR"
+            body="Routine questions about policy and your own records, answered from what is written down."
+            Icon={IconComment}
+          />
+        </div>
       </div>
 
       {tab === 'time' ? <TimeTab /> : null}

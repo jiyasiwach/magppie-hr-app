@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { AsyncSection, Card, EmptyState, PageHeader } from '@/components/ui';
+import { AsyncSection, ButtonLink, Card, EmptyState, PageHeader, Small, StatusPill } from '@/components/ui';
 import { ApprovalList, type RequestDecision } from '@/components/requests/ApprovalList';
 import { useCurrentUser } from '@/components/shell/CurrentUserProvider';
 import {
@@ -10,8 +10,11 @@ import {
   decideRequest,
   getApprovalQueue,
 } from '@/data/requests';
+import { getPendingSignatures } from '@/data/signing';
+import { getOpenSurveysFor } from '@/data/surveys';
 import { useAsync } from '@/hooks/useAsync';
-import { requestTypeLabels } from '@/lib/labels';
+import { formatDate } from '@/lib/date';
+import { documentTypeLabels, requestTypeLabels, signingStateLabels, signingStateTones } from '@/lib/labels';
 import type { RequestType } from '@/lib/types';
 import s from './inbox.module.css';
 
@@ -27,6 +30,76 @@ const CHIPS: Array<{ value: RequestType | 'all'; label: string }> = [
   { value: 'profile-change', label: requestTypeLabels['profile-change'] },
   { value: 'hr-notice', label: requestTypeLabels['hr-notice'] },
 ];
+
+/** What this person still has to sign, alongside everything else waiting. */
+function ToSign() {
+  const { user } = useCurrentUser();
+  const { state, reload } = useAsync(() => getPendingSignatures(user), [user.employee.id]);
+
+  return (
+    <AsyncSection state={state} reload={reload} isEmpty={(rows) => rows.length === 0} empty={null} loadingRows={1}>
+      {(rows) => (
+        <Card title="Waiting for your signature" flush>
+          <ul className={s.extras}>
+            {rows.map((doc) => (
+              <li key={doc.id} className={s.extraRow}>
+                <span className={s.extraMain}>
+                  <span className={s.extraTitle}>{doc.fileName}</span>
+                  <span className={s.extraMeta}>
+                    {documentTypeLabels[doc.type]}
+                    {doc.signing?.expiresOn ? ` · expires ${formatDate(doc.signing.expiresOn)}` : ''}
+                  </span>
+                </span>
+                <span className={s.extraActions}>
+                  <StatusPill
+                    label={signingStateLabels[doc.signing?.state ?? 'not-sent']}
+                    tone={signingStateTones[doc.signing?.state ?? 'not-sent']}
+                  />
+                  <ButtonLink href="/me?tab=documents">Open</ButtonLink>
+                </span>
+              </li>
+            ))}
+          </ul>
+          <p className={s.extraNote}>
+            <Small>
+              Nothing here is treated as accepted until it is signed. Leaving it is not agreement.
+            </Small>
+          </p>
+        </Card>
+      )}
+    </AsyncSection>
+  );
+}
+
+/** Surveys open to this person that they have not answered. */
+function OpenSurveys() {
+  const { user } = useCurrentUser();
+  const { state, reload } = useAsync(() => getOpenSurveysFor(user), [user.employee.id]);
+
+  return (
+    <AsyncSection state={state} reload={reload} isEmpty={(rows) => rows.length === 0} empty={null} loadingRows={1}>
+      {(rows) => (
+        <Card title="Surveys open to you" flush>
+          <ul className={s.extras}>
+            {rows.map((survey) => (
+              <li key={survey.id} className={s.extraRow}>
+                <span className={s.extraMain}>
+                  <span className={s.extraTitle}>{survey.title}</span>
+                  <span className={s.extraMeta}>
+                    Closes {formatDate(survey.closesOn)} · {survey.anonymous ? 'anonymous' : 'named'}
+                  </span>
+                </span>
+                <span className={s.extraActions}>
+                  <ButtonLink href={`/surveys/${survey.id}`}>Answer</ButtonLink>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
+    </AsyncSection>
+  );
+}
 
 export default function InboxPage() {
   const { user } = useCurrentUser();
@@ -77,6 +150,9 @@ export default function InboxPage() {
           Include things already dealt with
         </label>
       </div>
+
+      <ToSign />
+      <OpenSurveys />
 
       <Card flush>
         <AsyncSection

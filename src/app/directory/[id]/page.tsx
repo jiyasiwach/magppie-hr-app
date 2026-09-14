@@ -19,6 +19,7 @@ import { useCurrentUser } from '@/components/shell/CurrentUserProvider';
 import { DocumentsPanel } from '@/components/documents/DocumentsPanel';
 import { ProfileEditor } from '@/components/directory/ProfileEditor';
 import { EmployeeTimeline } from '@/components/directory/EmployeeTimeline';
+import { CustomFieldsSection } from '@/components/fields/CustomFieldsSection';
 import { findEntitySync, findPolicyGroupSync } from '@/data/organisation';
 import { getActivityTrail, getEmployee, getEmploymentHistory, getManagerChain } from '@/data/directory';
 import { useAsync } from '@/hooks/useAsync';
@@ -219,6 +220,8 @@ export default function EmployeeProfilePage({ params }: { params: Promise<{ id: 
               </Card>
 
               <DocumentsPanel employeeId={employee.id} />
+
+              <CustomFieldsSection recordType="employee" recordId={employee.id} />
 
               <EmployeeTimeline employeeId={employee.id} />
 

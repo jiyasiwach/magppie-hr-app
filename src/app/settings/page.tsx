@@ -125,7 +125,11 @@ export default function SettingsPage() {
           {isHr ? (
             <div className={s.links}>
               <Link href="/chains">Approval chains and delegations</Link>
+              <Link href="/settings/fields">Custom fields</Link>
+              <Link href="/settings/integrations">Connections to other systems</Link>
               <Link href="/reports">Reports</Link>
+              <Link href="/reports/build">Build a report</Link>
+              <Link href="/surveys">Surveys</Link>
               <Link href="/me/rules">Working rules by person</Link>
             </div>
           ) : (
