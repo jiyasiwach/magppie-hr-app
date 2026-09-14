@@ -31,6 +31,10 @@ export interface Employee {
   status: EmployeeStatus;
   probationEndDate: IsoDate | null;
   dateOfBirth: IsoDate;
+  /** Exactly one at a time. A transfer is dated history on the employment record. */
+  entityId: string;
+  /** Which working rules apply to this person. */
+  policyGroupId: string;
 }
 
 /**
@@ -43,6 +47,9 @@ export interface EmploymentRecord {
   department: string;
   designation: string;
   managerId: string | null;
+  /** Carried here so an entity transfer is dated history, not an overwrite. */
+  entityId: string;
+  policyGroupId: string;
   validFrom: IsoDate;
   /** null means "current" */
   validTo: IsoDate | null;
@@ -287,3 +294,241 @@ export interface Post {
 }
 
 export type Role = 'employee' | 'manager' | 'hr-admin';
+
+// ===========================================================================
+// Structural additions
+// ===========================================================================
+
+/** 6.1 Entity — a legal company within the group. */
+export interface Entity {
+  id: string;
+  legalName: string;
+  shortName: string;
+  registrationNumber: string;
+  gstin: string;
+  pan: string;
+  registeredAddress: string;
+  /** Which locations belong to this entity. */
+  locations: string[];
+  active: boolean;
+}
+
+/** Per leave type, inside a leave policy. Rules are data, never code. */
+export interface LeavePolicyRule {
+  leaveTypeId: string;
+  accrualRate: number;
+  accrualFrequency: 'monthly' | 'quarterly' | 'annually' | 'none';
+  maxCarryForward: number;
+  encashable: boolean;
+  canGoNegative: boolean;
+  maxNegativeDays: number;
+}
+
+/** 6.3 Leave policy */
+export interface LeavePolicy {
+  id: string;
+  name: string;
+  entityId: string;
+  rules: LeavePolicyRule[];
+}
+
+/** 6.4 Attendance policy */
+export interface AttendancePolicy {
+  id: string;
+  name: string;
+  entityId: string;
+  shiftId: string;
+  graceMinutes: number;
+  halfDayThresholdHours: number;
+  fullDayThresholdHours: number;
+  /** After this many late marks in a month, a deduction applies. */
+  lateMarksBeforeDeduction: number;
+  lateDeductionLeaveTypeId: string | null;
+  lateDeductionDays: number;
+}
+
+/** Grouping for holidays, so calendars can differ by entity. */
+export interface HolidayCalendar {
+  id: string;
+  name: string;
+  entityId: string;
+}
+
+/** Which days of the week are off, and how Saturdays work. */
+export interface WeekOffPattern {
+  id: string;
+  name: string;
+  /** 0 = Sunday. Always off. */
+  days: number[];
+  /** e.g. [2, 4] = second and fourth Saturday off. Empty = none. */
+  alternateSaturdays: number[];
+}
+
+/** 6.2 Policy group — the unit that actually carries working rules. */
+export interface PolicyGroup {
+  id: string;
+  entityId: string;
+  name: string;
+  description: string;
+  leavePolicyId: string;
+  attendancePolicyId: string;
+  holidayCalendarId: string;
+  weekOffPatternId: string;
+}
+
+/** Approvers are named by role, so a chain survives people changing jobs. */
+export type ApproverRole =
+  | 'reporting-manager'
+  | 'skip-level-manager'
+  | 'department-head'
+  | 'entity-head'
+  | 'hr'
+  | 'finance';
+
+export type ConditionOperator = 'gt' | 'gte' | 'lt' | 'lte' | 'eq';
+
+/** A step applies only when this holds true of the request payload. */
+export interface ApprovalStepCondition {
+  field: string;
+  operator: ConditionOperator;
+  value: number | string;
+  /** Plain-English rendering, so the chain viewer never has to guess. */
+  describe: string;
+}
+
+/** 6.6 Approval step */
+export interface ApprovalStep {
+  id: string;
+  chainId: string;
+  position: number;
+  approverRole: ApproverRole;
+  condition: ApprovalStepCondition | null;
+  /** Untouched for this many days notifies the next level. Never auto-approves. */
+  escalationDays: number | null;
+}
+
+/** 6.5 Approval chain */
+export interface ApprovalChain {
+  id: string;
+  name: string;
+  requestType: RequestType;
+  entityId: string | null;
+  policyGroupId: string | null;
+}
+
+/** 6.7 Delegation — an approver's authority, handed over for a dated period. */
+export interface Delegation {
+  id: string;
+  fromEmployeeId: string;
+  toEmployeeId: string;
+  validFrom: IsoDate;
+  validTo: IsoDate;
+  reason: string;
+}
+
+export type TimelineEntryType =
+  | 'joined'
+  | 'probation-confirmed'
+  | 'role-change'
+  | 'department-change'
+  | 'manager-change'
+  | 'entity-transfer'
+  | 'policy-group-change'
+  | 'training-completed'
+  | 'assessment-passed'
+  | 'appraisal'
+  | 'exit';
+
+/** 6.8 Timeline entry — generated from the record that caused it, never typed. */
+export interface TimelineEntry {
+  id: string;
+  employeeId: string;
+  date: IsoDate;
+  type: TimelineEntryType;
+  description: string;
+  /** Which record produced this, so the entry can be traced back. */
+  sourceRecordId: string | null;
+  sourceModule: 'hr' | 'l&d';
+  /** Job-related entries are the subset a manager may see. */
+  jobRelated: boolean;
+}
+
+// ===========================================================================
+// Employee Voice
+// ===========================================================================
+
+export type VoiceCategory =
+  | 'workplace'
+  | 'pay-leave-attendance'
+  | 'policy-process'
+  | 'manager-team'
+  | 'harassment'
+  | 'suggestion'
+  | 'other';
+
+export type VoiceStatus =
+  | 'submitted'
+  | 'in-review'
+  | 'action-being-taken'
+  | 'resolved'
+  | 'closed-without-action';
+
+/** 12.1 Ticket */
+export interface VoiceTicket {
+  id: string;
+  referenceCode: string;
+  category: VoiceCategory;
+  anonymous: boolean;
+  /**
+   * NULL when anonymous, and never written. Hiding a name at the display layer
+   * is not anonymity — anyone with database access would still see it.
+   */
+  raiserId: string | null;
+  subject: string;
+  body: string;
+  attachmentName: string | null;
+  status: VoiceStatus;
+  assignedTo: string | null;
+  /**
+   * For anonymous tickets this is coarsened to the start of the day, so it
+   * cannot be lined up against a single person's session.
+   */
+  createdOn: IsoTimestamp;
+  firstResponseOn: IsoTimestamp | null;
+  closedOn: IsoTimestamp | null;
+  /** A ticket cannot reach resolved or closed without this. */
+  closingNote: string | null;
+  /** Shown alongside "action being taken". */
+  statusNote: string | null;
+}
+
+/** 12.2 Ticket message */
+export interface VoiceMessage {
+  id: string;
+  ticketId: string;
+  authorType: 'raiser' | 'hr';
+  /** Only when HR chooses to identify themselves. */
+  authorId: string | null;
+  body: string;
+  createdOn: IsoTimestamp;
+}
+
+/** 12.3 Committee member — the POSH Internal Committee. */
+export interface CommitteeMember {
+  id: string;
+  employeeId: string;
+  validFrom: IsoDate;
+  validTo: IsoDate | null;
+}
+
+/**
+ * FLAGGED, not in the brief's shapes: section 3.2 requires that only specific
+ * HR people see this module, not everyone holding an HR admin role elsewhere in
+ * the app. That needs its own assignment record.
+ */
+export interface VoiceHandler {
+  id: string;
+  employeeId: string;
+  validFrom: IsoDate;
+  validTo: IsoDate | null;
+}

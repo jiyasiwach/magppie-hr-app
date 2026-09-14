@@ -260,6 +260,8 @@ export function applyEmployeeChanges(
       department: employee.department,
       designation: employee.designation,
       managerId: employee.managerId,
+      entityId: employee.entityId,
+      policyGroupId: employee.policyGroupId,
       validFrom: MOCK_TODAY,
       validTo: null,
     });

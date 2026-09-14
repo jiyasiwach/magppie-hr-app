@@ -1,5 +1,7 @@
 import type {
   Announcement,
+  ApprovalChain,
+  ApprovalStep,
   Asset,
   AttendanceDay,
   EmployeeDocument,
@@ -11,6 +13,8 @@ import type {
   Post,
   Punch,
   Request,
+  VoiceMessage,
+  VoiceTicket,
 } from '@/lib/types';
 import * as mocks from '@/mocks';
 
@@ -42,6 +46,23 @@ export const store = {
   assets: [...mocks.assets] as Asset[],
   announcements: [...mocks.announcements] as Announcement[],
   posts: [...mocks.posts] as Post[],
+
+  // Structural additions
+  entities: [...mocks.entities],
+  holidayCalendars: [...mocks.holidayCalendars],
+  weekOffPatterns: [...mocks.weekOffPatterns],
+  leavePolicies: [...mocks.leavePolicies],
+  attendancePolicies: [...mocks.attendancePolicies],
+  policyGroups: [...mocks.policyGroups],
+  approvalChains: [...mocks.approvalChains] as ApprovalChain[],
+  approvalSteps: [...mocks.approvalSteps] as ApprovalStep[],
+  delegations: [...mocks.delegations],
+
+  // Employee Voice
+  voiceTickets: [...mocks.voiceTickets] as VoiceTicket[],
+  voiceMessages: [...mocks.voiceMessages] as VoiceMessage[],
+  committeeMembers: [...mocks.committeeMembers],
+  voiceHandlers: [...mocks.voiceHandlers],
 };
 
 /** Bumped by every mutation so open screens know to re-read. */

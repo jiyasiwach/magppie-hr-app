@@ -166,3 +166,79 @@ export const employeeFieldLabels: Record<string, string> = {
 export function employeeFieldLabel(field: unknown): string {
   return employeeFieldLabels[String(field)] ?? String(field);
 }
+
+// --- structural additions ---------------------------------------------------
+
+export const approverRoleLabels: Record<string, string> = {
+  'reporting-manager': 'Reporting manager',
+  'skip-level-manager': 'Skip-level manager',
+  'department-head': 'Department head',
+  'entity-head': 'Entity head',
+  hr: 'HR',
+  finance: 'Finance',
+};
+
+export const timelineTypeLabels: Record<string, string> = {
+  joined: 'Joined',
+  'probation-confirmed': 'Probation ended',
+  'role-change': 'Role change',
+  'department-change': 'Department change',
+  'manager-change': 'Manager change',
+  'entity-transfer': 'Entity transfer',
+  'policy-group-change': 'Working rules changed',
+  'training-completed': 'Training completed',
+  'assessment-passed': 'Assessment',
+  appraisal: 'Appraisal',
+  exit: 'Left the company',
+};
+
+export const timelineTypeTones: Record<string, Tone> = {
+  joined: 'success',
+  'probation-confirmed': 'success',
+  'role-change': 'info',
+  'department-change': 'info',
+  'manager-change': 'info',
+  'entity-transfer': 'warning',
+  'policy-group-change': 'warning',
+  'training-completed': 'neutral',
+  'assessment-passed': 'neutral',
+  appraisal: 'neutral',
+  exit: 'danger',
+};
+
+// --- employee voice ---------------------------------------------------------
+
+export const voiceCategoryLabels: Record<string, string> = {
+  workplace: 'Workplace or facilities',
+  'pay-leave-attendance': 'Pay, leave or attendance',
+  'policy-process': 'Policy or process',
+  'manager-team': 'Manager or team',
+  harassment: 'Harassment or misconduct',
+  suggestion: 'Suggestion or idea',
+  other: 'Something else',
+};
+
+export const voiceStatusLabels: Record<string, string> = {
+  submitted: 'Submitted',
+  'in-review': 'In review',
+  'action-being-taken': 'Action being taken',
+  resolved: 'Resolved',
+  'closed-without-action': 'Closed without action',
+};
+
+export const voiceStatusTones: Record<string, Tone> = {
+  submitted: 'warning',
+  'in-review': 'info',
+  'action-being-taken': 'info',
+  resolved: 'success',
+  'closed-without-action': 'quiet',
+};
+
+/** Said to the person before they submit, so nothing is a surprise afterwards. */
+export const voiceStatusMeaning: Record<string, string> = {
+  submitted: 'Received, not yet looked at.',
+  'in-review': 'Someone has opened it and is looking.',
+  'action-being-taken': 'Something is being done about it.',
+  resolved: 'Finished, with an explanation of the outcome.',
+  'closed-without-action': 'Closed, with an honest reason why nothing was done.',
+};

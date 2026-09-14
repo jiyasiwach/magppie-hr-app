@@ -13,6 +13,19 @@ export { policies, policyAcknowledgements } from './policies';
 export { notifications } from './notifications';
 export { assets, announcements, posts } from './workplace';
 export {
+  entities,
+  holidayCalendars,
+  weekOffPatterns,
+  leavePolicies,
+  attendancePolicies,
+  policyGroups,
+  departmentPlacement,
+  approvalChains,
+  approvalSteps,
+  delegations,
+} from './organisation';
+export { voiceTickets, voiceMessages, committeeMembers, voiceHandlers } from './voice';
+export {
   punches,
   attendanceDays,
   leaveRequests,
