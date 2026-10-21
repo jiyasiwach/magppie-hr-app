@@ -24,10 +24,10 @@ export function currentPosition(timeoutMs = 20000): Promise<Fix> {
       (err) => {
         const why =
           err.code === err.PERMISSION_DENIED
-            ? 'Location permission was refused. Allow location for this site in your browser settings, then try again.'
+            ? 'Location permission was refused. Click the icon at the left of the address bar, allow Location for this site, then try again.'
             : err.code === err.TIMEOUT
               ? 'Getting your location took too long. Step outside or near a window and try again.'
-              : 'Your location could not be read just now. Try again.';
+              : 'Your location could not be read. On a Mac, turn on System Settings → Privacy & Security → Location Services for your browser; on a phone, switch on Location. Then try again.';
         reject(new Error(why));
       },
       { enableHighAccuracy: true, timeout: timeoutMs, maximumAge: 0 },

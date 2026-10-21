@@ -181,3 +181,43 @@
   transform: scaleX(-1);
   border: 1px solid var(--line);
 }
+
+/* The "Verify it's you" screen shown when the app opens. */
+.gate {
+  min-height: 100dvh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--space-6) var(--space-4);
+  background: linear-gradient(160deg, #e0f2fe 0%, #f8fbfe 45%, #ffffff 100%);
+}
+
+.gateSheet {
+  width: 100%;
+  max-width: 460px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: var(--space-5) var(--space-4) var(--space-5);
+  box-shadow: 0 20px 50px -24px rgba(2, 112, 184, 0.45);
+}
+
+.gateBrand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  color: var(--brand-dark);
+  font-weight: 600;
+}
+
+.gateSwitch {
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+.gateSwitch select { margin-top: 4px; width: 100%; }

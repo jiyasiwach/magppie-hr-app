@@ -23,14 +23,21 @@ export function mockDayIsToday(): boolean {
 }
 
 /**
- * The instant to measure "now" against.
- *
- * While the real date matches MOCK_TODAY the live clock is used, so the Home
- * timer actually ticks. Once the real date moves past the pinned day it freezes
- * at the mock instant instead — otherwise a punch pinned to 9 September is
- * measured against a later real date and the card reports absurdities like
- * "28h 40m of 9h".
+ * The pinned mock day at the real time of day (IST). Live punches are stamped
+ * with this, so a clock-in made on any real date lands on the mock "today" and
+ * shows up on Home; the timer keeps ticking with the wall clock.
+ */
+export function liveMockNow(liveMs: number = Date.now()): Date {
+  const time = new Date(liveMs).toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata', hour12: false });
+  return new Date(`${MOCK_TODAY}T${time}+05:30`);
+}
+
+/**
+ * The instant to measure "now" against: the live clock while the real date is
+ * the mock day, otherwise the mock day at the real time of day. (It used to
+ * freeze at 14:20 once the mock day passed, which also hid every new punch,
+ * because those carried the real date.)
  */
 export function effectiveNow(liveMs: number): Date {
-  return mockDayIsToday() ? new Date(liveMs) : now();
+  return mockDayIsToday() ? new Date(liveMs) : liveMockNow(liveMs);
 }

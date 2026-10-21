@@ -37,7 +37,7 @@
 
 <div class="cover">
   <h1>Magppie HR App — Handover</h1>
-  <p>In-house HR application to replace Keka · phone-first · prepared 21 October 2026</p>
+  <p>In-house HR application to replace Keka · phone-first · prepared 21 October 2026 (updated with the opening check)</p>
   <p>Code: github.com/jiyasiwach/magppie-hr-app (temporary home) · Live: magppie-hr-app.vercel.app · Local: http://localhost:3040</p>
 </div>
 
@@ -71,7 +71,8 @@
 </table>
 
 <h2>3. New: location + face check on attendance</h2>
-<p>Clock In, Clock Out and Punch now save <b>only after both checks</b>:</p>
+<p><b>When the app opens</b> it shows a <b>"Verify it's you"</b> screen first: exact location, then a face scan (the face is registered here the first time). Only then does the app open, with a <b>"Clock In now"</b> button that uses the check just done. <b>Lock</b> (top bar, or the profile menu) brings the screen back, so the next person must verify again. A different person's face keeps the app locked.</p>
+<p>Clock In, Clock Out and Punch inside the app also save <b>only after both checks</b>:</p>
 <ol>
   <li><b>Exact location</b> — the phone's GPS (high accuracy, never a cached reading). No location, no punch.</li>
   <li><b>Face check</b> — a selfie must match the face the employee registered once (the first time they clock in, or from Me → Face for attendance, with a consent checkbox). A different face is <b>blocked</b>.</li>
@@ -82,6 +83,9 @@
 <h3>Test results (21 Oct 2026, real Chrome with a simulated camera and GPS)</h3>
 <table>
   <tr><th>Test</th><th>Expected</th><th>Result</th></tr>
+  <tr><td>Open the app → verify (register face) → Clock In now</td><td>App opens; Home shows clocked in with the timer running</td><td class="ok">Passed</td></tr>
+  <tr><td>Lock → verify again</td><td>Asks for location + face only (no re-registration), then opens</td><td class="ok">Passed</td></tr>
+  <tr><td>A different person tries to open the app</td><td>App stays locked</td><td class="ok">Passed</td></tr>
   <tr><td>Register a face, then punch as the same person</td><td>Saved with location and match</td><td class="ok">Passed</td></tr>
   <tr><td>A different person tries to punch for that employee</td><td>Blocked, nothing saved</td><td class="ok">Passed</td></tr>
   <tr><td>Punch 945 m from the site (limit 200 m)</td><td>Saved and flagged for the manager</td><td class="ok">Passed</td></tr>

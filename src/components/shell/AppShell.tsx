@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, type ReactNode } from 'react';
-import { navIcons } from '@/components/ui/icons';
+import { VerifyGate, lockApp } from '@/components/attendance/VerifyGate';
+import { IconLogout, navIcons } from '@/components/ui/icons';
 import { getUnacknowledgedPolicyCount } from '@/data/documents';
 import { getPendingCount } from '@/data/requests';
 import { useAsync } from '@/hooks/useAsync';
@@ -40,6 +41,16 @@ export function RoleSwitcher({ block = false }: { block?: boolean }) {
         ))}
       </select>
     </div>
+  );
+}
+
+function LockButton() {
+  const { user } = useCurrentUser();
+  return (
+    <button type="button" className={s.lockButton} onClick={() => lockApp(user.employee.id)} title="Lock the app; your location and face are checked again">
+      <IconLogout size={16} />
+      <span>Lock</span>
+    </button>
   );
 }
 
@@ -93,6 +104,7 @@ function Chrome({ children }: { children: ReactNode }) {
           <div className={s.switcherDesktop}>
             <RoleSwitcher />
           </div>
+          <LockButton />
         </div>
       </header>
 
@@ -152,7 +164,9 @@ function Chrome({ children }: { children: ReactNode }) {
 export function AppShell({ children }: { children: ReactNode }) {
   return (
     <CurrentUserProvider>
-      <Chrome>{children}</Chrome>
+      <VerifyGate>
+        <Chrome>{children}</Chrome>
+      </VerifyGate>
     </CurrentUserProvider>
   );
 }

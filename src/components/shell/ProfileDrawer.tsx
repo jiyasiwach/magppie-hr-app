@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { lockApp } from '@/components/attendance/VerifyGate';
 import { useEffect } from 'react';
 import { Avatar, Button } from '@/components/ui';
 import {
@@ -74,13 +75,19 @@ export function ProfileDrawer({ open, onClose }: { open: boolean; onClose: () =>
 
         <div className={s.drawerFooter}>
           <div className={s.logoutBlock}>
-            <span className={s.drawerLinkStatic}>
+            <Button
+              variant="quiet"
+              onClick={() => {
+                onClose();
+                lockApp(user.employee.id);
+              }}
+            >
               <IconLogout size={18} />
-              Logout
-            </span>
+              Lock app — verify again
+            </Button>
             <p className={s.drawerNote}>
-              There is no sign-in yet, so there is nothing to log out of. Use the role switcher above
-              to change who you are looking at.
+              There is no real sign-in yet. Locking asks for your location and face again before the
+              app reopens.
             </p>
           </div>
           <Button variant="quiet" onClick={onClose}>

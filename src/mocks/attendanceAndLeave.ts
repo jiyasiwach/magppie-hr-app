@@ -277,8 +277,19 @@ function buildAttendance(): { punches: Punch[]; attendanceDays: AttendanceDay[] 
 }
 
 const built = buildAttendance();
-export const punches: Punch[] = built.punches;
-export const attendanceDays: AttendanceDay[] = built.attendanceDays;
+
+/**
+ * The people the role switcher offers start today NOT clocked in, so the first
+ * thing a reviewer sees is Clock In and the location + face check behind it.
+ * Everyone else keeps their generated punches so team views still have data.
+ * Mirrors `mockPersonas` in src/lib/auth.ts (not imported, to avoid a cycle).
+ */
+const DEMO_PEOPLE = new Set(['emp-008', 'emp-003', 'emp-005', 'emp-017']);
+const notDemoToday = (r: { employeeId: string; date?: string; timestamp?: string }) =>
+  !(DEMO_PEOPLE.has(r.employeeId) && (r.date ?? r.timestamp?.slice(0, 10)) === MOCK_TODAY);
+
+export const punches: Punch[] = built.punches.filter(notDemoToday);
+export const attendanceDays: AttendanceDay[] = built.attendanceDays.filter(notDemoToday);
 
 // ---------------------------------------------------------------------------
 // Leave ledger — every credit, debit and adjustment behind a balance

@@ -101,7 +101,7 @@ export function TodayCard({ employeeId }: { employeeId: string }) {
                       <span className={s.timerValue}>{formatElapsed(elapsed)}</span>
                       <span>
                         since you clocked in at {formatTime(lastIn.timestamp)}
-                        {mockDayIsToday() ? '' : ' · frozen, the mock day has passed'}
+                        {mockDayIsToday() ? '' : ' · sample day, live time'}
                       </span>
                     </>
                   ) : (

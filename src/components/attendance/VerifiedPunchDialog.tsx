@@ -11,6 +11,7 @@ import {
   getSite,
   registerFace,
 } from '@/data/verification';
+import { effectiveNow } from '@/lib/clock';
 import { faceDistance, loadFaceModels, readFace } from '@/lib/face';
 import { currentPosition, distanceM, formatFix, type Fix } from '@/lib/geo';
 import type { FaceEnrolment, PunchVerification } from '@/lib/types';
@@ -28,6 +29,16 @@ interface Props {
   actionLabel: string;
   onClose: () => void;
   onSaved: (summary: string) => void;
+  /** Replaces saving a punch — used by the "Verify it's you" screen when the app opens. */
+  onVerified?: (verification: PunchVerification) => Promise<void> | void;
+  /** Full-screen and not dismissible: the app stays closed until both checks pass. */
+  gate?: boolean;
+  confirmLabel?: string;
+  doneTitle?: string;
+  /** Rendered under the title on the gate, e.g. the demo person switcher. */
+  extra?: React.ReactNode;
+  /** Replaces the single Done button once both checks pass. */
+  doneActions?: React.ReactNode;
 }
 
 /**
@@ -37,7 +48,21 @@ interface Props {
  * review, never blocked — installers clock in at client sites. A face that does
  * not match is blocked.
  */
-export function VerifiedPunchDialog({ employeeId, firstName, siteName, direction, actionLabel, onClose, onSaved }: Props) {
+export function VerifiedPunchDialog({
+  employeeId,
+  firstName,
+  siteName,
+  direction,
+  actionLabel,
+  onClose,
+  onSaved,
+  onVerified,
+  gate = false,
+  confirmLabel,
+  doneTitle,
+  extra,
+  doneActions,
+}: Props) {
   const [phase, setPhase] = useState<Phase>('locating');
   const [fix, setFix] = useState<Fix | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
@@ -101,9 +126,11 @@ export function VerifiedPunchDialog({ employeeId, firstName, siteName, direction
     setFaceResult(null);
   };
 
+  const cameraStarting = () => setFaceError('The camera is still starting — wait a second and try again.');
+
   const doRegister = async () => {
     const frame = capture();
-    if (!frame) return;
+    if (!frame) return cameraStarting();
     setShot(thumbnail(frame, 320));
     setFaceError(null);
     setPhase('checking');
@@ -117,7 +144,7 @@ export function VerifiedPunchDialog({ employeeId, firstName, siteName, direction
       const saved = await registerFace(employeeId, reading.descriptor);
       setEnrolment(saved);
       setShot(null);
-      setMessage(`Face registered. Now take your ${actionLabel.toLowerCase()} photo.`);
+      setMessage(gate ? 'Face registered. Now take one more photo to continue.' : `Face registered. Now take your ${actionLabel.toLowerCase()} photo.`);
       setPhase('camera');
     } catch (e) {
       setFaceError((e as Error).message);
@@ -127,7 +154,8 @@ export function VerifiedPunchDialog({ employeeId, firstName, siteName, direction
 
   const doVerify = async () => {
     const frame = capture();
-    if (!frame || !fix || !enrolment) return;
+    if (!fix || !enrolment) return;
+    if (!frame) return cameraStarting();
     const photo = thumbnail(frame);
     setShot(thumbnail(frame, 320));
     setFaceError(null);
@@ -144,7 +172,7 @@ export function VerifiedPunchDialog({ employeeId, firstName, siteName, direction
       setFaceResult(distance);
       if (distance > FACE_MATCH_THRESHOLD) {
         setFaceError(
-          `This face does not match the face registered for ${firstName}, so the punch was not saved. ` +
+          `This face does not match the face registered for ${firstName}, so ${gate ? 'the app stays locked' : 'the punch was not saved'}. ` +
             'Try again facing the camera in good light. If it keeps failing, ask HR.',
         );
         setPhase('camera');
@@ -163,7 +191,8 @@ export function VerifiedPunchDialog({ employeeId, firstName, siteName, direction
         faceThreshold: FACE_MATCH_THRESHOLD,
         photo,
       };
-      await punch(employeeId, direction, new Date(), verification);
+      if (onVerified) await onVerified(verification);
+      else await punch(employeeId, direction, effectiveNow(Date.now()), verification);
       setPhase('saved');
       onSaved(
         `${actionLabel} saved with location ${formatFix(fix)} and a matching face.` +
@@ -186,17 +215,20 @@ export function VerifiedPunchDialog({ employeeId, firstName, siteName, direction
         : 'idle';
 
   return (
-    <div className={s.overlay} role="dialog" aria-modal="true" aria-labelledby="verify-title">
-      <div className={s.sheet}>
+    <div className={gate ? s.gate : s.overlay} role="dialog" aria-modal="true" aria-labelledby="verify-title">
+      <div className={gate ? s.gateSheet : s.sheet}>
         <div className={s.head}>
           <div>
             <h2 id="verify-title">{actionLabel}</h2>
-            <p>Location and face check, then it is saved.</p>
+            <p>{gate ? `Confirm your location and your face to open the app, ${firstName}.` : 'Location and face check, then it is saved.'}</p>
           </div>
-          <button type="button" className={s.close} onClick={onClose} aria-label="Close">
-            <IconClose size={20} />
-          </button>
+          {gate ? null : (
+            <button type="button" className={s.close} onClick={onClose} aria-label="Close">
+              <IconClose size={20} />
+            </button>
+          )}
         </div>
+        {extra}
 
         <ol className={s.steps}>
           <Step
@@ -232,8 +264,14 @@ export function VerifiedPunchDialog({ employeeId, firstName, siteName, direction
           <Step
             state={phase === 'saved' ? 'done' : phase === 'saving' ? 'active' : 'idle'}
             icon={<IconCheck size={16} />}
-            title={`3. ${actionLabel} saved`}
-            text={phase === 'saved' ? 'Location, selfie and match score are kept with the punch.' : 'When both checks pass'}
+            title={`3. ${doneTitle ?? `${actionLabel} saved`}`}
+            text={
+              phase === 'saved'
+                ? gate
+                  ? 'Verified. Your location and the check are noted for HR.'
+                  : 'Location, selfie and match score are kept with the punch.'
+                : 'When both checks pass'
+            }
           />
         </ol>
 
@@ -248,7 +286,8 @@ export function VerifiedPunchDialog({ employeeId, firstName, siteName, direction
 
         {locationFlag && phase !== 'location-failed' ? (
           <p className={s.flag}>
-            <strong>Will be flagged for your manager:</strong> {locationFlag} The punch is still saved.
+            <strong>{gate ? 'Noted for HR:' : 'Will be flagged for your manager:'}</strong> {locationFlag}{' '}
+            {gate ? 'You can still continue.' : 'The punch is still saved.'}
           </p>
         ) : null}
         {siteNote && phase !== 'locating' ? <p className={s.message}>{siteNote}</p> : null}
@@ -292,12 +331,14 @@ export function VerifiedPunchDialog({ employeeId, firstName, siteName, direction
                 </button>
               ) : (
                 <button type="button" className={s.primary} disabled={!ready || phase === 'checking'} onClick={() => void doVerify()}>
-                  {phase === 'checking' ? 'Checking…' : `Take photo and ${actionLabel.toLowerCase()}`}
+                  {phase === 'checking' ? 'Checking…' : (confirmLabel ?? `Take photo and ${actionLabel.toLowerCase()}`)}
                 </button>
               )}
-              <button type="button" className={s.secondary} onClick={onClose}>
-                Cancel
-              </button>
+              {gate ? null : (
+                <button type="button" className={s.secondary} onClick={onClose}>
+                  Cancel
+                </button>
+              )}
             </div>
           </>
         ) : null}
@@ -305,9 +346,11 @@ export function VerifiedPunchDialog({ employeeId, firstName, siteName, direction
         {phase === 'saving' ? <p className={s.message}>Saving…</p> : null}
         {phase === 'saved' ? (
           <div className={s.actions}>
-            <button type="button" className={s.primary} onClick={onClose}>
-              Done
-            </button>
+            {doneActions ?? (
+              <button type="button" className={s.primary} onClick={onClose}>
+                {gate ? 'Open the app' : 'Done'}
+              </button>
+            )}
           </div>
         ) : null}
       </div>
