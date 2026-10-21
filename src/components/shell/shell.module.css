@@ -13,7 +13,7 @@
   align-items: center;
   gap: var(--space-3);
   padding: 0 var(--space-4);
-  background: var(--surface-2);
+  background: var(--surface);
   border-bottom: 1px solid var(--line);
 }
 
@@ -313,7 +313,7 @@
   width: var(--nav-width);
   flex: 0 0 var(--nav-width);
   border-right: 1px solid var(--line);
-  background: var(--surface-2);
+  background: var(--surface);
   padding: var(--space-4) var(--space-3) var(--space-6);
   position: sticky;
   top: var(--header-height);
@@ -334,8 +334,8 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: 10px;
-  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  border-radius: 10px;
   color: var(--ink-2);
   text-decoration: none;
   font-size: 14px;
@@ -343,16 +343,17 @@
 }
 
 .navLink:hover {
-  background: var(--surface-3);
+  background: var(--surface-2);
   color: var(--ink);
 }
 
 .navLinkActive,
 .navLinkActive:hover {
-  background: var(--surface);
-  border-left-color: var(--brand);
-  color: var(--ink);
+  background: var(--brand-soft);
+  border-left-color: transparent;
+  color: var(--brand-dark);
   font-weight: 600;
+  box-shadow: inset 3px 0 0 var(--accent);
 }
 
 .navIcon {
@@ -435,7 +436,7 @@
     left: 0;
     right: 0;
     z-index: 30;
-    background: var(--surface-2);
+    background: var(--surface);
     border-top: 1px solid var(--line);
     padding-bottom: env(safe-area-inset-bottom);
   }
@@ -469,8 +470,8 @@
   .bottomNavLinkActive {
     font-weight: 600;
     color: var(--brand-dark);
-    background: var(--surface);
-    box-shadow: inset 0 -2px 0 var(--brand);
+    background: var(--brand-soft);
+    box-shadow: inset 0 3px 0 var(--accent);
   }
 
   .bottomNavLink .navBadge {

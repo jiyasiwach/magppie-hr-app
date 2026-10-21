@@ -8,7 +8,6 @@ import {
   Button,
   Card,
   EmptyState,
-  PageHeader,
   Stack,
   StatusPill,
 } from '@/components/ui';
@@ -38,10 +37,15 @@ export default function HomePage() {
 
   return (
     <>
-      <PageHeader
-        title={`Hello, ${first}`}
-        description={`${formatDayName(MOCK_TODAY)}, ${formatDate(MOCK_TODAY)} — everything on this screen comes from mock data.`}
-      />
+      <section className={s.welcome}>
+        <p className={s.welcomeDate}>
+          {formatDayName(MOCK_TODAY)}, {formatDate(MOCK_TODAY)}
+        </p>
+        <h1>Hello, {first}</h1>
+        <p className={s.welcomeNote}>
+          Clock in with your location and a quick selfie. Everything on this screen comes from mock data.
+        </p>
+      </section>
 
       <Stack>
         <QuickActions />

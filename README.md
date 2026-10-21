@@ -18,6 +18,16 @@ phone and a left navigation on desktop.
 
 ---
 
+## Verified punches (added 21 Oct 2026)
+
+Clock In, Clock Out and Punch now save only after **(1)** the phone gives its exact GPS
+location and **(2)** a selfie matches the face the employee registered once (Me → Face for
+attendance, or the first time they clock in). Face matching runs **on the device** with
+`@vladmandic/face-api` (models in `public/models`). A punch far from the person's site is
+**saved and flagged**, never blocked — installers clock in at client sites. HR sets each
+site's position from the site itself: Settings → Attendance sites. Open questions 28–33 in
+`docs/13` cover strictness, radius, liveness and DPDP consent.
+
 ## Status at a glance
 
 | | |

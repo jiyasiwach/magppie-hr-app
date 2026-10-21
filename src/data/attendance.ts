@@ -1,4 +1,4 @@
-import type { AttendanceDay, AttendanceStatus, Holiday, Punch } from '@/lib/types';
+import type { AttendanceDay, AttendanceStatus, Holiday, Punch, PunchVerification } from '@/lib/types';
 import { MOCK_TODAY } from '@/lib/clock';
 import { datesBetween, endOfMonth, startOfMonth } from '@/lib/date';
 import { read, store, write } from './store';
@@ -74,7 +74,12 @@ export async function getTodayStatus(employeeId: string, at: Date): Promise<Toda
   });
 }
 
-export async function punch(employeeId: string, direction: 'in' | 'out', at: Date): Promise<void> {
+export async function punch(
+  employeeId: string,
+  direction: 'in' | 'out',
+  at: Date,
+  verification: PunchVerification | null = null,
+): Promise<void> {
   await write(() => {
     const timestamp = at.toISOString();
     store.punches.push({
@@ -83,7 +88,10 @@ export async function punch(employeeId: string, direction: 'in' | 'out', at: Dat
       timestamp,
       direction,
       source: 'web',
-      location: null,
+      location: verification
+        ? `${verification.latitude.toFixed(5)}, ${verification.longitude.toFixed(5)} (±${verification.accuracyM} m)`
+        : null,
+      verification,
     });
     const dayPunches = store.punches
       .filter((p) => p.employeeId === employeeId && p.timestamp.slice(0, 10) === MOCK_TODAY)

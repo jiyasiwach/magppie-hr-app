@@ -1,9 +1,9 @@
 /*
  * Palette and structural styling.
  *
- * Warm brown and white, flat: solid surfaces, clear borders, no gradients, no
+ * White with sky blue, flat: solid surfaces, clear borders, no gradients, no
  * glassmorphism, no decorative shadows. Status colours are deliberately NOT
- * brown — a person has to be able to tell present from absent at a glance, on a
+ * the brand blue — a person has to be able to tell present from absent at a glance, on a
  * phone, in bad light.
  */
 
@@ -12,28 +12,29 @@
   /* Three layers, and the layering is what does the layout work:
      beige page → white content cards → beige again for the chrome
      (sidebar, header, table headers, filter bars). Cards are never tinted. */
-  --bg: #f1e9dd;          /* page — warm beige */
+  --bg: #f8fbfe;          /* page — almost white, so white cards still read */
   --surface: #ffffff;     /* content cards, never tinted */
-  --surface-2: #e8dece;   /* chrome: sidebar, header, table heads, filters */
-  --surface-3: #dccfb9;   /* hover / pressed on the chrome */
+  --surface-2: #f0f8ff;   /* chrome: sidebar, header, table heads, filters */
+  --surface-3: #e0f2fe;   /* hover / pressed on the chrome */
 
-  /* --- brown ------------------------------------------------------------ */
-  --brand: #8b6f4e;       /* navigation, buttons, active states */
-  --brand-dark: #6f573b;  /* hover, links */
-  --brand-soft: #f0e8dd;
+  /* --- blue (brand) ----------------------------------------------------- */
+  --brand: #0270b8;       /* navigation, buttons, active states */
+  --brand-dark: #075985;  /* hover, links */
+  --brand-soft: #e0f2fe;
+  --accent: #0ea5e9;      /* bright sky: active markers and highlights only, never text */
 
   /* --- text ------------------------------------------------------------- */
-  --ink: #2e241c;         /* headings and body — 12.5:1 on beige */
-  --ink-2: #4c3f33;
+  --ink: #0f172a;         /* headings and body — 14:1 on the light-blue page */
+  --ink-2: #334155;
   /* Muted text is #6e5f50, not the #7a6a5a in the brief: on the beige page
      that value measured 4.32:1 and on the secondary beige 3.9:1, both under
      AA. This is the same warm grey-brown, darkened until it passes. */
-  --ink-3: #6e5f50;
+  --ink-3: #526174;
   --on-brand: #ffffff;
 
   /* --- lines ------------------------------------------------------------ */
-  --line: #ddd1bf;
-  --line-soft: #eae1d3;   /* dividers inside white cards */
+  --line: #dbe7f3;
+  --line-soft: #edf3f9;   /* dividers inside white cards */
 
   /* --- status ----------------------------------------------------------- */
   /* Each pair is text-on-tint, checked to clear 4.5:1 against its own tint. */
@@ -53,9 +54,9 @@
   --info-bg: #e8f1f8;
   --info-line: #c3dcee;
 
-  --neutral-fg: #5d4f42;
-  --neutral-bg: #e8dece;
-  --neutral-line: #ddd1bf;
+  --neutral-fg: #3d4c5e;
+  --neutral-bg: #f0f8ff;
+  --neutral-line: #dbe7f3;
 
   /* --- spacing ---------------------------------------------------------- */
   --space-1: 4px;
@@ -66,8 +67,9 @@
   --space-6: 32px;
   --space-7: 48px;
 
-  --radius: 6px;
-  --radius-sm: 4px;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 6px 20px -8px rgba(2, 112, 184, 0.14);
   --nav-width: 236px;
   --header-height: 56px;
   --bottom-nav-height: 58px;
@@ -145,7 +147,7 @@ textarea {
 input:hover,
 select:hover,
 textarea:hover {
-  border-color: #c9b99f;
+  border-color: #bcd7ee;
 }
 
 textarea {
@@ -154,7 +156,7 @@ textarea {
 }
 
 ::placeholder {
-  color: #9a8975;
+  color: #7a8ea3;
 }
 
 :focus-visible {

@@ -76,6 +76,49 @@ export interface Punch {
   direction: PunchDirection;
   source: PunchSource;
   location: string | null;
+  /** Evidence captured when the punch went through location + face check. */
+  verification?: PunchVerification | null;
+}
+
+/**
+ * What a verified punch carries so HR can review it: where the phone was, how
+ * sure that reading is, how far it was from the person's site, and whether the
+ * selfie matched the face they registered. Nothing here is a judgement on its
+ * own — `flag` says in plain words why a reviewer might want to look.
+ */
+export interface PunchVerification {
+  latitude: number;
+  longitude: number;
+  accuracyM: number;
+  siteName: string;
+  /** Null when the site's map position has not been set by HR, so distance was not checked. */
+  siteDistanceM: number | null;
+  siteRadiusM: number | null;
+  flag: string | null;
+  /** Euclidean distance between the selfie and the registered face; lower is closer. */
+  faceDistance: number;
+  faceThreshold: number;
+  /** Small JPEG of the selfie (data URL), kept with the punch for review. */
+  photo: string;
+}
+
+/** A person's registered face, used to check clock-in selfies. Biometric data. */
+export interface FaceEnrolment {
+  employeeId: string;
+  /** 128-number face description computed on the device; the photo itself is not kept. */
+  descriptor: number[];
+  enrolledAt: IsoTimestamp;
+  consent: string;
+}
+
+/** A place people clock in at. Coordinates stay null until HR sets them from the site itself. */
+export interface AttendanceSite {
+  name: string;
+  latitude: number | null;
+  longitude: number | null;
+  radiusM: number;
+  setBy: string | null;
+  setAt: IsoTimestamp | null;
 }
 
 export type AttendanceStatus =

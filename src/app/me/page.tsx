@@ -23,6 +23,7 @@ import {
   IconIdCard,
   IconInbox,
   IconPlus,
+  IconFace,
 } from '@/components/ui/icons';
 import { DocumentsPanel } from '@/components/documents/DocumentsPanel';
 import { OrgDocuments } from '@/components/documents/OrgDocuments';
@@ -151,6 +152,12 @@ function TimeTab() {
             title="My working rules"
             body="Your shift, your week off, and exactly how your leave is earned."
             Icon={IconPolicy}
+          />
+          <ActionCard
+            href="/me/face"
+            title="Face for attendance"
+            body="The face your clock-in selfies are checked against."
+            Icon={IconFace}
           />
         </div>
       </Card>

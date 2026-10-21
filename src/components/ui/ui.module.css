@@ -4,6 +4,7 @@
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
+  box-shadow: var(--shadow);
 }
 
 .cardHeader h2 {
@@ -83,9 +84,10 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  min-height: 38px;
-  padding: 0 14px;
-  border-radius: var(--radius);
+  min-height: 40px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font-weight: 500;
   border: 1px solid var(--line);
   background: var(--surface);
   cursor: pointer;
@@ -96,7 +98,7 @@
 
 .button:hover:not(:disabled) {
   background: var(--surface-2);
-  border-color: #c9b99f;
+  border-color: #bcd7ee;
 }
 
 .button:disabled {

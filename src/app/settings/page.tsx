@@ -127,6 +127,7 @@ export default function SettingsPage() {
               <Link href="/chains">Approval chains and delegations</Link>
               <Link href="/settings/fields">Custom fields</Link>
               <Link href="/settings/integrations">Connections to other systems</Link>
+              <Link href="/settings/sites">Attendance sites (location check)</Link>
               <Link href="/reports">Reports</Link>
               <Link href="/reports/build">Build a report</Link>
               <Link href="/surveys">Surveys</Link>

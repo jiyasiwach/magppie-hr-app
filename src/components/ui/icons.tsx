@@ -302,3 +302,21 @@ export const navIcons = {
 } as const;
 
 export type NavIconName = keyof typeof navIcons;
+
+export function IconCamera(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M4.5 8.5h3l1.6-2.5h5.8l1.6 2.5h3a1 1 0 0 1 1 1v8.5a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1V9.5a1 1 0 0 1 1-1Z" />
+      <circle cx="12" cy="13.3" r="3.3" />
+    </Svg>
+  );
+}
+
+export function IconFace(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16" />
+      <path d="M9.5 10v.5M14.5 10v.5M9.5 14.6c1.4 1.2 3.6 1.2 5 0" />
+    </Svg>
+  );
+}

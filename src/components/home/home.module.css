@@ -47,6 +47,7 @@
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
+  box-shadow: var(--shadow);
   overflow: hidden;
 }
 
@@ -166,8 +167,13 @@
 }
 
 .clockOut {
-  background: var(--danger-fg);
-  border-color: var(--danger-fg);
+  /* A clean red that sits with the white-and-sky palette; white text is 4.8:1. */
+  background: #dc2626;
+  border-color: #dc2626;
+}
+
+.clockOut:hover:not(:disabled) {
+  background: #b91c1c;
 }
 
 .clockButton:disabled {
@@ -378,4 +384,51 @@
   gap: var(--space-1);
   font-size: 13px;
   color: var(--ink-2);
+}
+
+/* Home welcome banner: the one place the bright sky is used as a surface. */
+.welcome {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: var(--space-5);
+  padding: var(--space-5) var(--space-5) var(--space-5);
+  border-radius: 16px;
+  background: linear-gradient(120deg, #0270b8 0%, #0ea5e9 100%);
+  color: #ffffff;
+  box-shadow: 0 12px 30px -14px rgba(2, 112, 184, 0.55);
+}
+
+.welcome::after {
+  content: '';
+  position: absolute;
+  right: -60px;
+  top: -80px;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+}
+
+.welcomeDate {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.welcome h1 {
+  margin: 4px 0 6px;
+  font-size: 28px;
+  line-height: 1.15;
+  color: #ffffff;
+}
+
+.welcomeNote {
+  margin: 0;
+  max-width: 52ch;
+  font-size: 14px;
+  opacity: 0.9;
 }

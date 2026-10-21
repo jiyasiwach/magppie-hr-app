@@ -4,7 +4,9 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { AsyncSection, Dial, StatusPill, Working } from '@/components/ui';
 import { IconChevronRight, IconPin } from '@/components/ui/icons';
-import { getTodayStatus, punch, workedHours } from '@/data/attendance';
+import { VerifiedPunchDialog } from '@/components/attendance/VerifiedPunchDialog';
+import { useCurrentUser } from '@/components/shell/CurrentUserProvider';
+import { getTodayStatus, workedHours } from '@/data/attendance';
 import { getShift } from '@/data/team';
 import { useAsync } from '@/hooks/useAsync';
 import { formatElapsed, useNow } from '@/hooks/useTicker';
@@ -16,43 +18,20 @@ import s from './home.module.css';
 /**
  * The most important element on the screen, and the one that has to work
  * one-handed on a phone: shift, hours against expected, a large clock control,
- * a live timer, and a separate location-tagged punch.
+ * a live timer, and a separate location-tagged punch. Every one of them goes
+ * through the location + face check before it is saved.
  */
 export function TodayCard({ employeeId }: { employeeId: string }) {
   const at = now();
   const { state, reload } = useAsync(() => getTodayStatus(employeeId, at), [employeeId]);
   const shiftQuery = useAsync(() => getShift(employeeId), [employeeId]);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { user } = useCurrentUser();
+  const [verifying, setVerifying] = useState<{ direction: 'in' | 'out'; label: string } | null>(null);
   const [punchNote, setPunchNote] = useState<string | null>(null);
   const nowMs = useNow(1000);
-
-  const act = async (direction: 'in' | 'out') => {
-    setBusy(true);
-    setError(null);
-    try {
-      await punch(employeeId, direction, new Date());
-    } catch (e) {
-      setError((e as Error).message);
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const locationPunch = async () => {
-    setBusy(true);
-    setError(null);
-    try {
-      await punch(employeeId, 'in', new Date());
-      setPunchNote(
-        'Punch recorded. Location is not captured in this pass — there is no device permission or geocoding behind it yet.',
-      );
-    } catch (e) {
-      setError((e as Error).message);
-    } finally {
-      setBusy(false);
-    }
-  };
+  const busy = verifying !== null;
+  const error: string | null = null;
+  const employee = user.employee.id === employeeId ? user.employee : null;
 
   return (
     <div className={s.today}>
@@ -138,11 +117,20 @@ export function TodayCard({ employeeId }: { employeeId: string }) {
                     type="button"
                     className={`${s.clockButton} ${today.isPunchedIn ? s.clockOut : s.clockIn}`}
                     disabled={busy}
-                    onClick={() => act(today.isPunchedIn ? 'out' : 'in')}
+                    onClick={() =>
+                      setVerifying(
+                        today.isPunchedIn ? { direction: 'out', label: 'Clock Out' } : { direction: 'in', label: 'Clock In' },
+                      )
+                    }
                   >
-                    {busy ? 'Saving…' : today.isPunchedIn ? 'Clock Out' : 'Clock In'}
+                    {busy ? 'Checking…' : today.isPunchedIn ? 'Clock Out' : 'Clock In'}
                   </button>
-                  <button type="button" className={s.punchButton} disabled={busy} onClick={locationPunch}>
+                  <button
+                    type="button"
+                    className={s.punchButton}
+                    disabled={busy}
+                    onClick={() => setVerifying({ direction: 'in', label: 'Punch' })}
+                  >
                     <IconPin size={18} />
                     Punch
                   </button>
@@ -157,7 +145,9 @@ export function TodayCard({ employeeId }: { employeeId: string }) {
                         <li key={p.id}>
                           {i + 1}. {p.direction === 'in' ? 'In' : 'Out'} at {formatTime(p.timestamp)} (
                           {punchSourceLabels[p.source]}
-                          {p.location ? `, ${p.location}` : ''})
+                          {p.location ? `, ${p.location}` : ''}
+                          {p.verification ? `, face matched (score ${p.verification.faceDistance})` : ''}
+                          {p.verification?.flag ? ` — flagged: ${p.verification.flag}` : ''})
                         </li>
                       ))
                     )}
@@ -185,6 +175,20 @@ export function TodayCard({ employeeId }: { employeeId: string }) {
           );
         }}
       </AsyncSection>
+      {verifying && employee ? (
+        <VerifiedPunchDialog
+          employeeId={employeeId}
+          firstName={employee.fullName.split(' ')[0]}
+          siteName={employee.location}
+          direction={verifying.direction}
+          actionLabel={verifying.label}
+          onClose={() => {
+            setVerifying(null);
+            reload();
+          }}
+          onSaved={setPunchNote}
+        />
+      ) : null}
     </div>
   );
 }

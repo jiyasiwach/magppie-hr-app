@@ -24,7 +24,7 @@ mutation land, and confirm the form keeps its values.
 | No file storage | Documents are records; "Download" explains there is nothing to download; post images are captions |
 | Nothing persists | The in-memory store resets on reload |
 | No automated tests | Every change needs manual verification |
-| Location not captured on the Punch button | The button records a punch with `location = null` and says so |
+| Verified punches persist only in this browser (mock) | Face registration and site positions use localStorage until Supabase exists; punches still reset on reload |
 | Feedback form goes nowhere | Says so plainly rather than faking success |
 | No cycle guard in `reportingLine` beyond `manager_id <> id` | A longer manager cycle would loop; the DB constraint does not prevent A→B→A |
 | Sidebar/page contrast is only 1.11:1 | Carried by a 1px border — a consequence of following the brief's hex values over its "lighter beige" wording |
@@ -89,3 +89,14 @@ Several are now encoded in RLS or SQL and are one line each to change.
 | 31 | Deployment on personal Vercel, should be the Magppie team | Temporary, owner's choice |
 | 32 | No git-linked auto-deploy | Blocked by #30 |
 | 33 | Global git identity on the dev machine is `SUNROOOF` | Overridden repo-locally; must stay overridden |
+
+### Verified punches — location + face (added 21 Oct 2026)
+
+| # | Question | Current placeholder | Where |
+| --- | --- | --- | --- |
+| 28 | **Face-match strictness.** How close must a selfie be to the registered face? | 0.5 (Euclidean distance, lower = stricter); not tuned on real staff, phones or lighting | `FACE_MATCH_THRESHOLD`, `src/data/verification.ts` |
+| 29 | **Allowed distance from a site** before a punch is flagged | 200 m for every site; HR can change per site | `DEFAULT_SITE_RADIUS_M`, Settings → Attendance sites |
+| 30 | **Liveness.** A printed photo or a phone screen can pass a pure face match | Not handled | `src/lib/face.ts` |
+| 31 | **Biometric data under the DPDP Act** — consent wording, retention, who may delete a registration, and where face data is stored | Consent checkbox on registration; descriptor kept on the device (mock) | `FACE_CONSENT`, `face_enrolments` table to design |
+| 32 | **What happens to flagged punches** — who reviews them, and can a manager reject one? | Flag is stored and shown; no review queue | `PunchVerification.flag` |
+| 33 | **Staff without a working camera or GPS** (old phones, factory terminals) | Cannot clock in — no fallback | `VerifiedPunchDialog` |
