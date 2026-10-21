@@ -220,7 +220,9 @@ export function VerifiedPunchDialog({ employeeId, firstName, siteName, direction
                 ? `Matches ${firstName}${faceResult != null ? ` (score ${faceResult} — must be under ${FACE_MATCH_THRESHOLD})` : ''}`
                 : phase === 'checking'
                   ? 'Checking the face…'
-                  : faceState === 'idle'
+                  : faceError
+                    ? 'Not matched — nothing was saved. See below.'
+                    : faceState === 'idle'
                     ? 'After the location'
                     : enrolment
                       ? 'Look straight at the camera'

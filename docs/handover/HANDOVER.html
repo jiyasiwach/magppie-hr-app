@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Magppie HR App — Handover</title>
+<style>
+  @page { size: A4; margin: 16mm 15mm 16mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: #0f172a; font-size: 10pt; line-height: 1.45; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .cover { background: linear-gradient(120deg, #0270b8, #0ea5e9); color: #fff; border-radius: 12px; padding: 18px 22px; margin-bottom: 14px; }
+  .cover h1 { margin: 0 0 4px; font-size: 22pt; }
+  .cover p { margin: 2px 0; opacity: .92; }
+  h2 { color: #075985; font-size: 13.5pt; margin: 18px 0 6px; padding-bottom: 4px; border-bottom: 2px solid #e0f2fe; page-break-after: avoid; }
+  h3 { font-size: 11pt; margin: 12px 0 4px; page-break-after: avoid; }
+  p { margin: 4px 0 6px; }
+  ul, ol { margin: 4px 0 8px; padding-left: 18px; }
+  li { margin-bottom: 2px; }
+  table { width: 100%; border-collapse: collapse; margin: 6px 0 10px; font-size: 9.2pt; }
+  tr { page-break-inside: avoid; }
+  th, td { border: 1px solid #dbe7f3; padding: 5px 7px; text-align: left; vertical-align: top; }
+  th { background: #f0f8ff; color: #075985; }
+  code { font-family: Menlo, Consolas, monospace; font-size: 8.8pt; background: #f0f8ff; padding: 1px 4px; border-radius: 4px; }
+  pre { background: #0f172a; color: #e2e8f0; padding: 9px 12px; border-radius: 8px; font-size: 8.6pt; white-space: pre-wrap; page-break-inside: avoid; }
+  .ok { color: #1c6b3a; font-weight: 700; }
+  .warn { color: #8a5300; font-weight: 700; }
+  .callout { background: #fbf0dc; border: 1px solid #eed9ae; border-radius: 8px; padding: 8px 12px; margin: 8px 0; }
+  .info { background: #f0f8ff; border: 1px solid #dbe7f3; border-radius: 8px; padding: 8px 12px; margin: 8px 0; }
+  .shots { display: flex; gap: 10px; margin: 8px 0; page-break-inside: avoid; }
+  .shots figure { margin: 0; flex: 1; }
+  .shots img { width: 100%; border: 1px solid #dbe7f3; border-radius: 8px; }
+  figcaption { font-size: 8.5pt; color: #526174; margin-top: 3px; text-align: center; }
+  img.wide { width: 100%; border: 1px solid #dbe7f3; border-radius: 8px; }
+  .pb { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>Magppie HR App — Handover</h1>
+  <p>In-house HR application to replace Keka · phone-first · prepared 21 October 2026</p>
+  <p>Code: github.com/jiyasiwach/magppie-hr-app (temporary home) · Live: magppie-hr-app.vercel.app · Local: http://localhost:3040</p>
+</div>
+
+<h2>1. Summary</h2>
+<p>An HR app for Magppie's office, showroom, factory and site staff. The <b>front end is complete</b> — 33 screens covering attendance, leave, approvals, the employee directory, documents, policies, a company wall, surveys, reports, an HR assistant and a confidential grievance module. It currently runs on <b>invented sample data</b>; the database design is written but not yet switched on.</p>
+<p><b>New in this round:</b> attendance now requires the employee's <b>exact location</b> and a <b>face check</b> before any clock-in, clock-out or punch is saved, and the app has a new <b>white and sky-blue</b> look.</p>
+
+<table>
+  <tr><th style="width:28%">Area</th><th style="width:22%">Status</th><th>Notes</th></tr>
+  <tr><td>Screens / front end</td><td class="ok">Complete</td><td>33 pages, phone and desktop layouts</td></tr>
+  <tr><td>Location + face check on attendance</td><td class="ok">Built and tested</td><td>New this round — see section 3</td></tr>
+  <tr><td>Data</td><td class="warn">Sample data only</td><td>40 invented employees; resets on page reload</td></tr>
+  <tr><td>Database (Supabase)</td><td class="warn">Designed, not applied</td><td>4 migration files ready; the Supabase project has not been created</td></tr>
+  <tr><td>Sign-in</td><td class="warn">Not built yet</td><td>A role switcher (Employee / Manager / HR) stands in until Google sign-in is configured</td></tr>
+  <tr><td>Automated code checks</td><td class="ok">Pass</td><td>Type check, lint and production build all pass on a fresh copy from GitHub</td></tr>
+</table>
+
+<h2>2. What the app does</h2>
+<table>
+  <tr><th style="width:24%">Section</th><th>What employees, managers and HR can do</th></tr>
+  <tr><td>Home</td><td>Today's shift and hours, one big Clock In / Clock Out button, Punch, who is off this week, birthdays and anniversaries, announcements, holidays</td></tr>
+  <tr><td>Inbox</td><td>One queue for everything waiting: leave, requests, documents to sign — approve, reject or comment in place</td></tr>
+  <tr><td>Attendance &amp; Leave</td><td>Month calendar with day detail, regularisation requests, leave balances with the full working shown, apply for leave, team calendar</td></tr>
+  <tr><td>Me</td><td>Time, finances (marked "not configured"), documents, assets, ID card, my working rules, <b>face for attendance</b></td></tr>
+  <tr><td>My Team / Directory</td><td>Departments, who is away, profiles, reporting tree, employment history and timeline</td></tr>
+  <tr><td>Policies &amp; Wall</td><td>Policies with read-acknowledgement; company feed with reactions and comments</td></tr>
+  <tr><td>Employee Voice</td><td>Confidential grievances: anonymous tickets store no identity, harassment cases go only to the committee, managers have no access by design</td></tr>
+  <tr><td>Ask HR assistant</td><td>Answers from published policies and the person's own records, cites the policy, refuses on grievances, pay disputes and legal questions</td></tr>
+  <tr><td>Reports &amp; Surveys</td><td>Headcount, attendance, leave and tenure reports; a report builder; eNPS surveys (no result shown below 5 respondents)</td></tr>
+  <tr><td>Settings (HR)</td><td>Custom fields, approval chains, integrations, <b>attendance sites</b> (new)</td></tr>
+</table>
+
+<h2>3. New: location + face check on attendance</h2>
+<p>Clock In, Clock Out and Punch now save <b>only after both checks</b>:</p>
+<ol>
+  <li><b>Exact location</b> — the phone's GPS (high accuracy, never a cached reading). No location, no punch.</li>
+  <li><b>Face check</b> — a selfie must match the face the employee registered once (the first time they clock in, or from Me → Face for attendance, with a consent checkbox). A different face is <b>blocked</b>.</li>
+</ol>
+<p>If the person is farther from their site than allowed (default 200 m), the punch is <b>saved but flagged</b> for the manager, never blocked, because installers clock in at client sites. HR records each site's position by standing there and tapping "use my location" (Settings → Attendance sites). Each punch keeps the location, its accuracy, the distance from the site, the match score and a small selfie for review.</p>
+<p>Face matching runs <b>entirely on the phone</b> (open-source face-api library); no photo is sent to any server in this version.</p>
+
+<h3>Test results (21 Oct 2026, real Chrome with a simulated camera and GPS)</h3>
+<table>
+  <tr><th>Test</th><th>Expected</th><th>Result</th></tr>
+  <tr><td>Register a face, then punch as the same person</td><td>Saved with location and match</td><td class="ok">Passed</td></tr>
+  <tr><td>A different person tries to punch for that employee</td><td>Blocked, nothing saved</td><td class="ok">Passed</td></tr>
+  <tr><td>Punch 945 m from the site (limit 200 m)</td><td>Saved and flagged for the manager</td><td class="ok">Passed</td></tr>
+  <tr><td>Location permission refused</td><td>Clear message, nothing saved</td><td class="ok">Passed</td></tr>
+  <tr><td>Camera permission refused</td><td>Clear message, nothing saved</td><td class="ok">Passed</td></tr>
+</table>
+<div class="shots">
+  <figure><img src="punch-verified.png" alt="Punch verified" /><figcaption>Same person — saved</figcaption></figure>
+  <figure><img src="punch-blocked.png" alt="Punch blocked" /><figcaption>Different person — blocked</figcaption></figure>
+  <figure><img src="punch-flagged.png" alt="Punch flagged" /><figcaption>Far from site — saved, flagged</figcaption></figure>
+</div>
+
+<div class="callout"><b>Before using this with real staff</b> (details in docs/13, questions 28–33):
+<ul>
+  <li><b>Biometric data (DPDP Act):</b> consent wording, how long face data is kept, who can delete it, and where it is stored need an HR/legal decision.</li>
+  <li><b>Liveness:</b> a printed photo or a phone screen held up to the camera could pass. Add a blink/turn-head check before go-live.</li>
+  <li><b>Strictness and distance:</b> the face-match limit (0.5) and the 200 m radius are starting values, not yet tuned on real phones and staff.</li>
+  <li><b>Staff without a camera or GPS</b> currently cannot clock in, so a fallback is needed.</li>
+  <li>Who reviews flagged punches, and whether a manager can reject one.</li>
+</ul></div>
+
+<h2 class="pb">4. New look</h2>
+<p>Changed from brown and beige to <b>white with sky blue</b>: white sidebar and header, a sky-blue active menu item, a sky-blue welcome banner on Home, rounded cards with soft shadows, and pill-shaped buttons. All text colours were checked for readability (WCAG AA contrast).</p>
+<img class="wide" src="home.png" alt="Home screen" />
+
+<h2>5. How to run it</h2>
+<pre>git clone https://github.com/jiyasiwach/magppie-hr-app.git
+cd magppie-hr-app
+git checkout verified-punch-and-sky-theme   # this round's work (local branch until pushed)
+npm install
+npm run dev -- -p 3040                       # then open http://localhost:3040</pre>
+<p>Use the "Viewing as" switcher (top right) to see the Employee, Manager and HR views. To try the camera feature, open the app in <b>Chrome or Safari</b> and allow location and camera when asked. On a phone it needs HTTPS (the deployed site), because browsers only allow camera and GPS on secure pages.</p>
+
+<h2>6. What is deliberately not real yet</h2>
+<ul>
+  <li>All 40 employees and their records are invented, and changes reset when the page reloads.</li>
+  <li>No file storage: documents are records, and "Download" explains there is nothing behind it.</li>
+  <li>Salary and Expenses show "not configured". There is no payroll.</li>
+  <li>The feedback form says plainly that nothing was sent.</li>
+  <li>The product name is not chosen. The app shows <code>[APP_NAME]</code> (a one-line change).</li>
+</ul>
+
+<h2>7. Decisions and blockers</h2>
+<table>
+  <tr><th style="width:5%">#</th><th style="width:45%">Needed</th><th>Who / why</th></tr>
+  <tr><td>1</td><td>Create the Supabase project (<code>magppie-hr-prod</code>)</td><td>Owner. Nothing on the database side can start without it.</td></tr>
+  <tr><td>2</td><td>Choose the product name</td><td>Management</td></tr>
+  <tr><td>3</td><td>Move the GitHub repo from <code>jiyasiwach</code> to <code>Magppie1234</code></td><td>Owner. This unlocks automatic deploys on the Magppie Vercel team.</td></tr>
+  <tr><td>4</td><td>Configure Google sign-in</td><td>Google Workspace admin. Also confirm factory and site staff have Workspace accounts.</td></tr>
+  <tr><td>5</td><td>HR policy answers (33 open questions)</td><td>HR: shift timings, who is HR admin, leave rules, approval chains, document visibility, and the face/location questions above</td></tr>
+  <tr><td>6</td><td>Data-protection basis</td><td>HR/legal: the database region (Singapore) holds Indian employees' data, plus the new biometric consent</td></tr>
+</table>
+
+<h2>8. Recommended next steps</h2>
+<ol>
+  <li>Create Supabase and apply the 4 migrations; add tables for face registrations and attendance sites.</li>
+  <li>Connect the screens to the database one module at a time (the code is structured for this swap).</li>
+  <li>Add Google sign-in and test access rules with real Employee, Manager and HR sessions.</li>
+  <li>Add a liveness check to the face step; get the DPDP consent wording approved.</li>
+  <li>Add a manager review queue for flagged punches.</li>
+  <li>Pilot with one office and one factory before replacing Keka.</li>
+</ol>
+
+<h2>9. Where things are</h2>
+<table>
+  <tr><th style="width:32%">Item</th><th>Location</th></tr>
+  <tr><td>Code (temporary home)</td><td>github.com/jiyasiwach/magppie-hr-app — this round is on branch <code>verified-punch-and-sky-theme</code>, not yet pushed</td></tr>
+  <tr><td>Live site</td><td>magppie-hr-app.vercel.app (personal Vercel account, temporary). Does <b>not</b> include this round's changes yet.</td></tr>
+  <tr><td>Full technical docs</td><td><code>AI_MEMORY.md</code> (start here), <code>README.md</code>, and <code>docs/01–17</code>: architecture, database, business rules, workflows, testing, open questions, backlog</td></tr>
+  <tr><td>Database design</td><td><code>supabase/migrations/0001–0004</code></td></tr>
+  <tr><td>New feature code</td><td><code>src/components/attendance/</code>, <code>src/data/verification.ts</code>, <code>src/lib/face.ts</code>, <code>src/lib/geo.ts</code>, <code>/me/face</code>, <code>/settings/sites</code></td></tr>
+</table>
+</body>
+</html>
