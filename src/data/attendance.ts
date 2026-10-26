@@ -1,5 +1,5 @@
 import type { AttendanceDay, AttendanceStatus, Holiday, Punch, PunchVerification } from '@/lib/types';
-import { MOCK_TODAY } from '@/lib/clock';
+import { MOCK_TODAY, toIstIso } from '@/lib/clock';
 import { datesBetween, endOfMonth, startOfMonth } from '@/lib/date';
 import { read, store, write } from './store';
 
@@ -81,7 +81,7 @@ export async function punch(
   verification: PunchVerification | null = null,
 ): Promise<void> {
   await write(() => {
-    const timestamp = at.toISOString();
+    const timestamp = toIstIso(at);
     store.punches.push({
       id: `pn-${employeeId}-${MOCK_TODAY}-manual-${store.punches.length}`,
       employeeId,

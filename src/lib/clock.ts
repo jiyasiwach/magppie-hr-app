@@ -41,3 +41,12 @@ export function liveMockNow(liveMs: number = Date.now()): Date {
 export function effectiveNow(liveMs: number): Date {
   return mockDayIsToday() ? new Date(liveMs) : liveMockNow(liveMs);
 }
+
+/**
+ * An instant as an IST timestamp ("2026-09-09T12:38:05+05:30"), the same shape
+ * as the seeded punches, so every screen that shows the stored wall-clock time
+ * shows Indian time. Plain toISOString() would store UTC and read 5h30m early.
+ */
+export function toIstIso(at: Date): string {
+  return new Date(at.getTime() + 330 * 60_000).toISOString().slice(0, 19) + '+05:30';
+}
